@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
-    /** @use HasFactory<\Database\Factories\CategoriaFactory> */
-    use HasFactory;
+    protected $table = 'categorias';
+
+    protected $primaryKey = 'id_categorias';
+
+    protected $fillable = [
+        'nombre_categoria',
+        'descripcion',
+        'estado',
+    ];
+
 }
