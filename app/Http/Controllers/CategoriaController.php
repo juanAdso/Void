@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
 
+
 class CategoriaController extends Controller
 {
     /**
