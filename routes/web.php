@@ -5,4 +5,4 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
-Route::resource('categorias', CategoriaController::class);
+Route::resource('categoria', CategoriaController::class);

@@ -19,7 +19,7 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = $this->categoriaService->listarTodo();
-        return view ('Categoria.index', compact('categorias'));
+        return view('categoria.index', compact('categorias'));
     }
 
     /**
@@ -27,7 +27,7 @@ class CategoriaController extends Controller
      */
     public function create()
     {
-        return view('Categoria.crear');
+        return view('categoria.crear');
     }
 
     /**
@@ -36,15 +36,8 @@ class CategoriaController extends Controller
     public function store(StoreCategoriaRequest $request)
     {
         Categoria::create($request->validated());
+        $categorias = $this->categoriaService->listarTodo();
         return redirect()->route('categoria.index')->with('success', 'Categoria creada correctamente');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Categoria $categoria)
-    {
-        //
     }
 
     /**
@@ -53,7 +46,7 @@ class CategoriaController extends Controller
     public function edit(int $id)
     {
         $categoria = $this->categoriaService->buscarPorId($id);
-        return view('Categoria.editar', compact('categoria'));
+        return view('categoria.editar', compact('categoria'));
     }
 
     /**
