@@ -18,7 +18,7 @@ class ClienteController extends Controller
     public function index()
     {
         $clientes = $this->clienteService->listarTodo();
-        return view('cliente.index', compact('clientes'));
+        return view('clientes.index', compact('clientes'));
     }
 
     /**
@@ -26,7 +26,7 @@ class ClienteController extends Controller
      */
     public function create()
     {
-        return view('cliente.crear');
+        return view('clientes.crear');
     }
 
     /**
@@ -45,7 +45,7 @@ class ClienteController extends Controller
     public function edit(int $id)
     {
         $cliente = $this->clienteService->buscarPorId($id);
-        return view('cliente.editar', compact('cliente  '));
+        return view('clientes.editar', compact('cliente'));
     }
 
     /**
