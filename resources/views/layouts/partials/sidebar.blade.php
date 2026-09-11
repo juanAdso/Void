@@ -28,7 +28,7 @@
                     ['label' => 'Clientes',    'route' => 'cliente.index',      'icon' => 'users'],
                     ['label' => 'Perfiles/Roles', 'route' => 'roles.index',   'icon' => 'shield'],
                     ['label' => 'Categorías',  'route' => 'categoria.index', 'icon' => 'tag'],
-                    ['label' => 'Productos',   'route' => 'producto.index',   'icon' => 'box'],
+                    ['label' => 'Productos',   'route' => 'productos.index',   'icon' => 'box'],
                     ['label' => 'Reportes',    'route' => 'reports.index',    'icon' => 'chart'],
                     ['label' => 'Configuración', 'route' => 'settings.index', 'icon' => 'cog'],
                 ];

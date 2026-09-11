@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('precio', 10, 2);
             $table->integer('stock');
             $table->string('imagen', 255)->nullable();
-            $table->boolean('estado');
+            $table->boolean('estado')->default(true);
             $table->unsignedBigInteger('id_categoria');
             $table->foreign('id_categoria')
                   ->references('id')
