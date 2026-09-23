@@ -9,17 +9,17 @@ class Productos extends Model
 {
     protected $table = 'productos';
     protected $fillable = [
-        'id_categoria',
         'nombre',
         'descripcion',
         'precio',
         'stock',
         'imagen',
         'estado',
+        'id_categoria',
     ];
 
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class, 'id');
+        return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 }

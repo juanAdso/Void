@@ -49,7 +49,8 @@ class ProductosController extends Controller
     public function edit(int $id)
     {
         $productos = $this->productosService->buscarPorId($id);
-        return view('productos.editar', compact('productos'));
+        $categorias = $this->categoriasService->listarTodo();
+        return view('productos.editar', compact('productos','categorias'));
     }
     
 

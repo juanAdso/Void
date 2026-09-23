@@ -72,6 +72,9 @@
                             <th class="border px-4 py-2">
                                 Categoría
                             </th>
+                            <th class="border px-4 py-2">
+                                Acciones
+                            </th>
                         </tr>
 
                     </thead>
@@ -85,8 +88,6 @@
                                 <td class="border px-4 py-2">{{ $producto->precio }}</td>
                                 <td class="border px-4 py-2">{{ $producto->stock }}</td>
                                 <td class="border px-4 py-2">{{ $producto->imagen }}</td>
-                                </td>
-                                <td class="border px-4 py-2">{{ $producto->categoria->nombre_categoria}}</td>
                                 <td class="border px-4 py-2">
                                     @if ($producto->estado)
                                         <span class="bg-green-500 text-white px-2 py-1 rounded">Activo</span>
@@ -94,6 +95,7 @@
                                         <span class="bg-red-500 text-white px-2 py-1 rounded">Inactivo</span>
                                     @endif
                                 </td>
+                                <td class="border px-4 py-2">{{ $producto->categoria->nombre_categoria}}</td>
                                 <td class="border px-4 py-2 flex justify-center gap-2">
                                     <a
                                         href="{{ route('productos.edit', $producto->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>

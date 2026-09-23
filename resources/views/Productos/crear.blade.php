@@ -56,7 +56,7 @@
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Categoría</label>
-                    <select name="categoria_id" class="w-full border rounded px-3 py-2">
+                    <select name="id_categoria" class="w-full border rounded px-3 py-2">
                         @foreach($categorias as $categoria)
                             <option value="{{ $categoria->id }}">{{ $categoria->nombre_categoria }}</option>
                         @endforeach
