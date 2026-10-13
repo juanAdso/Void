@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\DetalleFactura;
+use App\Repositories\Interfaces\DetalleFacturaRepositoryInterface;
 
-class DetalleFacturaRepository
+class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
     public function listarTodo()
     {

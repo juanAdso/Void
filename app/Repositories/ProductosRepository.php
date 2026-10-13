@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Productos;
+use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
-class ProductosRepository
+class ProductosRepository implements ProductoRepositoryInterface
 {
     public function listarTodo()
     {

@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Cliente;
+use App\Repositories\Interfaces\ClienteRepositoryInterface;
 
-class ClienteRepository
+class ClienteRepository implements ClienteRepositoryInterface
 {
     public function listarTodo()
     {

@@ -2,63 +2,81 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\DetalleFacturaService;
+use App\Services\ProductosService;
+use App\Services\FacturasService;
 use Illuminate\Http\Request;
 
 class DetalleFacturaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private DetalleFacturaService $detallefacturaservice;
+    private ProductosService $productoService;
+    private FacturasService $facturaservice;
+
+    public function __construct(DetalleFacturaService $detallefacturaservice, ProductosService $productoService, FacturasService $facturaservice) {
+        $this->detallefacturaservice = $detallefacturaservice;
+        $this->productoService = $productoService;
+        $this->facturaservice = $facturaservice;
+    }
+    
+
     public function index()
     {
         //
+        $detalle_facturas = $this->detallefacturaservice->listarTodo();
+        return view('detalle_facturas.index', compact('detalle_facturas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         //
+        $productos = $this->productoService->listarTodo();
+        $facturas = $this->facturaservice->listarTodo();
+
+        return view('detalle_facturas.create', compact('productos', 'facturas'));
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         //
+        $this->detallefacturaservice->guardar($request->all());
+        return redirect()->route('detalle_facturas.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    
+    public function show()
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    
+    public function edit(int $id)
     {
         //
+        $detalle_factura = $this->detallefacturaservice->editar($id);
+
+        $productos = $this->productoService->listarTodo();
+        $facturas = $this->facturaservice->listarTodo();
+
+        return view('detalle_facturas.edit', compact('detalle_factura', 'productos', 'facturas'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    
+    public function update(int $id, Request $request)
     {
         //
+        $this->detallefacturaservice->actualizar($id, $request->all());
+        return redirect()->route('detalle_facturas.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    
+    public function destroy(int $id)
     {
         //
+        $this->detallefacturaservice->eliminar($id);
+        return redirect()->route('detalle_facturas.index');
     }
 }

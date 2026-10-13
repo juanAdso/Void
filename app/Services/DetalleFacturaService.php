@@ -17,6 +17,11 @@ class DetalleFacturaService
         return $this->detalle_factura_repository->listarTodo();
     }
 
+    public function editar(int $id)
+    {
+        return $this->detalle_factura_repository->buscarPorId($id);
+    }
+
     public function guardar(array $datos,)
     {
         $this->detalle_factura_repository->guardar($datos);

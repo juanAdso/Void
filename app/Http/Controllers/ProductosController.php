@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Productos;
 use App\Http\Requests\StoreProductosRequest;
 use App\Http\Requests\UpdateProductosRequest;
 use App\Services\ProductosService;

@@ -13,6 +13,23 @@ return new class extends Migration
     {
         Schema::create('detalle_facturas', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_factura');
+            $table->unsignedBigInteger('id_producto');
+
+            $table->integer('cantidad');
+
+            $table->decimal('precio_unitario', 10, 2);
+            $table->decimal('subtotal', 10, 2);
+
+            $table->foreign('id_factura')
+                ->references('id')
+                ->on('facturas');
+
+
+            $table->foreign('id_producto')
+                ->references('id')
+                ->on('productos');
+
             $table->timestamps();
         });
     }

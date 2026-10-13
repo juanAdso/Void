@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Categoria;
+use App\Repositories\Interfaces\CategoriaRepositoryInterface;
 
-class CategoriaRepository
+class CategoriaRepository implements CategoriaRepositoryInterface
 {
     public function listarTodo()
     {
