@@ -56,7 +56,7 @@ class DetalleFacturaController extends Controller
     public function edit(int $id)
     {
         //
-        $detalle_factura = $this->detallefacturaservice->editar($id);
+        $detalle_factura = $this->detallefacturaservice->buscarPorId($id);
 
         $productos = $this->productoService->listarTodo();
         $facturas = $this->facturaservice->listarTodo();

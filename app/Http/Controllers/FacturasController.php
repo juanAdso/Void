@@ -28,7 +28,7 @@ use App\Services\ClienteService;
     public function create()
     {
         $clientes = $this->clientesService->listarTodo();
-        return view('facturas.crear', compact('clientes'));
+        return view('facturas.create', compact('clientes'));
     }
 
     /**
@@ -48,7 +48,7 @@ use App\Services\ClienteService;
     {
         $facturas = $this->facturasService->buscarPorId($id);
         $clientes = $this->clientesService->listarTodo();
-        return view('facturas.editar', compact('facturas','clientes'));
+        return view('facturas.edit', compact('facturas','clientes'));
     }
     
 

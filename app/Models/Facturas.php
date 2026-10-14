@@ -11,8 +11,6 @@ class Facturas extends Model
     use HasFactory;
     protected $table = 'facturas';
 
-    protected $primaryKey = 'id_factura';
-
     protected $fillable = [
         'id_cliente',
         'fecha',

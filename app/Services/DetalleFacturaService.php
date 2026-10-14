@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\detalleFacturaRepository;
+use App\Repositories\DetalleFacturaRepository;
 
 class DetalleFacturaService
 {
