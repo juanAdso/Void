@@ -10,7 +10,7 @@ class DetalleFactura extends Model
     /** @use HasFactory<\Database\Factories\DetalleFacturaFactory> */
     use HasFactory;
     
-    protected $table = 'detalle_factura';
+    protected $table = 'detalle_facturas';
     protected $fillable = [
         'id_factura',
         'id_producto',
@@ -21,11 +21,11 @@ class DetalleFactura extends Model
 
     public function factura()
     {
-        return $this->belongsTo(Facturas::class, 'id');
+        return $this->belongsTo(Facturas::class, 'id_factura');
     }
 
     public function producto()
     {
-        return $this->belongsTo(Productos::class, 'id');
+        return $this->belongsTo(Productos::class, 'id_producto');
     }
 }
