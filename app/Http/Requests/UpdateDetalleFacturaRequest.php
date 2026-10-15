@@ -23,7 +23,11 @@ class UpdateDetalleFacturaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id_factura' => 'required|integer|exists:facturas,id',
+            'id_producto' => 'required|integer|exists:productos,id',
+            'cantidad' => 'required|integer|min:1',
+            'precio_unitario' => 'required|numeric|min:0',
+            'subtotal' => 'required|numeric|min:0',
         ];
     }
 }

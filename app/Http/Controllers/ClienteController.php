@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Services\ClienteService;
@@ -10,6 +9,7 @@ use App\Services\ClienteService;
 class ClienteController extends Controller
 {
     private ClienteService $clienteService;
+
     public function __construct(ClienteService $clienteService)
     {
         $this->clienteService = $clienteService;
@@ -18,6 +18,7 @@ class ClienteController extends Controller
     public function index()
     {
         $clientes = $this->clienteService->listarTodo();
+
         return view('clientes.index', compact('clientes'));
     }
 
@@ -34,8 +35,8 @@ class ClienteController extends Controller
      */
     public function store(StoreClienteRequest $request)
     {
-        Cliente::create($request->validated());
-        $clientes = $this->clienteService->listarTodo();
+        $this->clienteService->guardar($request->validated());
+
         return redirect()->route('cliente.index')->with('success', 'Cliente creado correctamente');
     }
 
@@ -45,6 +46,7 @@ class ClienteController extends Controller
     public function edit(int $id)
     {
         $cliente = $this->clienteService->buscarPorId($id);
+
         return view('clientes.editar', compact('cliente'));
     }
 
@@ -54,6 +56,7 @@ class ClienteController extends Controller
     public function update(int $id, UpdateClienteRequest $request)
     {
         $this->clienteService->actualizar($id, $request->validated());
+
         return redirect()->route('cliente.index')->with('success', 'Cliente actualizado correctamente');
     }
 
@@ -63,6 +66,7 @@ class ClienteController extends Controller
     public function destroy(int $id)
     {
         $this->clienteService->eliminar($id);
+
         return redirect()->route('cliente.index')->with('success', 'Cliente eliminado correctamente');
     }
 }
