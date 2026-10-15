@@ -23,13 +23,12 @@ class StoreFacturasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_cliente' => 'required|integer|exists:clientes,id_cliente',
+            'id_cliente' => 'required|integer|exists:clientes,id',
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric|min:0',
             'iva' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
             'estado' => 'required|string|max:30',
-            
         ];
     }
 

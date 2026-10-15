@@ -9,7 +9,8 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
     public function listarTodo()
     {
-        $detalleFacturas = DetalleFactura::with('factura')->get();
+        $detalleFacturas = DetalleFactura::with(['factura', 'producto'])->get();
+
         return $detalleFacturas;
     }
 
@@ -26,6 +27,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     public function buscarPorId(int $id)
     {
         $detalleFacturas = DetalleFactura::findOrFail($id);
+
         return $detalleFacturas;
     }
 

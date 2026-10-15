@@ -74,6 +74,9 @@
                             <th class="border px-4 py-2">
                                 Dirección
                             </th>
+                            <th class="border px-4 py-2">
+                                Acciones
+                            </th>
 
                         </tr>
 
@@ -93,7 +96,7 @@
                                 <td class="border px-4 py-2">
                                     <a
                                         href="{{ route('cliente.edit', $cliente->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                                    <form action="{{ route('cliente.destroy', $cliente->id) }}" method="post">
+                                    <form action="{{ route('cliente.destroy', $cliente->id) }}" method="post" class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

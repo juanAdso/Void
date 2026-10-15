@@ -4,21 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFacturasRequest;
 use App\Http\Requests\UpdateFacturasRequest;
-use App\Services\FacturasService;
 use App\Services\ClienteService;
+use App\Services\FacturasService;
 
-   class FacturasController extends Controller
+class FacturasController extends Controller
 {
     private FacturasService $facturasService;
+
     private ClienteService $clientesService;
+
     public function __construct(FacturasService $facturasService, ClienteService $clientesService)
     {
         $this->facturasService = $facturasService;
         $this->clientesService = $clientesService;
     }
+
     public function index()
     {
         $facturas = $this->facturasService->listarTodo();
+
         return view('facturas.index', compact('facturas'));
     }
 
@@ -28,6 +32,7 @@ use App\Services\ClienteService;
     public function create()
     {
         $clientes = $this->clientesService->listarTodo();
+
         return view('facturas.create', compact('clientes'));
     }
 
@@ -42,20 +47,30 @@ use App\Services\ClienteService;
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(int $id)
+    {
+        $factura = $this->facturasService->buscarPorId($id);
+
+        return view('facturas.show', compact('factura'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(int $id)
     {
-        $facturas = $this->facturasService->buscarPorId($id);
+        $factura = $this->facturasService->buscarPorId($id);
         $clientes = $this->clientesService->listarTodo();
-        return view('facturas.edit', compact('facturas','clientes'));
-    }
-    
 
-  
+        return view('facturas.edit', compact('factura', 'clientes'));
+    }
+
     public function update(int $id, UpdateFacturasRequest $request)
     {
         $this->facturasService->actualizar($id, $request->validated());
+
         return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente');
     }
 
@@ -65,6 +80,7 @@ use App\Services\ClienteService;
     public function destroy(int $id)
     {
         $this->facturasService->eliminar($id);
+
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada correctamente');
     }
 }
