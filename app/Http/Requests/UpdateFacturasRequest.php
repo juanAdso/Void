@@ -22,8 +22,8 @@ class UpdateFacturasRequest extends FormRequest
      */
     public function rules(): array
     {
-            return [
-            'id_cliente' => 'required|integer|exists:clientes,id_cliente',
+        return [
+            'id_cliente' => 'required|integer|exists:clientes,id',
             'fecha' => 'required|date',
             'subtotal' => 'required|numeric|min:0',
             'iva' => 'required|numeric|min:0',
@@ -53,6 +53,5 @@ class UpdateFacturasRequest extends FormRequest
             'estado.string' => 'El campo estado debe ser una cadena de texto.',
             'estado.max' => 'El campo estado no puede tener más de 30 caracteres.',
         ];
-
     }
 }

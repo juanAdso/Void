@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categoria;
 use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
 use App\Services\CategoriaService;
 
-
 class CategoriaController extends Controller
 {
     private CategoriaService $categoriaService;
+
     public function __construct(CategoriaService $categoriaService)
     {
         $this->categoriaService = $categoriaService;
@@ -19,6 +18,7 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = $this->categoriaService->listarTodo();
+
         return view('categoria.index', compact('categorias'));
     }
 
@@ -35,8 +35,8 @@ class CategoriaController extends Controller
      */
     public function store(StoreCategoriaRequest $request)
     {
-        Categoria::create($request->validated());
-        $categorias = $this->categoriaService->listarTodo();
+        $this->categoriaService->guardar($request->validated());
+
         return redirect()->route('categoria.index')->with('success', 'Categoria creada correctamente');
     }
 
@@ -46,6 +46,7 @@ class CategoriaController extends Controller
     public function edit(int $id)
     {
         $categoria = $this->categoriaService->buscarPorId($id);
+
         return view('categoria.editar', compact('categoria'));
     }
 
@@ -55,6 +56,7 @@ class CategoriaController extends Controller
     public function update(int $id, UpdateCategoriaRequest $request)
     {
         $this->categoriaService->actualizar($id, $request->validated());
+
         return redirect()->route('categoria.index')->with('success', 'Categoria actualizada correctamente');
     }
 
@@ -64,6 +66,7 @@ class CategoriaController extends Controller
     public function destroy(int $id)
     {
         $this->categoriaService->eliminar($id);
+
         return redirect()->route('categoria.index')->with('success', 'Categoria eliminada correctamente');
     }
 }
