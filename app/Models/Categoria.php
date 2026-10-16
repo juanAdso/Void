@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
+    use HasFactory;
+
     protected $table = 'categorias';
 
     protected $fillable = [
@@ -19,5 +21,4 @@ class Categoria extends Model
     {
         return $this->hasMany(Productos::class, 'id_categoria');
     }
-
 }

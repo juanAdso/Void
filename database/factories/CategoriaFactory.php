@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoriaFactory extends Factory
 {
+    protected $model = Categoria::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,7 +20,9 @@ class CategoriaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nombre_categoria' => fake()->word(),
+            'descripcion' => fake()->sentence(),
+            'estado' => true,
         ];
     }
 }

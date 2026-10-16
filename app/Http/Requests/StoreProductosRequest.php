@@ -29,11 +29,11 @@ class StoreProductosRequest extends FormRequest
             'stock' => 'required|integer|min:0',
             'estado' => 'required|boolean',
             'id_categoria' => 'required|exists:categorias,id',
-            'imagen' => 'nullable|image',    
+            'imagen' => 'nullable|string|max:255',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'nombre.required' => 'El nombre del producto es obligatorio.',
@@ -50,9 +50,8 @@ class StoreProductosRequest extends FormRequest
             'id_categoria.exists' => 'La categoría seleccionada no existe.',
             'estado.required' => 'El estado del producto es obligatorio.',
             'estado.boolean' => 'El estado del producto debe ser un valor booleano.',
-            'imagen.required' => 'La imagen del producto es obligatorio.',
             'imagen.string' => 'La imagen del producto debe ser una cadena de texto.',
-            'imagen.max' => 'La imagene del producto no puede tener más de 255 caracteres.',
+            'imagen.max' => 'La imagen del producto no puede tener más de 255 caracteres.',
         ];
     }
 }

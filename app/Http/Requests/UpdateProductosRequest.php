@@ -27,12 +27,13 @@ class UpdateProductosRequest extends FormRequest
             'descripcion' => 'nullable|string',
             'precio' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
+            'estado' => 'required|boolean',
             'id_categoria' => 'required|exists:categorias,id',
-            'imagen' => 'required|string|max:255',
+            'imagen' => 'nullable|string|max:255',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'nombre.required' => 'El nombre del producto es obligatorio.',
@@ -45,11 +46,12 @@ class UpdateProductosRequest extends FormRequest
             'stock.required' => 'El stock del producto es obligatorio.',
             'stock.integer' => 'El stock del producto debe ser un número entero.',
             'stock.min' => 'El stock del producto no puede ser negativo.',
+            'estado.required' => 'El estado del producto es obligatorio.',
+            'estado.boolean' => 'El estado del producto debe ser un valor booleano.',
             'id_categoria.required' => 'La categoría del producto es obligatoria.',
             'id_categoria.exists' => 'La categoría seleccionada no existe.',
-            'imagen.required' => 'La imagen del producto es obligatorio.',
             'imagen.string' => 'La imagen del producto debe ser una cadena de texto.',
-            'imagen.max' => 'La imagene del producto no puede tener más de 255 caracteres.',
+            'imagen.max' => 'La imagen del producto no puede tener más de 255 caracteres.',
         ];
     }
 }

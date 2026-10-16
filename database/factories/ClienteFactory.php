@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ClienteFactory extends Factory
 {
+    protected $model = Cliente::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,7 +20,12 @@ class ClienteFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nombre' => fake()->firstName(),
+            'apellido' => fake()->lastName(),
+            'documento' => fake()->numerify('##########'),
+            'telefono' => fake()->phoneNumber(),
+            'correo' => fake()->safeEmail(),
+            'direccion' => fake()->address(),
         ];
     }
 }

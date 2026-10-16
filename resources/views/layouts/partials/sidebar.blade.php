@@ -24,13 +24,12 @@
 
             @php
                 $links = [
-                    ['label' => 'Dashboard',   'route' => 'dashboard.index',  'icon' => 'home'],
-                    ['label' => 'Clientes',    'route' => 'cliente.index',      'icon' => 'users'],
-                    ['label' => 'Perfiles/Roles', 'route' => 'roles.index',   'icon' => 'shield'],
-                    ['label' => 'Categorías',  'route' => 'categoria.index', 'icon' => 'tag'],
-                    ['label' => 'Productos',   'route' => 'productos.index',   'icon' => 'box'],
-                    ['label' => 'Reportes',    'route' => 'reports.index',    'icon' => 'chart'],
-                    ['label' => 'Configuración', 'route' => 'settings.index', 'icon' => 'cog'],
+                    ['label' => 'Dashboard',        'route' => 'dashboard.index',        'icon' => 'home'],
+                    ['label' => 'Clientes',         'route' => 'cliente.index',          'icon' => 'users'],
+                    ['label' => 'Categorías',       'route' => 'categoria.index',        'icon' => 'tag'],
+                    ['label' => 'Productos',        'route' => 'productos.index',        'icon' => 'box'],
+                    ['label' => 'Facturas',         'route' => 'facturas.index',         'icon' => 'chart'],
+                    ['label' => 'Detalle Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'box'],
                 ];
             @endphp
 
