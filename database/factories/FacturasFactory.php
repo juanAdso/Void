@@ -5,20 +5,20 @@ namespace Database\Factories;
 use App\Models\Facturas;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Facturas>
- */
+
 class FacturasFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Facturas::class;
+
     public function definition(): array
     {
         return [
-            //
+            'fecha' => $this->faker->date(),
+            'subtotal' => $this->faker->randomFloat(2, 1, 1000),
+            'iva' => $this->faker->randomFloat(2, 1, 100),
+            'estado' => $this->faker->randomElement(['pendiente', 'pagada', 'cancelada']),
+            'total' => $this->faker->randomFloat(2, 1, 1000),
+            'cliente_id' => \App\Models\Cliente::factory(),
         ];
     }
 }

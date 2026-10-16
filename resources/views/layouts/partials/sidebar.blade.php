@@ -31,7 +31,7 @@
                     ['label' => 'Categorías',  'route' => 'categoria.index', 'icon' => 'tag'],
                     ['label' => 'Productos',   'route' => 'productos.index',   'icon' => 'box'],
                     ['label' => 'Facturas',    'route' => 'facturas.index',    'icon' => 'chart'],
-                    ['label' => 'Detalle de Facturas', 'route' => ' detalle_facturas.index', 'icon' => 'cog'],
+                    ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'cog'],
                     
                 ];
             @endphp

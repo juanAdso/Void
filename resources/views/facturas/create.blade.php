@@ -13,22 +13,22 @@
 
             </h2>
 
-            @if($errors->any())
+            @if ($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
                     <ul>
-                        @foreach($errors->all() as $error)
+                        @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
-            <form action="{{ route('facturas.store')}}" method="post">
-            @csrf
+            <form action="{{ route('facturas.store') }}" method="post">
+                @csrf
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cliente</label>
                     <select name="id_cliente" class="w-full border rounded px-3 py-2">
-                        @foreach($clientes as $cliente)
+                        @foreach ($clientes as $cliente)
                             <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
                         @endforeach
                     </select>
@@ -36,7 +36,7 @@
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Fecha</label>
                     <input type="date" name="fecha" class="w-full border rounded px-3 py-2">
-                </div> 
+                </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Subtotal</label>
                     <input type="number" name="subtotal" step="0.01" class="w-full border rounded px-3 py-2">
@@ -48,7 +48,6 @@
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Total</label>
                     <input type="number" name="total" step="0.01" class="w-full border rounded px-3 py-2">
-                </div>  
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
@@ -57,16 +56,17 @@
                         <option value="0">Inactivo</option>
                     </select>
                 </div>
-                
-                </div>
-
-                <div class="mb-5">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
-                </div>   
-            
-            </form>
-
         </div>
+
+    </div>
+
+    <div class="mb-5">
+        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+    </div>
+
+    </form>
+
+    </div>
 
     </div>
 @endsection

@@ -1,19 +1,76 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Crear DetalleFactura</title>
-</head>
-<body>
+@extends('layouts.app')
 
-<h1>Crear DetalleFactura</h1>
+@section('title', 'Crear Detalle de Factura')
 
-<form action="{{ route('detalle_facturas.store') }}" method="POST">
-    @csrf
+@section('content')
+    <div class="container mx-auto mt-10">
 
-    <button type="submit">
-        Guardar
-    </button>
-</form>
+        <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-8">
 
-</body>
-</html>
+            <h2 class="text-3xl font-bold text-center mb-6">
+
+                Nuevo Detalle de Factura
+
+            </h2>
+
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('detalle_facturas.store') }}" method="post">
+                @csrf
+
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Factura</label>
+                    <select name="id_factura" class="w-full border rounded px-3 py-2">
+                        @foreach($facturas as $factura)
+                            <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Producto</label>
+                    <select name="id_producto" class="w-full border rounded px-3 py-2">
+                        @foreach($productos as $producto)
+                            <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Cantidad</label>
+                    <input type="number" name="cantidad" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Precio Unitario</label>
+                    <input type="number" name="precio" step="0.01" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Subtotal</label>
+                    <input type="text" name="subtotal" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Estado</label>
+                    <select name="estado" class="w-full border rounded px-3 py-2">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="mb-5">
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+@endsection

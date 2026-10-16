@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Crear Categoria')
+@section('title', 'Crear Detalle de Factura')
 
 @section('content')
     <div class="container mx-auto mt-10">
@@ -9,7 +9,7 @@
 
             <h2 class="text-3xl font-bold text-center mb-6">
 
-                Nueva Categoría
+                Nueva Detalle de Factura
 
             </h2>
 
@@ -23,17 +23,29 @@
                 </div>
             @endif
 
-            <form action="{{ route('categoria.store')}}" method="post">
-            @csrf
+            <form action="{{ route('detalle_facturas.store') }}" method="post">
+                @csrf
 
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Nombre Categoria</label>
-                    <input type="text" name="nombre_categoria" class="w-full border rounded px-3 py-2">
+                    <label for="" class="block mb-2 font-semibold">Factura</label>
+                    <input type="text" name="numero_factura" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Descripcion</label>
+                    <label for="" class="block mb-2 font-semibold">Producto</label>
                     <input type="text" name="descripcion" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Cantidad</label>
+                    <input type="number" name="cantidad" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Precio Unitario</label>
+                    <input type="number" name="precio" step="0.01" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="" class="block mb-2 font-semibold">Subtotal</label>
+                    <input type="text" name="subtotal" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">

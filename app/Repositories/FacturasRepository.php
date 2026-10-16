@@ -34,4 +34,5 @@ class FacturasRepository implements FacturasRepositoryInterface
         $factura = Facturas::findOrFail($id);
         $factura->update($datos);
     }
+
 }
