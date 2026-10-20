@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Facturas;
+use Illuminate\Database\Seeder;
 
 class FacturaSeeder extends Seeder
 {
     public function run(): void
     {
-        Facturas::factory()->count(20)->create();
+        Facturas::factory()->count(300)->create();
     }
 }

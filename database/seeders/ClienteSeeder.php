@@ -1,14 +1,15 @@
+
 <?php
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Cliente;
+use Illuminate\Database\Seeder;
 
 class ClienteSeeder extends Seeder
 {
     public function run(): void
     {
-        Cliente::factory()->count(20)->create();
+        Cliente::factory()->count(500)->create();
     }
 }

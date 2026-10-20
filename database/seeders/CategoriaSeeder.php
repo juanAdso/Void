@@ -1,14 +1,15 @@
+
 <?php
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Categoria;
+use Illuminate\Database\Seeder;
 
 class CategoriaSeeder extends Seeder
 {
     public function run(): void
     {
-        Categoria::factory()->count(10)->create();
+        Categoria::factory()->count(30)->create();
     }
 }

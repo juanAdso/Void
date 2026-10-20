@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\DetalleFactura;
+use Illuminate\Database\Seeder;
 
 class DetalleFacturaSeeder extends Seeder
 {
     public function run(): void
     {
-        DetalleFactura::factory()->count(50)->create();
+        DetalleFactura::factory()->count(1000)->create();
     }
 }
+

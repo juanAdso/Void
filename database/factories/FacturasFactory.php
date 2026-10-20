@@ -1,10 +1,10 @@
+
 <?php
 
-namespace Database\Factories;
 
 use App\Models\Facturas;
+use App\Models\Cliente;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
 
 class FacturasFactory extends Factory
 {
@@ -12,13 +12,20 @@ class FacturasFactory extends Factory
 
     public function definition(): array
     {
+        $subtotal = fake()->randomFloat(2, 10000, 500000);
+        $iva = round($subtotal * 0.19, 2);
+
         return [
-            'fecha' => $this->faker->date(),
-            'subtotal' => $this->faker->randomFloat(2, 1, 1000),
-            'iva' => $this->faker->randomFloat(2, 1, 100),
-            'estado' => $this->faker->randomElement(['pendiente', 'pagada', 'cancelada']),
-            'total' => $this->faker->randomFloat(2, 1, 1000),
-            'cliente_id' => \App\Models\Cliente::factory(),
+            'id_cliente' => Cliente::factory(),
+            'fecha' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
+            'subtotal' => $subtotal,
+            'iva' => $iva,
+            'total' => round($subtotal + $iva, 2),
+            'estado' => fake()->randomElement([
+                'pendiente',
+                'pagada',
+                'anulada',
+            ]),
         ];
     }
 }

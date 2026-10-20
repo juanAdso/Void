@@ -1,10 +1,9 @@
+
 <?php
 
-namespace Database\Factories;
 
 use App\Models\Cliente;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
 
 class ClienteFactory extends Factory
 {
@@ -13,12 +12,12 @@ class ClienteFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->firstName(),
-            'apellido' => $this->faker->lastName(),
-            'documento' => $this->faker->unique()->randomNumber(8, true),
-            'telefono' => $this->faker->phoneNumber(),
-            'correo' => $this->faker->unique()->safeEmail(),
-            'direccion' => $this->faker->address(),
+            'nombre' => fake()->firstName(),
+            'apellido' => fake()->lastName(),
+            'documento' => fake()->unique()->numerify('##########'),
+            'telefono' => fake()->numerify('3#########'),
+            'correo' => fake()->unique()->safeEmail(),
+            'direccion' => fake()->address(),
         ];
     }
 }

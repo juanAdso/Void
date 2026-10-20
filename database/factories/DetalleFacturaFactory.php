@@ -1,10 +1,11 @@
+
 <?php
 
-namespace Database\Factories;
 
 use App\Models\DetalleFactura;
+use App\Models\Facturas;
+use App\Models\Productos;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
 
 class DetalleFacturaFactory extends Factory
 {
@@ -12,11 +13,15 @@ class DetalleFacturaFactory extends Factory
 
     public function definition(): array
     {
+        $cantidad = fake()->numberBetween(1, 5);
+        $precio = fake()->randomFloat(2, 5000, 200000);
+
         return [
-            'cantidad' => $this->faker->numberBetween(1, 10),
-            'precio_unitario' => $this->faker->randomFloat(2, 1, 100),
-            'producto_id' => \App\Models\Productos::factory(),
-            'factura_id' => \App\Models\Facturas::factory(),
+            'id_factura' => Facturas::factory(),
+            'id_producto' => Productos::factory(),
+            'cantidad' => $cantidad,
+            'precio_unitario' => $precio,
+            'subtotal' => round($cantidad * $precio, 2),
         ];
     }
 }
