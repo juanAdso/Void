@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Repositories\CategoriaRepository;
+use App\Repositories\Interfaces\CategoriaRepositoryInterface;
 
 class CategoriaService
 {
-    private CategoriaRepository $categoria_repository;
-    public function __construct(CategoriaRepository $categoria_repository)
+    private CategoriaRepositoryInterface $categoria_repository;
+
+    public function __construct(CategoriaRepositoryInterface $categoria_repository)
     {
         $this->categoria_repository = $categoria_repository;
     }
@@ -37,4 +38,4 @@ class CategoriaService
     {
         $this->categoria_repository->actualizar($id, $datos);
     }
-}          
+}

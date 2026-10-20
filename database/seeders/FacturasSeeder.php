@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Facturas;
 use Illuminate\Database\Seeder;
 
-class FacturaSeeder extends Seeder
+class FacturasSeeder extends Seeder
 {
     public function run(): void
     {

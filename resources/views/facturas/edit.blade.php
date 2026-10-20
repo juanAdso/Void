@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
-@section('title')
-    Editar Factura
+@section('title', 'Editar Factura')
 
 @section('content')
     <div class="container mx-auto mt-10">
@@ -21,9 +20,9 @@
                 </div>
             @endif
 
-            <form action="{{ route('facturas.update',$facturas->id)}}" method="post">
-            @csrf
-            @method('PUT')
+            <form action="{{ route('facturas.update', $facturas->id) }}" method="post">
+                @csrf
+                @method('PUT')
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cliente</label>
@@ -33,36 +32,41 @@
                                 {{ $cliente->nombre }}
                             </option>
                         @endforeach
-                </select>
+                    </select>
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Fecha</label>
-                    <input type="text" name="fecha" value="{{$facturas->fecha}}" class="w-full border rounded px-3 py-2">
+                    <input type="date" name="fecha" value="{{ $facturas->fecha ? $facturas->fecha->format('Y-m-d') : '' }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Subtotal</label>
-                    <input type="text" name="subtotal" value="{{$facturas->subtotal}}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="subtotal" step="0.01" value="{{ $facturas->subtotal }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Iva</label>
-                    <input type="text" name="iva" value="{{$facturas->iva}}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="iva" step="0.01" value="{{ $facturas->iva }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Total</label>
-                    <input type="text" name="total" value="{{$facturas->total}}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="total" step="0.01" value="{{ $facturas->total }}" class="w-full border rounded px-3 py-2">
                 </div>
+
+                <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
                     <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $facturas->estado == 1 ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ $facturas->estado == 0 ? 'selected' : '' }}>Inactivo</option>
+                        <option value="1" {{ $facturas->estado == '1' || $facturas->estado == 'Activo' ? 'selected' : '' }}>Activo</option>
+                        <option value="0" {{ $facturas->estado == '0' || $facturas->estado == 'Inactivo' ? 'selected' : '' }}>Inactivo</option>
                     </select>
                 </div>
-                
+
                 <div class="mb-5">
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
                 </div>
-            
+
             </form>
 
         </div>

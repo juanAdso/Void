@@ -30,7 +30,7 @@
                     <label for="" class="block mb-2 font-semibold">Factura</label>
                     <select name="id_factura" class="w-full border rounded px-3 py-2">
                         @foreach($facturas as $factura)
-                            <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
+                            <option value="{{ $factura->id }}">Factura #{{ $factura->id }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -43,24 +43,20 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cantidad</label>
-                    <input type="number" name="cantidad" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="cantidad" value="{{ old('cantidad') }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Precio Unitario</label>
-                    <input type="number" name="precio" step="0.01" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="precio_unitario" step="0.01" value="{{ old('precio_unitario') }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Subtotal</label>
-                    <input type="text" name="subtotal" class="w-full border rounded px-3 py-2">
-                </div>
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
+                    <input type="number" name="subtotal" step="0.01" value="{{ old('subtotal') }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
