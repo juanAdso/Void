@@ -1,6 +1,6 @@
-
 <?php
 
+namespace Database\Factories;
 
 use App\Models\DetalleFactura;
 use App\Models\Facturas;

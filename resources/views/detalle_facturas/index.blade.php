@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
-
 @section('title', 'Detalle Facturas')
-
 
 @section('content')
 <div class="container mx-auto mt-10">
@@ -23,7 +21,6 @@
 
         </div>
 
-
         @if (session('store'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('store') }}
@@ -41,8 +38,6 @@
                 {{ session('delete') }}
             </div>
         @endif
-
-
 
         <table class="min-w-full border border-gray-200">
 
@@ -71,7 +66,7 @@
                     </th>
 
                     <th class="border px-4 py-2">
-                        Total
+                        Subtotal
                     </th>
 
                     <th class="border px-4 py-2">
@@ -84,45 +79,34 @@
 
             <tbody>
 
-                @foreach ($detalle_facturas as $detalle_facturas)
+                @foreach ($detalle_facturas as $detalle_factura)
                     <tr class="text-center hover:bg-gray-50">
-                        <td class="border px-4 py-2">{{ $detalle_facturas->id }}</td>
-                        <td class="border px-4 py-2">{{ $detalle_facturas->facturas->id }}</td>
-                        <td class="border px-4 py-2">{{ $detalle_facturas->productos->id }}</td>
-                        <td class="border px-4 py-2">{{ $detalle_facturas->cantidad }}</td>
-                        <td class="border px-4 py-2">{{ $detalle_facturas->precio_unitario }}</td>
-                        <td class="border px-4 py-2">{{ $detalle_facturas->total }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->id }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->factura?->id }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->producto?->nombre }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->cantidad }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->precio_unitario }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->subtotal }}</td>
 
+                        <td class="border px-4 py-2 flex justify-center gap-2">
+                            <a href="{{ route('detalle_facturas.edit', $detalle_factura->id) }}"
+                                class="bg-purple-400 hover:bg-purple-600 text-white rounded px-2 py-2">Editar</a>
 
-
-                        <td class="border px-4 py-2">
-
-
-                            <br>
-                            <a href="{{ route('detalle_facturas.edit', $detalle_facturas->id) }}"
-                                class="max-w-xl mx-auto bg-purple-400 shadow-lg rounded-lg p-3 my-4">Editar</a>
-
-                            <form action="{{ route('detalle_facturas.destroy', $detalle_facturas->id) }}"
-                                method="post">
+                            <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id) }}"
+                                method="post" class="inline-block">
                                 @csrf
                                 @method('DELETE')
 
-                                <br>
-                                <button class="max-w-xl mx-auto bg-red-400 shadow-lg rounded-lg p-3">eliminar</button>
-
+                                <button type="submit" class="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-2">Eliminar</button>
                             </form>
-
                         </td>
                     </tr>
                 @endforeach
-
-
-
 
             </tbody>
 
         </table>
 
     </div>
-
+</div>
 @endsection

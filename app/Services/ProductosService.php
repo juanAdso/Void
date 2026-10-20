@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Repositories\ProductosRepository;
+use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
 class ProductosService
 {
-    private ProductosRepository $productos_repository;
-    public function __construct(ProductosRepository $productos_repository)
+    private ProductoRepositoryInterface $productos_repository;
+
+    public function __construct(ProductoRepositoryInterface $productos_repository)
     {
         $this->productos_repository = $productos_repository;
     }
@@ -17,7 +18,7 @@ class ProductosService
         return $this->productos_repository->listarTodo();
     }
 
-    public function guardar(array $datos,)
+    public function guardar(array $datos)
     {
         $this->productos_repository->guardar($datos);
     }

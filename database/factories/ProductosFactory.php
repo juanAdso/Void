@@ -1,8 +1,9 @@
-
 <?php
 
-use App\Models\Productos;
+namespace Database\Factories;
+
 use App\Models\Categoria;
+use App\Models\Productos;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductosFactory extends Factory

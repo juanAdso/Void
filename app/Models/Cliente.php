@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Facturas;
 
 class Cliente extends Model
 {
+    use HasFactory;
+
     protected $table = 'clientes';
+
     protected $fillable = [
         'nombre',
         'apellido',
@@ -17,9 +19,9 @@ class Cliente extends Model
         'correo',
         'direccion',
     ];
-    
+
     public function facturas()
     {
-        return $this->hasMany(Facturas::class, 'id');
+        return $this->hasMany(Facturas::class, 'id_cliente');
     }
 }

@@ -1,9 +1,9 @@
-
 <?php
 
+namespace Database\Factories;
 
-use App\Models\Facturas;
 use App\Models\Cliente;
+use App\Models\Facturas;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FacturasFactory extends Factory

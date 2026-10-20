@@ -10,6 +10,7 @@
             <h2 class="text-3xl font-bold text-center mb-6">
                 Editar Detalle de Factura
             </h2>
+
             @if($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
                     <ul>
@@ -28,7 +29,7 @@
                     <label for="" class="block mb-2 font-semibold">Factura</label>
                     <select name="id_factura" class="w-full border rounded px-3 py-2">
                         @foreach($facturas as $factura)
-                            <option value="{{ $factura->id }}" {{ $detalle_factura->id_factura == $factura->id ? 'selected' : '' }}>{{ $factura->id }}</option>
+                            <option value="{{ $factura->id }}" {{ $detalle_factura->id_factura == $factura->id ? 'selected' : '' }}>Factura #{{ $factura->id }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -37,29 +38,26 @@
                     <label for="" class="block mb-2 font-semibold">Producto</label>
                     <select name="id_producto" class="w-full border rounded px-3 py-2">
                         @foreach($productos as $producto)
-                            <option value="{{ $producto->id }}" {{ $detalle_factura->id_producto == $producto->id ? 'selected' : '' }}>{{ $producto->nombre}}</option>
+                            <option value="{{ $producto->id }}" {{ $detalle_factura->id_producto == $producto->id ? 'selected' : '' }}>{{ $producto->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cantidad</label>
-                    <input type="text" name="cantidad" value="{{ $detalle_factura->cantidad }}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="cantidad" value="{{ $detalle_factura->cantidad }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Precio Unitario</label>
-                    <input type="text" name="precio" value="{{ $detalle_factura->precio }}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="precio_unitario" step="0.01" value="{{ $detalle_factura->precio_unitario }}" class="w-full border rounded px-3 py-2">
                 </div>
+
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Subtotal</label>
-                    <input type="text" name="subtotal" value="{{ $detalle_factura->subtotal }}" class="w-full border rounded px-3 py-2">
+                    <input type="number" name="subtotal" step="0.01" value="{{ $detalle_factura->subtotal }}" class="w-full border rounded px-3 py-2">
                 </div>
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $detalle_factura->estado == 1 ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ $detalle_factura->estado == 0 ? 'selected' : '' }}>Inactivo</option>
-                    </select>
-                </div>
+
                 <div class="mb-5">
                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
                 </div>

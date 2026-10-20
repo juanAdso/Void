@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Repositories\DetalleFacturaRepository;
+use App\Repositories\Interfaces\DetalleFacturaRepositoryInterface;
 
 class DetalleFacturaService
 {
-    private DetalleFacturaRepository $detalle_factura_repository;
-    public function __construct(DetalleFacturaRepository $detalle_factura_repository)
+    private DetalleFacturaRepositoryInterface $detalle_factura_repository;
+
+    public function __construct(DetalleFacturaRepositoryInterface $detalle_factura_repository)
     {
         $this->detalle_factura_repository = $detalle_factura_repository;
     }
@@ -22,7 +23,7 @@ class DetalleFacturaService
         return $this->detalle_factura_repository->buscarPorId($id);
     }
 
-    public function guardar(array $datos,)
+    public function guardar(array $datos)
     {
         $this->detalle_factura_repository->guardar($datos);
     }
