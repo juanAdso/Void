@@ -7,34 +7,30 @@ use App\Repositories\Interfaces\TiendaRepositoryInterface;
 
 class TiendaRepository implements TiendaRepositoryInterface
 {
-    public function all()
+    public function listarTodo()
     {
-        return Tienda::all();
+        return Tienda::orderBy('id', 'desc')->get();
     }
 
-    public function find($id)
+    public function guardar(array $datos)
+    {
+        return Tienda::create($datos);
+    }
+
+    public function eliminar(int $id)
+    {
+        return Tienda::findOrFail($id)->delete();
+    }
+
+    public function buscarPorId(int $id)
     {
         return Tienda::findOrFail($id);
     }
 
-    public function create(array $data)
+    public function actualizar(int $id, array $datos)
     {
-        return Tienda::create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        $registro = Tienda::findOrFail($id);
-
-        $registro->update($data);
-
-        return $registro;
-    }
-
-    public function delete($id)
-    {
-        $registro = Tienda::findOrFail($id);
-
-        return $registro->delete();
+        $tienda = Tienda::findOrFail($id);
+        $tienda->update($datos);
+        return $tienda;
     }
 }
