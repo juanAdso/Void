@@ -12,12 +12,12 @@ class ClienteFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => fake()->firstName(),
-            'apellido' => fake()->lastName(),
+            'nombre' => fake('es_CO')->firstName(),
+            'apellido' => fake('es_CO')->lastName(),
             'documento' => fake()->unique()->numerify('##########'),
             'telefono' => fake()->numerify('3#########'),
             'correo' => fake()->unique()->safeEmail(),
-            'direccion' => fake()->address(),
+            'direccion' => fake('es_CO')->address(),
         ];
     }
 }

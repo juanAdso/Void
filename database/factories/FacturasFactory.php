@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Cliente;
 use App\Models\Facturas;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RuntimeException;
 
 class FacturasFactory extends Factory
 {
@@ -12,20 +13,22 @@ class FacturasFactory extends Factory
 
     public function definition(): array
     {
-        $subtotal = fake()->randomFloat(2, 10000, 500000);
-        $iva = round($subtotal * 0.19, 2);
+        $cliente = Cliente::query()->inRandomOrder()->first();
+
+        if (!$cliente) {
+            throw new RuntimeException(
+                'Debes crear los clientes antes de generar facturas.'
+            );
+        }
 
         return [
-            'id_cliente' => Cliente::factory(),
-            'fecha' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'subtotal' => $subtotal,
-            'iva' => $iva,
-            'total' => round($subtotal + $iva, 2),
-            'estado' => fake()->randomElement([
-                'pendiente',
-                'pagada',
-                'anulada',
-            ]),
+            'id_cliente' => $cliente->getKey(),
+            'fecha' => fake()->dateTimeBetween('-1 year', 'now'),
+            'subtotal' => 0,
+            'iva' => 0,
+            'total' => 0,
+            'estado' => fake()->randomElement(['pendiente', 'pagada']),
         ];
     }
 }
+

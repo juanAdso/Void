@@ -7,14 +7,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\DetalleFacturaController;
+use App\Http\Controllers\TiendaController;
 use App\Models\Productos;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+
 Route::resource('categoria', CategoriaController::class);
 Route::resource('cliente', ClienteController::class);
 Route::resource('facturas', FacturasController::class);
 Route::resource('productos', ProductosController::class);
 Route::resource('detalle_facturas', DetalleFacturaController::class);
-Route::get('/consultas', function () { 
+Route::resource('tiendas', TiendaController::class);
+
+Route::get('/consultas', function () {
     return Productos::findOrFail(2);
 });
