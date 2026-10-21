@@ -6,13 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tienda extends Model
-
 {
     use HasFactory;
 
     protected $table = 'tiendas';
 
-    protected $primaryKey = 'id_tienda';
 
     protected $fillable = [
         'nombre',
@@ -30,5 +28,9 @@ class Tienda extends Model
             'estado' => 'boolean',
         ];
     }
-}
 
+    public function productos()
+    {
+        return $this->hasMany(Productos::class, 'id_tienda', 'id');
+    }
+}

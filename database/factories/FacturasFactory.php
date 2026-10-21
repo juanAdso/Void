@@ -16,19 +16,16 @@ class FacturasFactory extends Factory
         $cliente = Cliente::query()->inRandomOrder()->first();
 
         if (!$cliente) {
-            throw new RuntimeException(
-                'Debes crear los clientes antes de generar facturas.'
-            );
+            throw new RuntimeException('Debes crear los clientes antes de generar facturas.');
         }
 
         return [
             'id_cliente' => $cliente->getKey(),
-            'fecha' => fake()->dateTimeBetween('-1 year', 'now'),
+            'fecha' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
             'subtotal' => 0,
             'iva' => 0,
             'total' => 0,
-            'estado' => fake()->randomElement(['pendiente', 'pagada']),
+            'estado' => fake()->randomElement(['pendiente', 'pagada', 'anulada']),
         ];
     }
 }
-

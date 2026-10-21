@@ -15,23 +15,13 @@ class DetalleFacturaFactory extends Factory
     public function definition(): array
     {
         $factura = Facturas::query()->inRandomOrder()->first();
-
-        $producto = Productos::query()
-            ->where('stock', '>', 0)
-            ->inRandomOrder()
-            ->first();
+        $producto = Productos::query()->where('stock', '>', 0)->inRandomOrder()->first();
 
         if (!$factura || !$producto) {
-            throw new RuntimeException(
-                'Debes tener facturas y productos con stock para generar detalles.'
-            );
+            throw new RuntimeException('Debes tener facturas y productos con stock para generar detalles.');
         }
 
-        $cantidad = fake()->numberBetween(
-            1,
-            min(3, (int) $producto->stock)
-        );
-
+        $cantidad = fake()->numberBetween(1, min(3, (int) $producto->stock));
         $precio = (float) $producto->precio;
 
         return [
@@ -43,4 +33,3 @@ class DetalleFacturaFactory extends Factory
         ];
     }
 }
-
