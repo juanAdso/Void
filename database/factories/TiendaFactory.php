@@ -10,15 +10,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TiendaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Tienda::class;
+
     public function definition(): array
     {
         return [
-            //
+            'nombre' => fake()->unique()->company(),
+            'descripcion' => fake()->optional()->sentence(),
+            'logo' => null,
+            'direccion' => fake()->optional()->address(),
+            'telefono' => fake()->optional()->numerify('3#########'),
+            'correo' => fake()->unique()->safeEmail(),
+            'estado' => true,
         ];
     }
 }
