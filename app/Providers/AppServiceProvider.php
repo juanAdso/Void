@@ -7,9 +7,6 @@ use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $this->app->bind(
@@ -32,11 +29,12 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\DetalleFacturaRepositoryInterface::class,
             \App\Repositories\DetalleFacturaRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Interfaces\TiendaRepositoryInterface::class,
+            \App\Repositories\TiendaRepository::class
+        );
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Paginator::useTailwind();
