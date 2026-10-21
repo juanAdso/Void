@@ -4,13 +4,9 @@ namespace App\Repositories\Interfaces;
 
 interface TiendaRepositoryInterface
 {
-    public function all();
-
-    public function find($id);
-
-    public function create(array $data);
-
-    public function update($id, array $data);
-
-    public function delete($id);
+    public function listarTodo();
+    public function guardar(array $datos);
+    public function eliminar(int $id);
+    public function buscarPorId(int $id);
+    public function actualizar(int $id, array $datos);
 }

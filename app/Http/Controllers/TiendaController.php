@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreTiendaRequest;
+use App\Http\Requests\UpdateTiendaRequest;
+use App\Services\TiendaService;
 
 class TiendaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private TiendaService $tiendaService;
+
+    public function __construct(TiendaService $tiendaService)
+    {
+        $this->tiendaService = $tiendaService;
+    }
+
     public function index()
     {
-        //
+        $tiendas = $this->tiendaService->listarTodo();
+        return view('tiendas.index', compact('tiendas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('tiendas.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreTiendaRequest $request)
     {
-        //
+        $this->tiendaService->guardar($request->validated());
+        return redirect()->route('tiendas.index')->with('success', 'Tienda creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(int $id)
     {
-        //
+        $tienda = $this->tiendaService->buscarPorId($id);
+        return view('tiendas.show', compact('tienda'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(int $id)
     {
-        //
+        $tienda = $this->tiendaService->buscarPorId($id);
+        return view('tiendas.edit', compact('tienda'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(int $id, UpdateTiendaRequest $request)
     {
-        //
+        $this->tiendaService->actualizar($id, $request->validated());
+        return redirect()->route('tiendas.index')->with('success', 'Tienda actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        $this->tiendaService->eliminar($id);
+        return redirect()->route('tiendas.index')->with('success', 'Tienda eliminada correctamente.');
     }
 }
