@@ -11,22 +11,24 @@ class DetalleFacturaSeeder extends Seeder
 {
     public function run(): void
     {
-        $productosDisponibles = Productos::query()->where('stock', '>', 0)->get();
-
         if (!Facturas::exists()) {
             throw new RuntimeException('Ejecuta FacturasSeeder antes de DetalleFacturaSeeder.');
         }
 
-        if ($productosDisponibles->isEmpty()) {
-            throw new RuntimeException('Debes tener productos con stock para generar detalles.');
-        }
-
-        foreach (Facturas::all() as $factura) {
+        foreach (Facturas::query()->orderBy('id')->get() as $factura) {
             if (!$factura->detalle_facturas()->exists()) {
-                $cantidadDetalles = fake()->numberBetween(1, min(4, $productosDisponibles->count()));
-                $seleccionados = $productosDisponibles->random($cantidadDetalles);
+                $cantidadDetalles = fake()->numberBetween(1, 4);
 
-                foreach ($seleccionados as $producto) {
+                for ($i = 0; $i < $cantidadDetalles; $i++) {
+                    $producto = Productos::query()
+                        ->where('stock', '>', 0)
+                        ->inRandomOrder()
+                        ->first();
+
+                    if (!$producto) {
+                        break;
+                    }
+
                     $cantidad = fake()->numberBetween(1, min(3, (int) $producto->stock));
                     $precio = (float) $producto->precio;
 
@@ -36,6 +38,8 @@ class DetalleFacturaSeeder extends Seeder
                         'precio_unitario' => $precio,
                         'subtotal' => round($cantidad * $precio, 2),
                     ]);
+
+                    $producto->decrement('stock', $cantidad);
                 }
             }
 
@@ -43,7 +47,7 @@ class DetalleFacturaSeeder extends Seeder
             $iva = round($subtotal * 0.19, 2);
 
             $factura->update([
-                'subtotal' => $subtotal,
+                'subtotal' => round($subtotal, 2),
                 'iva' => $iva,
                 'total' => round($subtotal + $iva, 2),
             ]);
