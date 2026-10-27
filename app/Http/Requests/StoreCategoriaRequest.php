@@ -24,7 +24,7 @@ class StoreCategoriaRequest extends FormRequest
     {
         return [
             'nombre_categoria' => 'required|string|max:100',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:255',
             'estado' => 'required|boolean',
         ];
     }
