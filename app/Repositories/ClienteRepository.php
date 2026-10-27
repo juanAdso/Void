@@ -9,29 +9,35 @@ class ClienteRepository implements ClienteRepositoryInterface
 {
     public function listarTodo()
     {
-        $clientes = Cliente::all();
-        return $clientes;
+        return Cliente::orderBy('id')->get();
     }
 
-    public function guardar (array $datos)
+    public function guardar(array $datos)
     {
-        Cliente::create($datos);
-    }  
-    
+        return Cliente::create($datos);
+    }
+
     public function eliminar(int $id)
     {
-        Cliente::destroy($id);
+        $cliente = Cliente::findOrFail($id);
+
+        if ($cliente->facturas()->exists()) {
+            return false;
+        }
+
+        return $cliente->delete();
     }
 
     public function buscarPorId(int $id)
     {
-        $clientes  = Cliente::findOrFail($id);
-        return $clientes;
+        return Cliente::findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
         $cliente = Cliente::findOrFail($id);
         $cliente->update($datos);
+
+        return $cliente->refresh();
     }
 }
