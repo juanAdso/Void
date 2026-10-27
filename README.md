@@ -22,6 +22,8 @@ Después de ejecutar los seeders, puedes entrar al área administrativa con:
 - Correo: `test@example.com`
 - Contraseña: `password`
 
+Esta cuenta es solo para desarrollo local; cambia la contraseña y crea cuentas propias antes de desplegar el sistema.
+
 La página pública está en `/`; el área administrativa solicita autenticación.
 
 ---
