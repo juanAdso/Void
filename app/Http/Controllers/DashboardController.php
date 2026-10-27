@@ -2,61 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
+use App\Models\Facturas;
+use App\Models\Productos;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    /**
-     * Muestra el dashboard principal.
-     *
-     * Reemplaza los valores de ejemplo por consultas reales a tus modelos,
-     * por ejemplo: User::count(), Product::count(), Order::sum('total'), etc.
-     */
     public function index(Request $request)
     {
-        $totalUsers    = 8241;
-        $totalProducts = 1523;
-        $totalSales    = 962;
-        $totalRevenue  = 48920.50;
+        $inicioMes = now()->startOfMonth()->toDateString();
+        $finMes = now()->endOfMonth()->toDateString();
 
-        $recentActivity = [
-            [
-                'avatar'      => 'https://ui-avatars.com/api/?name=Laura+Gomez',
-                'name'        => 'Laura Gómez',
-                'description' => 'Registró un nuevo producto en la categoría Electrónica',
-                'status'      => 'Activo',
-                'date'        => now()->subHours(2)->format('d/m/Y H:i'),
-            ],
-            [
-                'avatar'      => 'https://ui-avatars.com/api/?name=Carlos+Ruiz',
-                'name'        => 'Carlos Ruiz',
-                'description' => 'Solicitud de reembolso pendiente de revisión',
-                'status'      => 'Pendiente',
-                'date'        => now()->subHours(5)->format('d/m/Y H:i'),
-            ],
-            [
-                'avatar'      => 'https://ui-avatars.com/api/?name=Maria+Torres',
-                'name'        => 'María Torres',
-                'description' => 'Cuenta suspendida por incumplimiento de políticas',
-                'status'      => 'Inactivo',
-                'date'        => now()->subDay()->format('d/m/Y H:i'),
-            ],
-            [
-                'avatar'      => 'https://ui-avatars.com/api/?name=Jorge+Diaz',
-                'name'        => 'Jorge Díaz',
-                'description' => 'Actualizó la información de su perfil',
-                'status'      => 'Activo',
-                'date'        => now()->subDays(2)->format('d/m/Y H:i'),
-            ],
-        ];
+        $totalUsers = User::count();
+        $totalProducts = Productos::count();
+        $totalSales = Facturas::whereBetween('fecha', [$inicioMes, $finMes])
+            ->where('estado', 'pagada')
+            ->count();
+        $totalRevenue = (float) Facturas::whereBetween('fecha', [$inicioMes, $finMes])
+            ->where('estado', 'pagada')
+            ->sum('total');
+
+        $meses = collect(range(5, 0))->map(function (int $mesesAtras) {
+            return now()->startOfMonth()->subMonths($mesesAtras);
+        });
 
         $chartData = [
-            'months'         => ['Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago'],
-            'sales'          => [320, 410, 380, 512, 460, 590],
-            'users'          => [120, 190, 150, 260, 210, 300],
-            'categoryLabels' => ['Electrónica', 'Ropa', 'Hogar', 'Deportes', 'Otros'],
-            'categoryValues' => [38, 24, 18, 12, 8],
+            'months' => $meses->map(fn (Carbon $mes) => $mes->translatedFormat('M'))->values()->all(),
+            'sales' => $meses->map(function (Carbon $mes) {
+                return Facturas::where('estado', 'pagada')
+                    ->whereBetween('fecha', [$mes->copy()->startOfMonth()->toDateString(), $mes->copy()->endOfMonth()->toDateString()])
+                    ->count();
+            })->values()->all(),
+            'users' => $meses->map(function (Carbon $mes) {
+                return User::whereBetween('created_at', [$mes->copy()->startOfMonth(), $mes->copy()->endOfMonth()])->count();
+            })->values()->all(),
+            'categoryLabels' => Categoria::query()
+                ->withCount('productos')
+                ->orderByDesc('productos_count')
+                ->limit(5)
+                ->pluck('nombre_categoria')
+                ->values()
+                ->all(),
+            'categoryValues' => Categoria::query()
+                ->withCount('productos')
+                ->orderByDesc('productos_count')
+                ->limit(5)
+                ->pluck('productos_count')
+                ->map(fn ($cantidad) => (int) $cantidad)
+                ->values()
+                ->all(),
         ];
+
+        $recentActivity = Facturas::with('cliente')
+            ->latest('fecha')
+            ->latest('id')
+            ->limit(6)
+            ->get()
+            ->map(function (Facturas $factura) {
+                $nombre = trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? ''));
+
+                return [
+                    'id' => $factura->id,
+                    'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($nombre ?: 'Cliente'),
+                    'name' => $nombre ?: 'Cliente eliminado',
+                    'description' => 'Factura #' . $factura->id . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
+                    'status' => ucfirst((string) $factura->estado),
+                    'date' => $factura->fecha?->format('d/m/Y') ?? 'Sin fecha',
+                ];
+            })
+            ->all();
 
         return view('dashboard.index', compact(
             'totalUsers',
