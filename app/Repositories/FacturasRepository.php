@@ -9,30 +9,35 @@ class FacturasRepository implements FacturasRepositoryInterface
 {
     public function listarTodo()
     {
-        $facturas = Facturas::with('cliente')->get();
-        return $facturas;
+        return Facturas::with(['cliente', 'detalle_facturas'])->orderByDesc('fecha')->get();
     }
 
     public function guardar(array $datos)
     {
-        Facturas::create($datos);
+        return Facturas::create($datos);
     }
 
     public function eliminar(int $id)
     {
-        Facturas::destroy($id);
+        $factura = Facturas::findOrFail($id);
+
+        if ($factura->detalle_facturas()->exists()) {
+            return false;
+        }
+
+        return $factura->delete();
     }
 
     public function buscarPorId(int $id)
     {
-        $facturas  = Facturas::findOrFail($id);
-        return $facturas;
+        return Facturas::with(['cliente', 'detalle_facturas'])->findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
         $factura = Facturas::findOrFail($id);
         $factura->update($datos);
-    }
 
+        return $factura->refresh();
+    }
 }
