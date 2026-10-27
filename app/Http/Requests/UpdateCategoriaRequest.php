@@ -23,7 +23,7 @@ class UpdateCategoriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre_categoria' => 'required|string|max:255',
+            'nombre_categoria' => 'required|string|max:100',
             'descripcion' => 'nullable|string|max:255',
             'estado' => 'required|boolean',
         ];
@@ -34,7 +34,7 @@ class UpdateCategoriaRequest extends FormRequest
         return [
             'nombre_categoria.required' => 'El nombre de la categoría es obligatorio.',
             'nombre_categoria.string' => 'El nombre de la categoría debe ser una cadena de texto.',
-            'nombre_categoria.max' => 'El nombre de la categoría no puede tener más de 255 caracteres.',
+            'nombre_categoria.max' => 'El nombre de la categoría no puede tener más de 100 caracteres.',
             'descripcion.string' => 'La descripción debe ser una cadena de texto.',
             'estado.required' => 'El estado es obligatorio.',
             'estado.boolean' => 'El estado debe ser verdadero o falso.',
