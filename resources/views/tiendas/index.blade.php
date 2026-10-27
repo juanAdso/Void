@@ -14,7 +14,11 @@
             </a>
         </div>
 
-        @if (session('success'))
+        @if (session('error'))
+                <div class="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">{{ session('error') }}</div>
+            @endif
+
+            @if (session('success'))
             <div class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
         @endif
         @if (session('actualizar'))
