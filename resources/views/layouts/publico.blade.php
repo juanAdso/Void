@@ -33,31 +33,26 @@
         <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
 
             {{-- Logo --}}
-            <a href="{{ url('/catalogo') }}"
+            <a href="{{ url('/') }}"
                class="text-2xl font-extrabold tracking-widest">
                 V<span class="text-violet-600">Ø</span>ID
             </a>
 
             {{-- Navegación para computador --}}
             <div class="hidden items-center gap-8 md:flex">
-                <a href="{{ url('/catalogo') }}"
-                   class="text-sm font-medium text-gray-700 transition hover:text-violet-600">
-                    Inicio
-                </a>
-
-                <a href="{{ url('/catalogo#tiendas') }}"
+                <a href="{{ url('/#tiendas') }}"
                    class="text-sm font-medium text-gray-700 transition hover:text-violet-600">
                     Tiendas
                 </a>
 
-                <a href="{{ url('/catalogo#productos') }}"
+                <a href="{{ url('/#productos') }}"
                    class="text-sm font-medium text-gray-700 transition hover:text-violet-600">
                     Catálogo
                 </a>
             </div>
 
-            {{-- Acceso administrativo --}}
-            <a href="{{ url('/login') }}"
+            {{-- Acceso administrativo temporal --}}
+            <a href="{{ route('dashboard.index') }}"
                class="shrink-0 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700">
                 Iniciar sesión
             </a>
@@ -83,15 +78,15 @@
             </div>
 
             <div class="flex flex-wrap gap-5 text-sm text-gray-300">
-                <a href="{{ url('/catalogo') }}" class="hover:text-white">
+                <a href="{{ url('/') }}" class="hover:text-white">
                     Inicio
                 </a>
 
-                <a href="{{ url('/catalogo#tiendas') }}" class="hover:text-white">
+                <a href="{{ url('/#tiendas') }}" class="hover:text-white">
                     Tiendas
                 </a>
 
-                <a href="{{ url('/catalogo#productos') }}" class="hover:text-white">
+                <a href="{{ url('/#productos') }}" class="hover:text-white">
                     Productos
                 </a>
             </div>
