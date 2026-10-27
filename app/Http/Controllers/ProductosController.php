@@ -6,16 +6,22 @@ use App\Http\Requests\StoreProductosRequest;
 use App\Http\Requests\UpdateProductosRequest;
 use App\Services\ProductosService;
 use App\Services\CategoriaService;
+use App\Services\TiendaService;
 
 class ProductosController extends Controller
 {
     private ProductosService $productosService;
     private CategoriaService $categoriasService;
+    private TiendaService $tiendasService;
 
-    public function __construct(ProductosService $productosService, CategoriaService $categoriasService)
-    {
+    public function __construct(
+        ProductosService $productosService,
+        CategoriaService $categoriasService,
+        TiendaService $tiendasService
+    ) {
         $this->productosService = $productosService;
         $this->categoriasService = $categoriasService;
+        $this->tiendasService = $tiendasService;
     }
 
     public function index()
@@ -27,7 +33,8 @@ class ProductosController extends Controller
     public function create()
     {
         $categorias = $this->categoriasService->listarTodo();
-        return view('productos.crear', compact('categorias'));
+        $tiendas = $this->tiendasService->listarTodo();
+        return view('productos.crear', compact('categorias', 'tiendas'));
     }
 
     public function store(StoreProductosRequest $request)
@@ -41,7 +48,8 @@ class ProductosController extends Controller
     {
         $productos = $this->productosService->buscarPorId($id);
         $categorias = $this->categoriasService->listarTodo();
-        return view('productos.editar', compact('productos', 'categorias'));
+        $tiendas = $this->tiendasService->listarTodo();
+        return view('productos.editar', compact('productos', 'categorias', 'tiendas'));
     }
 
     public function update(int $id, UpdateProductosRequest $request)
