@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Categoria;
 use App\Models\Productos;
 use App\Models\Tienda;
-use App\Models\Tienda as ModelsTienda;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use RuntimeException;
 
