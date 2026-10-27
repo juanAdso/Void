@@ -9,31 +9,35 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 {
     public function listarTodo()
     {
-        $categorias = Categoria::all();
-
-        return $categorias;
+        return Categoria::withCount('productos')->orderBy('id')->get();
     }
 
     public function guardar(array $datos)
     {
-        Categoria::create($datos);
+        return Categoria::create($datos);
     }
 
     public function eliminar(int $id)
     {
-        Categoria::destroy($id);
+        $categoria = Categoria::findOrFail($id);
+
+        if ($categoria->productos()->exists()) {
+            return false;
+        }
+
+        return $categoria->delete();
     }
 
     public function buscarPorId(int $id)
     {
-        $categorias = Categoria::findOrFail($id);
-
-        return $categorias;
+        return Categoria::findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
         $categoria = Categoria::findOrFail($id);
         $categoria->update($datos);
+
+        return $categoria->refresh();
     }
 }
