@@ -27,7 +27,7 @@
                 @csrf
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cliente</label>
-                    <select name="id_cliente" class="w-full border rounded px-3 py-2">
+                    <select name="id_cliente" required class="w-full border rounded px-3 py-2">
                         @foreach ($clientes as $cliente)
                             <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
                         @endforeach
@@ -35,26 +35,20 @@
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Fecha</label>
-                    <input type="date" name="fecha" class="w-full border rounded px-3 py-2">
+                    <input type="date" name="fecha" value="{{ old('fecha', now()->toDateString()) }}" required class="w-full border rounded px-3 py-2">
                 </div>
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Subtotal</label>
-                    <input type="number" name="subtotal" step="0.01" class="w-full border rounded px-3 py-2">
-                </div>
-                <div class="mb-5">
+<div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Iva</label>
                     <input type="number" name="iva" step="0.01" class="w-full border rounded px-3 py-2">
                 </div>
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Total</label>
-                    <input type="number" name="total" step="0.01" class="w-full border rounded px-3 py-2">
-                </div>
-                <div class="mb-5">
+<div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
+                    <select name="estado" required class="w-full border rounded px-3 py-2">
+                        <option value="pendiente" @selected(old('estado', 'pendiente') === 'pendiente')>Pendiente</option>
+                        <option value="pagada" @selected(old('estado') === 'pagada')>Pagada</option>
+                        <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
                     </select>
+                    <p class="mt-2 text-sm text-gray-500">Los totales se calculan automáticamente al agregar los productos desde Detalle de facturas.</p>
                 </div>
         </div>
 
