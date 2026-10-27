@@ -59,7 +59,7 @@
     <div class="mt-6">
         <x-card title="Actividad reciente" subtitle="Últimos registros del sistema" :padding="false">
             <x-slot:actions>
-                <x-button variant="secondary" href="#">Ver todo</x-button>
+                <x-button variant="secondary" href="{{ route('facturas.index') }}">Ver todas</x-button>
             </x-slot:actions>
 
             <x-table :headers="['Usuario', 'Descripción', 'Estado', 'Fecha', 'Acciones']">
@@ -79,31 +79,9 @@
                         <td class="px-5 py-3.5"><x-badge :status="$item['status']" /></td>
                         <td class="px-5 py-3.5 text-slate-500 whitespace-nowrap">{{ $item['date'] }}</td>
                         <td class="px-5 py-3.5">
-                            <div class="flex items-center gap-1">
-                                <a href="#" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Ver {{ $item['name'] }}">
-                                    <span class="w-4 h-4 block">@include('layouts.partials.icons', ['icon' => 'eye'])</span>
-                                </a>
-                                <a href="#" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Editar {{ $item['name'] }}">
-                                    <span class="w-4 h-4 block">@include('layouts.partials.icons', ['icon' => 'pencil'])</span>
-                                </a>
-                                <button
-                                    type="button"
-                                    @click="$dispatch('open-modal', 'delete-{{ $loop->index }}')"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                    aria-label="Eliminar {{ $item['name'] }}"
-                                >
-                                    <span class="w-4 h-4 block">@include('layouts.partials.icons', ['icon' => 'trash'])</span>
-                                </button>
-
-                                <x-modal name="delete-{{ $loop->index }}" title="Eliminar registro" maxWidth="sm">
-                                    <p class="text-sm text-slate-500">
-                                        ¿Seguro que deseas eliminar a <strong>{{ $item['name'] }}</strong>? Esta acción no se puede deshacer.
-                                    </p>
-                                    <x-slot:footer>
-                                        <x-button variant="secondary" @click="show = false">Cancelar</x-button>
-                                        <x-button variant="danger">Eliminar</x-button>
-                                    </x-slot:footer>
-                                </x-modal>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('facturas.edit', $item['id']) }}" class="rounded-lg px-3 py-2 text-sm font-medium text-primary-600 hover:bg-slate-100">Editar factura</a>
+                                <a href="{{ route('detalle_facturas.index') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Ver detalles</a>
                             </div>
                         </td>
                     </tr>
