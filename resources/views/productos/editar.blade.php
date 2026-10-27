@@ -4,12 +4,8 @@
 
 @section('content')
     <div class="container mx-auto mt-10">
-
         <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-8">
-
-            <h2 class="text-3xl font-bold text-center mb-6">
-                Editar Producto
-            </h2>
+            <h2 class="text-3xl font-bold text-center mb-6">Editar Producto</h2>
             @if($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
                     <ul>
@@ -23,50 +19,54 @@
             <form action="{{ route('productos.update', $productos->id) }}" method="post">
                 @csrf
                 @method('PUT')
-
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Nombre</label>
-                    <input type="text" name="nombre" value="{{ $productos->nombre }}" class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Descripcion</label>
-                    <input type="text" name="descripcion" value="{{ $productos->descripcion }}" class="w-full border rounded px-3 py-2">
+                    <label for="nombre" class="block mb-2 font-semibold">Nombre</label>
+                    <input id="nombre" type="text" name="nombre" value="{{ old('nombre', $productos->nombre) }}" maxlength="150" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Precio</label>
-                    <input type="text" name="precio" value="{{ $productos->precio }}" class="w-full border rounded px-3 py-2">
+                    <label for="descripcion" class="block mb-2 font-semibold">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="w-full border rounded px-3 py-2">{{ old('descripcion', $productos->descripcion) }}</textarea>
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Stock</label>
-                    <input type="text" name="stock" value="{{ $productos->stock }}" class="w-full border rounded px-3 py-2">
+                    <label for="precio" class="block mb-2 font-semibold">Precio</label>
+                    <input id="precio" type="number" name="precio" value="{{ old('precio', $productos->precio) }}" min="0" step="0.01" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Imagen</label>
-                    <input type="text" name="imagen" value="{{ $productos->imagen }}" class="w-full border rounded px-3 py-2">
+                    <label for="stock" class="block mb-2 font-semibold">Stock</label>
+                    <input id="stock" type="number" name="stock" value="{{ old('stock', $productos->stock) }}" min="0" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $productos->estado == 1 ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ $productos->estado == 0 ? 'selected' : '' }}>Inactivo</option>
+                    <label for="imagen" class="block mb-2 font-semibold">Ruta de imagen</label>
+                    <input id="imagen" type="text" name="imagen" value="{{ old('imagen', $productos->imagen) }}" maxlength="255" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="estado" class="block mb-2 font-semibold">Estado</label>
+                    <select id="estado" name="estado" required class="w-full border rounded px-3 py-2">
+                        <option value="1" @selected(old('estado', (string) $productos->estado) == '1')>Activo</option>
+                        <option value="0" @selected(old('estado', (string) $productos->estado) == '0')>Inactivo</option>
                     </select>
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Categoría</label>
-                    <select name="id_categoria" class="w-full border rounded px-3 py-2">
+                    <label for="id_categoria" class="block mb-2 font-semibold">Categoría</label>
+                    <select id="id_categoria" name="id_categoria" required class="w-full border rounded px-3 py-2">
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id }}" {{ $productos->id_categoria == $categoria->id ? 'selected' : '' }}>{{ $categoria->nombre_categoria }}</option>
+                            <option value="{{ $categoria->id }}" @selected(old('id_categoria', $productos->id_categoria) == $categoria->id)>{{ $categoria->nombre_categoria }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="mb-5">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+                    <label for="id_tienda" class="block mb-2 font-semibold">Tienda</label>
+                    <select id="id_tienda" name="id_tienda" required class="w-full border rounded px-3 py-2">
+                        @foreach($tiendas as $tienda)
+                            <option value="{{ $tienda->id }}" @selected(old('id_tienda', $productos->id_tienda) == $tienda->id)>{{ $tienda->nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
-
+                <div class="flex gap-3">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white rounded px-5 py-2">Guardar cambios</button>
+                    <a href="{{ route('productos.index') }}" class="border rounded px-5 py-2">Cancelar</a>
+                </div>
             </form>
-
         </div>
-
     </div>
 @endsection
