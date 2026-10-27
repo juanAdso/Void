@@ -25,7 +25,7 @@ class ProductosService
 
     public function eliminar(int $id)
     {
-        $this->productos_repository->eliminar($id);
+        return $this->productos_repository->eliminar($id);
     }
 
     public function buscarPorId(int $id)

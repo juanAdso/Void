@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Productos;
+use App\Models\DetalleFactura;
 use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
 class ProductosRepository implements ProductoRepositoryInterface
@@ -20,7 +21,13 @@ class ProductosRepository implements ProductoRepositoryInterface
 
     public function eliminar(int $id)
     {
-        Productos::destroy($id);
+        $producto = Productos::findOrFail($id);
+
+        if (DetalleFactura::where('id_producto', $id)->exists()) {
+            return false;
+        }
+
+        return $producto->delete();
     }
 
     public function buscarPorId(int $id)
