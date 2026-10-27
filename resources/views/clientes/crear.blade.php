@@ -28,32 +28,32 @@
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre</label>
-                    <input type="text" name="nombre" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre') }}" required class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Apellido</label>
-                    <input type="text" name="apellido" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="apellido" value="{{ old('apellido') }}" required class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Documento</label>
-                    <input type="text" name="documento" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="documento" value="{{ old('documento') }}" required class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Telefono</label>
-                    <input type="text" name="telefono" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="telefono" value="{{ old('telefono') }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Correo</label>
-                    <input type="email" name="correo" class="w-full border rounded px-3 py-2">
+                    <input type="email" name="correo" value="{{ old('correo') }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Dirección</label>
-                    <input type="text" name="direccion" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="direccion" value="{{ old('direccion') }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
