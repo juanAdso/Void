@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -6,12 +6,7 @@ use App\Repositories\Interfaces\ClienteRepositoryInterface;
 
 class ClienteService
 {
-    private ClienteRepositoryInterface $cliente_repository;
-
-    public function __construct(ClienteRepositoryInterface $cliente_repository)
-    {
-        $this->cliente_repository = $cliente_repository;
-    }
+    public function __construct(private ClienteRepositoryInterface $cliente_repository) {}
 
     public function listarTodo()
     {
@@ -20,22 +15,21 @@ class ClienteService
 
     public function guardar(array $datos)
     {
-        $this->cliente_repository->guardar($datos);
+        return $this->cliente_repository->guardar($datos);
     }
 
     public function eliminar(int $id)
     {
-        $this->cliente_repository->eliminar($id); 
+        return $this->cliente_repository->eliminar($id);
     }
 
     public function buscarPorId(int $id)
     {
-        $cliente = $this->cliente_repository->buscarPorId($id);
-        return $cliente;
+        return $this->cliente_repository->buscarPorId($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
-        $this->cliente_repository->actualizar($id, $datos);
+        return $this->cliente_repository->actualizar($id, $datos);
     }
 }

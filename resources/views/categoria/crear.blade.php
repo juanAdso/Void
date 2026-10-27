@@ -28,19 +28,19 @@
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Categoría</label>
-                    <input type="text" name="nombre_categoria" value="{{ old('nombre_categoria') }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre_categoria" value="{{ old('nombre_categoria') }}" required maxlength="100" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Descripción</label>
-                    <input type="text" name="descripcion" value="{{ old('descripcion') }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="descripcion" value="{{ old('descripcion') }}" maxlength="255" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
                     <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
+                        <option value="1" @selected(old('estado', '1') == '1')>Activo</option>
+                        <option value="0" @selected(old('estado') == '0')>Inactivo</option>
                     </select>
                 </div>
 

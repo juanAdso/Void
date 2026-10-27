@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -6,12 +6,7 @@ use App\Repositories\Interfaces\CategoriaRepositoryInterface;
 
 class CategoriaService
 {
-    private CategoriaRepositoryInterface $categoria_repository;
-
-    public function __construct(CategoriaRepositoryInterface $categoria_repository)
-    {
-        $this->categoria_repository = $categoria_repository;
-    }
+    public function __construct(private CategoriaRepositoryInterface $categoria_repository) {}
 
     public function listarTodo()
     {
@@ -20,22 +15,21 @@ class CategoriaService
 
     public function guardar(array $datos)
     {
-        $this->categoria_repository->guardar($datos);
+        return $this->categoria_repository->guardar($datos);
     }
 
     public function eliminar(int $id)
     {
-        $this->categoria_repository->eliminar($id); 
+        return $this->categoria_repository->eliminar($id);
     }
 
     public function buscarPorId(int $id)
     {
-        $categoria = $this->categoria_repository->buscarPorId($id);
-        return $categoria;
+        return $this->categoria_repository->buscarPorId($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
-        $this->categoria_repository->actualizar($id, $datos);
+        return $this->categoria_repository->actualizar($id, $datos);
     }
 }

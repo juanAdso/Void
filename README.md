@@ -1,3 +1,33 @@
+# VOID — Catálogo e inventario de tiendas
+
+## Preparar el proyecto local
+
+Requisitos: PHP 8.3 o superior, Composer, Node.js y una base de datos configurada en `.env`.
+
+1. Instala las dependencias de PHP: `composer install`.
+2. Crea el archivo de entorno: en PowerShell ejecuta `Copy-Item .env.example .env` si aún no existe.
+3. Genera la clave: `php artisan key:generate`.
+4. Configura la conexión de base de datos en `.env` y crea la base de datos si utilizas MySQL.
+5. Ejecuta las migraciones: `php artisan migrate`.
+6. Crea los datos de demostración y el usuario inicial: `php artisan db:seed`.
+7. Instala y compila los recursos: `npm install` y luego `npm run build`.
+8. Inicia Laravel: `php artisan serve`.
+
+No ejecutes `php artisan migrate:fresh --seed` sobre una base de datos con información que necesites conservar: ese comando elimina las tablas y vuelve a crearlas.
+
+## Acceso de demostración
+
+Después de ejecutar los seeders, puedes entrar al área administrativa con:
+
+- Correo: `test@example.com`
+- Contraseña: `password`
+
+Esta cuenta es solo para desarrollo local; cambia la contraseña y crea cuentas propias antes de desplegar el sistema.
+
+La página pública está en `/`; el área administrativa solicita autenticación.
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

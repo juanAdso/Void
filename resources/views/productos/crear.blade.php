@@ -4,14 +4,8 @@
 
 @section('content')
     <div class="container mx-auto mt-10">
-
         <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-8">
-
-            <h2 class="text-3xl font-bold text-center mb-6">
-
-                Nuevo Producto
-
-            </h2>
+            <h2 class="text-3xl font-bold text-center mb-6">Nuevo Producto</h2>
 
             @if($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
@@ -23,53 +17,58 @@
                 </div>
             @endif
 
-            <form action="{{ route('productos.store')}}" method="post">
-            @csrf
-
+            <form action="{{ route('productos.store') }}" method="post">
+                @csrf
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Nombre</label>
-                    <input type="text" name="nombre" class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Descripción</label>
-                    <input type="text" name="descripcion" class="w-full border rounded px-3 py-2">
+                    <label for="nombre" class="block mb-2 font-semibold">Nombre</label>
+                    <input id="nombre" type="text" name="nombre" value="{{ old('nombre') }}" maxlength="150" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Precio</label>
-                    <input type="number" name="precio" step="0.01" class="w-full border rounded px-3 py-2">
-                </div> 
-                <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Stock</label>
-                    <input type="number" name="stock" class="w-full border rounded px-3 py-2">
+                    <label for="descripcion" class="block mb-2 font-semibold">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="w-full border rounded px-3 py-2">{{ old('descripcion') }}</textarea>
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Imagen</label>
-                    <input type="text" name="imagen" class="w-full border rounded px-3 py-2">
+                    <label for="precio" class="block mb-2 font-semibold">Precio</label>
+                    <input id="precio" type="number" name="precio" value="{{ old('precio') }}" min="0" step="0.01" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
+                    <label for="stock" class="block mb-2 font-semibold">Stock</label>
+                    <input id="stock" type="number" name="stock" value="{{ old('stock', 0) }}" min="0" required class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="imagen" class="block mb-2 font-semibold">Ruta de imagen</label>
+                    <input id="imagen" type="text" name="imagen" value="{{ old('imagen') }}" maxlength="255" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-5">
+                    <label for="estado" class="block mb-2 font-semibold">Estado</label>
+                    <select id="estado" name="estado" required class="w-full border rounded px-3 py-2">
+                        <option value="1" @selected(old('estado', '1') == '1')>Activo</option>
+                        <option value="0" @selected(old('estado') == '0')>Inactivo</option>
                     </select>
                 </div>
                 <div class="mb-5">
-                    <label for="" class="block mb-2 font-semibold">Categoría</label>
-                    <select name="id_categoria" class="w-full border rounded px-3 py-2">
+                    <label for="id_categoria" class="block mb-2 font-semibold">Categoría</label>
+                    <select id="id_categoria" name="id_categoria" required class="w-full border rounded px-3 py-2">
+                        <option value="">Selecciona una categoría</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id }}">{{ $categoria->nombre_categoria }}</option>
+                            <option value="{{ $categoria->id }}" @selected(old('id_categoria') == $categoria->id)>{{ $categoria->nombre_categoria }}</option>
                         @endforeach
-                </select>
+                    </select>
                 </div>
-
                 <div class="mb-5">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
-                </div>   
-            
+                    <label for="id_tienda" class="block mb-2 font-semibold">Tienda</label>
+                    <select id="id_tienda" name="id_tienda" required class="w-full border rounded px-3 py-2">
+                        <option value="">Selecciona una tienda</option>
+                        @foreach($tiendas as $tienda)
+                            <option value="{{ $tienda->id }}" @selected(old('id_tienda') == $tienda->id)>{{ $tienda->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white rounded px-5 py-2">Guardar</button>
+                    <a href="{{ route('productos.index') }}" class="border rounded px-5 py-2">Cancelar</a>
+                </div>
             </form>
-
         </div>
-
     </div>
 @endsection

@@ -6,12 +6,7 @@ use App\Repositories\Interfaces\DetalleFacturaRepositoryInterface;
 
 class DetalleFacturaService
 {
-    private DetalleFacturaRepositoryInterface $detalle_factura_repository;
-
-    public function __construct(DetalleFacturaRepositoryInterface $detalle_factura_repository)
-    {
-        $this->detalle_factura_repository = $detalle_factura_repository;
-    }
+    public function __construct(private DetalleFacturaRepositoryInterface $detalle_factura_repository) {}
 
     public function listarTodo()
     {
@@ -25,22 +20,21 @@ class DetalleFacturaService
 
     public function guardar(array $datos)
     {
-        $this->detalle_factura_repository->guardar($datos);
+        return $this->detalle_factura_repository->guardar($datos);
     }
 
     public function eliminar(int $id)
     {
-        $this->detalle_factura_repository->eliminar($id);
+        return $this->detalle_factura_repository->eliminar($id);
     }
 
     public function buscarPorId(int $id)
     {
-        $detalleFactura = $this->detalle_factura_repository->buscarPorId($id);
-        return $detalleFactura;
+        return $this->detalle_factura_repository->buscarPorId($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
-        $this->detalle_factura_repository->actualizar($id, $datos);
+        return $this->detalle_factura_repository->actualizar($id, $datos);
     }
 }

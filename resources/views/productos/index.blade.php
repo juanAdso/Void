@@ -3,119 +3,70 @@
 @section('title', 'Productos')
 
 @section('content')
-    <x-card>
-
-        <div class="container mx-auto mt-10">
-
-            <div class="bg-white shadow-lg rounded-lg p-6">
-
-                <div class="flex justify-between items-center mb-6">
-
-                    <h2 class="text-3xl font-bold text-gray-700">
-                        Listado de Productos
-                    </h2>
-
-                    <a href="{{ route('productos.create') }}"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-
-                        Nuevo Producto
-
-                    </a>
-
-                </div>
-
-                @if (session('success'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if (session('actualizar'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-
-                        {{ session('actualizar') }}
-                    </div>
-                @endif
-
-                @if (session('eliminar'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-
-                        {{ session('eliminar') }}
-                    </div>
-                @endif
-
-                <table class="min-w-full border border-gray-300">
-
-                    <thead class="bg-gray-200">
-
-                        <tr>
-
-                            <th class="border px-4 py-2">
-                                ID
-                            </th>
-                            <th class="border px-4 py-2">
-                                Descripción
-                            </th>
-                            <th class="border px-4 py-2">
-                                Precio
-                            </th>
-                            <th class="border px-4 py-2">
-                                Stock
-                            </th>
-                            <th class="border px-4 py-2">
-                                Imagen
-                            </th>
-                            <th class="border px-4 py-2">
-                                Estado
-                            </th>
-                            <th class="border px-4 py-2">
-                                Categoría
-                            </th>
-                            <th class="border px-4 py-2">
-                                Acciones
-                            </th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        @foreach ($productos as $producto)
-                            <tr class="text-center hover:bg-gray-50">
-                                <td class="border px-4 py-2">{{ $producto->id }}</td>
-                                <td class="border px-4 py-2">{{ $producto->descripcion }}</td>
-                                <td class="border px-4 py-2">{{ $producto->precio }}</td>
-                                <td class="border px-4 py-2">{{ $producto->stock }}</td>
-                                <td class="border px-4 py-2">{{ $producto->imagen }}</td>
-                                <td class="border px-4 py-2">
-                                    @if ($producto->estado)
-                                        <span class="bg-green-500 text-white px-2 py-1 rounded">Activo</span>
-                                    @else
-                                        <span class="bg-red-500 text-white px-2 py-1 rounded">Inactivo</span>
-                                    @endif
-                                </td>
-                                <td class="border px-4 py-2">{{ $producto->categoria->nombre_categoria}}</td>
-                                <td class="border px-4 py-2 flex justify-center gap-2">
-                                    <a
-                                        href="{{ route('productos.edit', $producto->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                                    <form action="{{ route('productos.destroy', $producto->id) }}" method="post">
-                                
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-2">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-
-                    </tbody>
-
-                </table>
-
+    <div class="container mx-auto mt-10">
+        <div class="rounded-lg bg-white p-6 shadow-lg">
+            <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-3xl font-bold text-gray-700">Listado de Productos</h2>
+                <a href="{{ route('productos.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Nuevo Producto</a>
             </div>
 
+            @foreach (['success' => 'green', 'error' => 'red'] as $tipo => $color)
+                @if (session($tipo))
+                    <div class="mb-4 rounded border border-{{ $color }}-400 bg-{{ $color }}-100 px-4 py-3 text-{{ $color }}-700">{{ session($tipo) }}</div>
+                @endif
+            @endforeach
+
+            @if($productos->isEmpty())
+                <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border border-gray-300">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="border px-4 py-2">ID</th>
+                                <th class="border px-4 py-2">Nombre</th>
+                                <th class="border px-4 py-2">Descripción</th>
+                                <th class="border px-4 py-2">Precio</th>
+                                <th class="border px-4 py-2">Stock</th>
+                                <th class="border px-4 py-2">Tienda</th>
+                                <th class="border px-4 py-2">Categoría</th>
+                                <th class="border px-4 py-2">Estado</th>
+                                <th class="border px-4 py-2">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($productos as $producto)
+                                <tr class="text-center hover:bg-gray-50">
+                                    <td class="border px-4 py-2">{{ $producto->id }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->nombre }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->descripcion }}</td>
+                                    <td class="border px-4 py-2">{{ number_format($producto->precio, 2, ',', '.') }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->stock }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->tienda?->nombre ?? 'Sin tienda' }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->categoria?->nombre_categoria ?? 'Sin categoría' }}</td>
+                                    <td class="border px-4 py-2">
+                                        @if ($producto->estado)
+                                            <span class="rounded bg-green-500 px-2 py-1 text-white">Activo</span>
+                                        @else
+                                            <span class="rounded bg-red-500 px-2 py-1 text-white">Inactivo</span>
+                                        @endif
+                                    </td>
+                                    <td class="border px-4 py-2">
+                                        <div class="flex justify-center gap-2">
+                                            <a href="{{ route('productos.edit', $producto->id) }}" class="rounded bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">Editar</a>
+                                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rounded bg-red-500 px-2 py-2 text-white hover:bg-red-600">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
-    </x-card>
+    </div>
 @endsection

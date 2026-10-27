@@ -8,65 +8,43 @@ use App\Services\CategoriaService;
 
 class CategoriaController extends Controller
 {
-    private CategoriaService $categoriaService;
-
-    public function __construct(CategoriaService $categoriaService)
-    {
-        $this->categoriaService = $categoriaService;
-    }
+    public function __construct(private CategoriaService $categoriaService) {}
 
     public function index()
     {
         $categorias = $this->categoriaService->listarTodo();
-
         return view('categoria.index', compact('categorias'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('categoria.crear');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCategoriaRequest $request)
     {
         $this->categoriaService->guardar($request->validated());
-
-        return redirect()->route('categoria.index')->with('success', 'Categoria creada correctamente');
+        return redirect()->route('categoria.index')->with('success', 'Categoría creada correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(int $id)
     {
         $categoria = $this->categoriaService->buscarPorId($id);
-
         return view('categoria.editar', compact('categoria'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(int $id, UpdateCategoriaRequest $request)
     {
         $this->categoriaService->actualizar($id, $request->validated());
-
-        return redirect()->route('categoria.index')->with('success', 'Categoria actualizada correctamente');
+        return redirect()->route('categoria.index')->with('success', 'Categoría actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(int $id)
     {
-        $this->categoriaService->eliminar($id);
+        if (!$this->categoriaService->eliminar($id)) {
+            return redirect()->route('categoria.index')->with('error', 'No se puede eliminar una categoría que tiene productos asociados.');
+        }
 
-        return redirect()->route('categoria.index')->with('success', 'Categoria eliminada correctamente');
+        return redirect()->route('categoria.index')->with('success', 'Categoría eliminada correctamente.');
     }
 }

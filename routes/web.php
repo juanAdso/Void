@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
@@ -12,26 +14,43 @@ use App\Models\Categoria;
 use App\Models\Productos;
 use App\Models\Tienda;
 
-Route::get('/', function () {
-    $tiendas = Tienda::where('estado', true)->get();
-    $categorias = Categoria::where('estado', true)->get();
-    $productos = Productos::with(['categoria', 'tienda'])
-        ->where('estado', true)
-        ->where('stock', '>', 0)
+$catalogo = function (Request $request) {
+    $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
+    $categorias = Categoria::query()->where('estado', true)->orderBy('nombre_categoria')->get();
+
+    $productos = Productos::query()
+        ->with(['categoria', 'tienda'])
+        ->where('productos.estado', true)
+        ->where('productos.stock', '>', 0)
+        ->whereHas('tienda', fn ($query) => $query->where('estado', true))
+        ->when($request->filled('tienda'), fn ($query) => $query->where('productos.id_tienda', $request->integer('tienda')))
+        ->when($request->filled('categoria'), fn ($query) => $query->where('productos.id_categoria', $request->integer('categoria')))
+        ->when($request->filled('buscar'), function ($query) use ($request) {
+            $buscar = trim((string) $request->input('buscar'));
+            $query->where(function ($subquery) use ($buscar) {
+                $subquery->where('productos.nombre', 'like', '%' . $buscar . '%')
+                    ->orWhere('productos.descripcion', 'like', '%' . $buscar . '%');
+            });
+        })
+        ->orderBy('productos.nombre')
         ->get();
 
     return view('layouts.catalogo', compact('tiendas', 'categorias', 'productos'));
-})->name('inicio');
+};
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::get('/', $catalogo)->name('inicio');
+Route::get('/catalogo', $catalogo)->name('catalogo');
+Route::get('/login', [AuthController::class, 'create'])->name('login');
+Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::resource('categoria', CategoriaController::class);
-Route::resource('cliente', ClienteController::class);
-Route::resource('facturas', FacturasController::class);
-Route::resource('productos', ProductosController::class);
-Route::resource('detalle_facturas', DetalleFacturaController::class);
-Route::resource('tiendas', TiendaController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-Route::get('/consultas', function () {
-    return Productos::findOrFail(2);
+    Route::resource('categoria', CategoriaController::class)->except(['show']);
+    Route::resource('cliente', ClienteController::class)->except(['show']);
+    Route::resource('facturas', FacturasController::class)->except(['show']);
+    Route::resource('productos', ProductosController::class)->except(['show']);
+    Route::resource('detalle_facturas', DetalleFacturaController::class)->except(['show']);
+    Route::resource('tiendas', TiendaController::class);
 });

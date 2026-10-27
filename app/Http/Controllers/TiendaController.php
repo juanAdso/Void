@@ -8,12 +8,7 @@ use App\Services\TiendaService;
 
 class TiendaController extends Controller
 {
-    private TiendaService $tiendaService;
-
-    public function __construct(TiendaService $tiendaService)
-    {
-        $this->tiendaService = $tiendaService;
-    }
+    public function __construct(private TiendaService $tiendaService) {}
 
     public function index()
     {
@@ -52,7 +47,10 @@ class TiendaController extends Controller
 
     public function destroy(int $id)
     {
-        $this->tiendaService->eliminar($id);
+        if (!$this->tiendaService->eliminar($id)) {
+            return redirect()->route('tiendas.index')->with('error', 'No se puede eliminar una tienda que tiene productos asociados.');
+        }
+
         return redirect()->route('tiendas.index')->with('success', 'Tienda eliminada correctamente.');
     }
 }

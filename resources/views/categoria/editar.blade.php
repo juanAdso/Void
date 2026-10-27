@@ -11,25 +11,35 @@
                 Editar Categoría
             </h2>
 
+            @if ($errors->any())
+                <div class="mb-5 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('categoria.update', $categoria->id) }}" method="post">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Categoria</label>
-                    <input type="text" name="nombre_categoria" value="{{ $categoria->nombre_categoria }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre_categoria" value="{{ old('nombre_categoria', $categoria->nombre_categoria) }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Descripcion</label>
-                    <input type="text" name="descripcion" value="{{ $categoria->descripcion }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="descripcion" value="{{ old('descripcion', $categoria->descripcion) }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
                     <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $categoria->estado == 1 ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ $categoria->estado == 0 ? 'selected' : '' }}>Inactivo</option>
+                        <option value="1" @selected(old('estado', $categoria->estado) == 1)>Activo</option>
+                        <option value="0" @selected(old('estado', $categoria->estado) == 0)>Inactivo</option>
                     </select>
                 </div>
 

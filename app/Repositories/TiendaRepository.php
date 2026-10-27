@@ -9,7 +9,7 @@ class TiendaRepository implements TiendaRepositoryInterface
 {
     public function listarTodo()
     {
-        return Tienda::orderBy('id', 'desc')->get();
+        return Tienda::withCount('productos')->orderBy('id', 'desc')->get();
     }
 
     public function guardar(array $datos)
@@ -19,18 +19,25 @@ class TiendaRepository implements TiendaRepositoryInterface
 
     public function eliminar(int $id)
     {
-        return Tienda::findOrFail($id)->delete();
+        $tienda = Tienda::findOrFail($id);
+
+        if ($tienda->productos()->exists()) {
+            return false;
+        }
+
+        return $tienda->delete();
     }
 
     public function buscarPorId(int $id)
     {
-        return Tienda::findOrFail($id);
+        return Tienda::with('productos')->findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
     {
         $tienda = Tienda::findOrFail($id);
         $tienda->update($datos);
-        return $tienda;
+
+        return $tienda->refresh();
     }
 }

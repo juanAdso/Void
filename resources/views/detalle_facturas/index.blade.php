@@ -21,21 +21,15 @@
 
         </div>
 
-        @if (session('store'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('store') }}
+        @if (session('success'))
+            <div class="mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-800">
+                {{ session('success') }}
             </div>
         @endif
 
-        @if (session('edit'))
-            <div class="bg-yellow-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('edit') }}
-            </div>
-        @endif
-
-        @if (session('delete'))
-            <div class="bg-red-100 border border-red-400 text-red-500 px-4 py-3 rounded mb-4">
-                {{ session('delete') }}
+        @if (session('error'))
+            <div class="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-800">
+                {{ session('error') }}
             </div>
         @endif
 
