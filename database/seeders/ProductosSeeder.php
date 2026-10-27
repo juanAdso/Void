@@ -20,15 +20,6 @@ class ProductosSeeder extends Seeder
             throw new RuntimeException('Ejecuta TiendaSeeder antes de ProductosSeeder.');
         }
 
-        // Si ya hay productos, asigna tienda a los registros antiguos que aún no tengan una.
-        Productos::query()
-            ->whereNull('id_tienda')
-            ->get()
-            ->each(function (Productos $producto): void {
-                $producto->id_tienda = Tienda::query()->inRandomOrder()->value('id');
-                $producto->save();
-            });
-
         if (Productos::exists()) {
             return;
         }
