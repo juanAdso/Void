@@ -10,29 +10,21 @@
         <x-stat-card
             label="Total de usuarios"
             :value="number_format($totalUsers)"
-            change="+12.4%"
-            trend="up"
             icon="users"
         />
         <x-stat-card
             label="Total de productos"
             :value="number_format($totalProducts)"
-            change="+4.1%"
-            trend="up"
             icon="box"
         />
         <x-stat-card
             label="Ventas del mes"
             :value="number_format($totalSales)"
-            change="-2.3%"
-            trend="down"
             icon="chart"
         />
         <x-stat-card
             label="Ingresos"
             :value="'$' . number_format($totalRevenue, 2)"
-            change="+8.7%"
-            trend="up"
             icon="tag"
         />
     </div>
