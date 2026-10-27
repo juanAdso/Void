@@ -88,16 +88,18 @@
                         @foreach ($facturas as $factura)
                             <tr class="text-center hover:bg-gray-50">
                                 <td class="border px-4 py-2">{{ $factura->id }}</td>
-                                <td class="border px-4 py-2">{{ $factura->cliente->nombre}}</td>
+                                <td class="border px-4 py-2">{{ $factura->cliente?->nombre ?? 'Cliente eliminado' }} {{ $factura->cliente?->apellido ?? '' }}</td>
                                 <td class="border px-4 py-2">{{ $factura->fecha }}</td>
                                 <td class="border px-4 py-2">{{ $factura->subtotal }}</td>
                                 <td class="border px-4 py-2">{{ $factura->iva }}</td>
                                 <td class="border px-4 py-2">{{ $factura->total }}</td>
                                 <td class="border px-4 py-2">
-                                    @if ($factura->estado)
-                                        <span class="bg-green-500 text-white px-2 py-1 rounded">Activo</span>
+                                    @if ($factura->estado === 'pagada')
+                                        <span class="rounded bg-green-100 px-2 py-1 text-green-800">Pagada</span>
+                                    @elseif ($factura->estado === 'pendiente')
+                                        <span class="rounded bg-yellow-100 px-2 py-1 text-yellow-800">Pendiente</span>
                                     @else
-                                        <span class="bg-red-500 text-white px-2 py-1 rounded">Inactivo</span>
+                                        <span class="rounded bg-red-100 px-2 py-1 text-red-800">Anulada</span>
                                     @endif
                                 </td>
                                 
