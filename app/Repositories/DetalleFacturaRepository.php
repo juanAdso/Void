@@ -19,6 +19,14 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     public function guardar(array $datos)
     {
         return DB::transaction(function () use ($datos) {
+            $factura = Facturas::query()->lockForUpdate()->findOrFail($datos['id_factura']);
+
+            if ($factura->estado === 'anulada') {
+                throw ValidationException::withMessages([
+                    'id_factura' => 'No se pueden agregar productos a una factura anulada.',
+                ]);
+            }
+
             $producto = Productos::query()->lockForUpdate()->findOrFail($datos['id_producto']);
             $cantidad = (int) $datos['cantidad'];
 
@@ -30,7 +38,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             $precio = (float) $datos['precio_unitario'];
             $detalle = DetalleFactura::create([
-                'id_factura' => $datos['id_factura'],
+                'id_factura' => $factura->id,
                 'id_producto' => $producto->id,
                 'cantidad' => $cantidad,
                 'precio_unitario' => $precio,
@@ -38,7 +46,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             ]);
 
             $producto->decrement('stock', $cantidad);
-            $this->recalcularFactura((int) $detalle->id_factura);
+            $this->recalcularFactura((int) $factura->id);
 
             return $detalle;
         });
@@ -48,12 +56,15 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     {
         return DB::transaction(function () use ($id) {
             $detalle = DetalleFactura::query()->lockForUpdate()->findOrFail($id);
+            $factura = Facturas::query()->lockForUpdate()->findOrFail($detalle->id_factura);
             $producto = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
-            $facturaId = (int) $detalle->id_factura;
 
-            $producto->increment('stock', (int) $detalle->cantidad);
+            if ($factura->estado !== 'anulada') {
+                $producto->increment('stock', (int) $detalle->cantidad);
+            }
+
             $detalle->delete();
-            $this->recalcularFactura($facturaId);
+            $this->recalcularFactura((int) $factura->id);
 
             return true;
         });
@@ -68,17 +79,32 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     {
         return DB::transaction(function () use ($id, $datos) {
             $detalle = DetalleFactura::query()->lockForUpdate()->findOrFail($id);
-            $facturaAnterior = (int) $detalle->id_factura;
+            $facturaAnterior = Facturas::query()->lockForUpdate()->findOrFail($detalle->id_factura);
+            $facturaNueva = (int) $datos['id_factura'] === (int) $facturaAnterior->id
+                ? $facturaAnterior
+                : Facturas::query()->lockForUpdate()->findOrFail($datos['id_factura']);
+
+            if ($facturaNueva->estado === 'anulada') {
+                throw ValidationException::withMessages([
+                    'id_factura' => 'No se pueden mover productos a una factura anulada.',
+                ]);
+            }
+
             $productoAnterior = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
-            $cantidadAnterior = (int) $detalle->cantidad;
             $productoNuevoId = (int) $datos['id_producto'];
+            $productoNuevo = $productoNuevoId === (int) $productoAnterior->id
+                ? $productoAnterior
+                : Productos::query()->lockForUpdate()->findOrFail($productoNuevoId);
+
+            $cantidadAnterior = (int) $detalle->cantidad;
             $cantidadNueva = (int) $datos['cantidad'];
 
-            $productoAnterior->increment('stock', $cantidadAnterior);
-
-            $productoNuevo = $productoNuevoId === (int) $productoAnterior->id
-                ? $productoAnterior->refresh()
-                : Productos::query()->lockForUpdate()->findOrFail($productoNuevoId);
+            if ($facturaAnterior->estado !== 'anulada') {
+                $productoAnterior->increment('stock', $cantidadAnterior);
+                if ($productoNuevoId === (int) $productoAnterior->id) {
+                    $productoNuevo->refresh();
+                }
+            }
 
             if ($productoNuevo->stock < $cantidadNueva) {
                 throw ValidationException::withMessages([
@@ -88,17 +114,18 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             $productoNuevo->decrement('stock', $cantidadNueva);
             $precio = (float) $datos['precio_unitario'];
+
             $detalle->update([
-                'id_factura' => $datos['id_factura'],
+                'id_factura' => $facturaNueva->id,
                 'id_producto' => $productoNuevoId,
                 'cantidad' => $cantidadNueva,
                 'precio_unitario' => $precio,
                 'subtotal' => round($cantidadNueva * $precio, 2),
             ]);
 
-            $this->recalcularFactura($facturaAnterior);
-            if ((int) $datos['id_factura'] !== $facturaAnterior) {
-                $this->recalcularFactura((int) $datos['id_factura']);
+            $this->recalcularFactura((int) $facturaAnterior->id);
+            if ((int) $facturaNueva->id !== (int) $facturaAnterior->id) {
+                $this->recalcularFactura((int) $facturaNueva->id);
             }
 
             return $detalle->refresh();
