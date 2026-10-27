@@ -8,65 +8,43 @@ use App\Services\ClienteService;
 
 class ClienteController extends Controller
 {
-    private ClienteService $clienteService;
-
-    public function __construct(ClienteService $clienteService)
-    {
-        $this->clienteService = $clienteService;
-    }
+    public function __construct(private ClienteService $clienteService) {}
 
     public function index()
     {
         $clientes = $this->clienteService->listarTodo();
-
         return view('clientes.index', compact('clientes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('clientes.crear');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreClienteRequest $request)
     {
         $this->clienteService->guardar($request->validated());
-
-        return redirect()->route('cliente.index')->with('success', 'Cliente creado correctamente');
+        return redirect()->route('cliente.index')->with('success', 'Cliente creado correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(int $id)
     {
         $cliente = $this->clienteService->buscarPorId($id);
-
         return view('clientes.editar', compact('cliente'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(int $id, UpdateClienteRequest $request)
     {
         $this->clienteService->actualizar($id, $request->validated());
-
-        return redirect()->route('cliente.index')->with('success', 'Cliente actualizado correctamente');
+        return redirect()->route('cliente.index')->with('success', 'Cliente actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(int $id)
     {
-        $this->clienteService->eliminar($id);
+        if (!$this->clienteService->eliminar($id)) {
+            return redirect()->route('cliente.index')->with('error', 'No se puede eliminar un cliente que tiene facturas asociadas.');
+        }
 
-        return redirect()->route('cliente.index')->with('success', 'Cliente eliminado correctamente');
+        return redirect()->route('cliente.index')->with('success', 'Cliente eliminado correctamente.');
     }
 }
