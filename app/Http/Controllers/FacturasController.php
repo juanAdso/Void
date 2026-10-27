@@ -28,8 +28,12 @@ class FacturasController extends Controller
 
     public function store(StoreFacturasRequest $request)
     {
-        $this->facturasService->guardar($request->validated());
-        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.');
+        $datos = $request->validated();
+        $datos['subtotal'] = 0;
+        $datos['iva'] = 0;
+        $datos['total'] = 0;
+        $this->facturasService->guardar($datos);
+        return redirect()->route('facturas.index')->with('success', 'Factura creada. Ahora agrega sus productos desde Detalle de facturas.');
     }
 
     public function edit(int $id)
