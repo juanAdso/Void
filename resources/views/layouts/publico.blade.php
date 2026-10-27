@@ -52,7 +52,7 @@
             </div>
 
             {{-- Acceso administrativo temporal --}}
-            <a href="{{ route('dashboard.index') }}"
+            <a href="{{ route('login') }}"
                class="shrink-0 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700">
                 Iniciar sesión
             </a>
