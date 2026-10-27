@@ -26,7 +26,7 @@
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Cliente</label>
-                    <select name="id_cliente" class="w-full border rounded px-3 py-2">
+                    <select name="id_cliente" required class="w-full border rounded px-3 py-2">
                         @foreach($clientes as $cliente)
                             <option value="{{ $cliente->id }}" {{ $facturas->id_cliente == $cliente->id ? 'selected' : '' }}>
                                 {{ $cliente->nombre }}
@@ -57,9 +57,10 @@
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Estado</label>
-                    <select name="estado" class="w-full border rounded px-3 py-2">
-                        <option value="1" {{ $facturas->estado == '1' || $facturas->estado == 'Activo' ? 'selected' : '' }}>Activo</option>
-                        <option value="0" {{ $facturas->estado == '0' || $facturas->estado == 'Inactivo' ? 'selected' : '' }}>Inactivo</option>
+                    <select name="estado" required class="w-full border rounded px-3 py-2">
+                        <option value="pendiente" @selected(old('estado', $facturas->estado) === 'pendiente')>Pendiente</option>
+                        <option value="pagada" @selected(old('estado', $facturas->estado) === 'pagada')>Pagada</option>
+                        <option value="anulada" @selected(old('estado', $facturas->estado) === 'anulada')>Anulada</option>
                     </select>
                 </div>
 
