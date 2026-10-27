@@ -39,7 +39,9 @@ class DetalleFacturaSeeder extends Seeder
                         'subtotal' => round($cantidad * $precio, 2),
                     ]);
 
-                    $producto->decrement('stock', $cantidad);
+                    if ($factura->estado !== 'anulada') {
+                        $producto->decrement('stock', $cantidad);
+                    }
                 }
             }
 
