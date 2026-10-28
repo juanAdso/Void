@@ -10,20 +10,28 @@ class Productos extends Model
     use HasFactory;
 
     protected $table = 'productos';
+    protected $primaryKey = 'id_producto';
 
     protected $fillable = [
+        'id_categoria',
         'nombre',
         'descripcion',
         'precio',
         'stock',
         'imagen',
         'estado',
-        'id_categoria',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'precio' => 'decimal:2',
+            'estado' => 'boolean',
+        ];
+    }
 
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria');
+        return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
 }
-
