@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('facturas', function (Blueprint $table) {
-            $table->id('id_factura');
+            $table->id();
             $table->unsignedBigInteger('id_cliente');
             $table->unsignedBigInteger('id_usuario');
             $table->date('fecha');
@@ -20,11 +20,11 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('id_cliente')
-                ->references('id_cliente')
+                ->references('id')
                 ->on('clientes');
 
             $table->foreign('id_usuario')
-                ->references('id_usuario')
+                ->references('id')
                 ->on('usuarios');
         });
     }
