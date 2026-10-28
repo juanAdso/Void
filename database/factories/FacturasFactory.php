@@ -13,14 +13,14 @@ class FacturasFactory extends Factory
 
     public function definition(): array
     {
-        $cliente = Cliente::query()->inRandomOrder()->first();
+        $cliente = Cliente::query()->inRandomOrder()->first();\n        $usuario = User::query()->where('estado', true)->inRandomOrder()->first();
 
-        if (!$cliente) {
+        if (!$cliente || !$usuario) {
             throw new RuntimeException('Debes crear los clientes antes de generar facturas.');
         }
 
         return [
-            'id_cliente' => $cliente->getKey(),
+            'id_cliente' => $cliente->getKey(),\n            'id_usuario' => $usuario->getKey(),
             'fecha' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
             'subtotal' => 0,
             'iva' => 0,
