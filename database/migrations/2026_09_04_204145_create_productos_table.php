@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('productos', function (Blueprint $table) {
-            $table->id('id_producto');
+            $table->id();
             $table->unsignedBigInteger('id_categoria');
             $table->string('nombre', 150);
             $table->text('descripcion')->nullable();
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('id_categoria')
-                ->references('id_categoria')
+                ->references('id')
                 ->on('categorias');
         });
     }
