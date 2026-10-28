@@ -10,7 +10,7 @@ class ProductosRepository implements ProductoRepositoryInterface
 {
     public function listarTodo()
     {
-        return Productos::with(['categoria', 'tienda'])->orderBy('id')->get();
+        return Productos::with('categoria')->orderBy('id_producto')->get();
     }
 
     public function guardar(array $datos)
@@ -31,7 +31,7 @@ class ProductosRepository implements ProductoRepositoryInterface
 
     public function buscarPorId(int $id)
     {
-        return Productos::with(['categoria', 'tienda'])->findOrFail($id);
+        return Productos::with('categoria')->findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
