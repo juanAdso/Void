@@ -51,16 +51,7 @@
                     <select id="id_categoria" name="id_categoria" required class="w-full border rounded px-3 py-2">
                         <option value="">Selecciona una categoría</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id }}" @selected(old('id_categoria') == $categoria->id)>{{ $categoria->nombre_categoria }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-5">
-                    <label for="id_tienda" class="block mb-2 font-semibold">Tienda</label>
-                    <select id="id_tienda" name="id_tienda" required class="w-full border rounded px-3 py-2">
-                        <option value="">Selecciona una tienda</option>
-                        @foreach($tiendas as $tienda)
-                            <option value="{{ $tienda->id }}" @selected(old('id_tienda') == $tienda->id)>{{ $tienda->nombre }}</option>
+                            <option value="{{ $categoria->id_categoria }}" @selected(old('id_categoria') == $categoria->id_categoria)>{{ $categoria->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
