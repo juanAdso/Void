@@ -16,13 +16,13 @@ class AuthController extends Controller
     public function store(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'correo' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'El correo o la contraseña son incorrectos.',
+                'correo' => 'El correo o la contraseña son incorrectos.',
             ]);
         }
 
