@@ -11,7 +11,7 @@
                     <h1 class="text-3xl font-bold text-slate-800">{{ $tienda->nombre }}</h1>
                     <p class="mt-1 text-sm text-slate-500">Información y datos de contacto de la tienda.</p>
                 </div>
-                <a href="{{ route('tiendas.edit', $tienda->id) }}" class="inline-flex justify-center rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">Editar tienda</a>
+                <a href="{{ route('tiendas.edit', $tienda->id_tienda) }}" class="inline-flex justify-center rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">Editar tienda</a>
             </div>
         </div>
 
