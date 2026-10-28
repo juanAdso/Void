@@ -15,8 +15,8 @@ class DetalleFacturaSeeder extends Seeder
             throw new RuntimeException('Ejecuta FacturasSeeder antes de DetalleFacturaSeeder.');
         }
 
-        foreach (Facturas::query()->orderBy('id')->get() as $factura) {
-            if (!$factura->detalle_facturas()->exists()) {
+        foreach (Facturas::query()->orderBy('id_detalle_factura')->get() as $factura) {
+            if (!$factura->detalle_factura()->exists()) {
                 $cantidadDetalles = fake()->numberBetween(1, 4);
 
                 for ($i = 0; $i < $cantidadDetalles; $i++) {
@@ -32,7 +32,7 @@ class DetalleFacturaSeeder extends Seeder
                     $cantidad = fake()->numberBetween(1, min(3, (int) $producto->stock));
                     $precio = (float) $producto->precio;
 
-                    $factura->detalle_facturas()->create([
+                    $factura->detalle_factura()->create([
                         'id_producto' => $producto->getKey(),
                         'cantidad' => $cantidad,
                         'precio_unitario' => $precio,
@@ -45,7 +45,7 @@ class DetalleFacturaSeeder extends Seeder
                 }
             }
 
-            $subtotal = (float) $factura->detalle_facturas()->sum('subtotal');
+            $subtotal = (float) $factura->detalle_factura()->sum('subtotal');
             $iva = round($subtotal * 0.19, 2);
 
             $factura->update([
