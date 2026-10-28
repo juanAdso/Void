@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Categoria;
 use App\Models\Productos;
-use App\Models\Tienda;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
@@ -14,10 +13,6 @@ class ProductosSeeder extends Seeder
     {
         if (!Categoria::exists()) {
             throw new RuntimeException('Ejecuta CategoriaSeeder antes de ProductosSeeder.');
-        }
-
-        if (!Tienda::exists()) {
-            throw new RuntimeException('Ejecuta TiendaSeeder antes de ProductosSeeder.');
         }
 
         if (Productos::exists()) {
