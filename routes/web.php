@@ -19,11 +19,9 @@ $catalogo = function (Request $request) {
     $categorias = Categoria::query()->where('estado', true)->orderBy('nombre_categoria')->get();
 
     $productos = Productos::query()
-        ->with(['categoria', 'tienda'])
+        ->with('categoria')
         ->where('productos.estado', true)
         ->where('productos.stock', '>', 0)
-        ->whereHas('tienda', fn ($query) => $query->where('estado', true))
-        ->when($request->filled('tienda'), fn ($query) => $query->where('productos.id_tienda', $request->integer('tienda')))
         ->when($request->filled('categoria'), fn ($query) => $query->where('productos.id_categoria', $request->integer('categoria')))
         ->when($request->filled('buscar'), function ($query) use ($request) {
             $buscar = trim((string) $request->input('buscar'));
