@@ -86,7 +86,7 @@
 
                 @foreach($tiendas as $tienda)
 
-                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id }}"
+                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id_tienda }}"
                        class="group rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg">
 
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-xl font-bold text-violet-700">
@@ -205,7 +205,7 @@
                         @foreach($categorias as $categoria)
                             <option value="{{ $categoria->id_categoria }}"
                                 @selected((string) request('categoria') === (string) $categoria->id_categoria)>
-                                {{ $categoria->nombre_categoria }}
+                                {{ $categoria->nombre }}
                             </option>
                         @endforeach
 
@@ -244,7 +244,7 @@
                             <div class="p-5">
 
                                 <p class="text-xs font-semibold uppercase tracking-wider text-violet-600">
-                                    {{ $producto->categoria->nombre_categoria ?? 'General' }}
+                                    {{ $producto->categoria->nombre ?? 'General' }}
                                 </p>
 
                                 <h3 class="mt-2 text-lg font-bold">
