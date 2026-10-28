@@ -75,7 +75,7 @@
 
                 @foreach ($detalle_facturas as $detalle_factura)
                     <tr class="text-center hover:bg-gray-50">
-                        <td class="border px-4 py-2">{{ $detalle_factura->id }}</td>
+                        <td class="border px-4 py-2">{{ $detalle_factura->id_detalle_factura }}</td>
                         <td class="border px-4 py-2">{{ $detalle_factura->factura?->id }}</td>
                         <td class="border px-4 py-2">{{ $detalle_factura->producto?->nombre }}</td>
                         <td class="border px-4 py-2">{{ $detalle_factura->cantidad }}</td>
@@ -83,10 +83,10 @@
                         <td class="border px-4 py-2">{{ $detalle_factura->subtotal }}</td>
 
                         <td class="border px-4 py-2 flex justify-center gap-2">
-                            <a href="{{ route('detalle_facturas.edit', $detalle_factura->id) }}"
+                            <a href="{{ route('detalle_facturas.edit', $detalle_factura->id_detalle_factura) }}"
                                 class="bg-purple-400 hover:bg-purple-600 text-white rounded px-2 py-2">Editar</a>
 
-                            <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id) }}"
+                            <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id_detalle_factura) }}"
                                 method="post" class="inline-block">
                                 @csrf
                                 @method('DELETE')
