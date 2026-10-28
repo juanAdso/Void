@@ -28,7 +28,7 @@
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Categoría</label>
-                    <input type="text" name="nombre_categoria" value="{{ old('nombre_categoria') }}" required maxlength="100" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre') }}" required maxlength="100" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
