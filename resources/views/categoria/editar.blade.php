@@ -21,13 +21,13 @@
                 </div>
             @endif
 
-            <form action="{{ route('categoria.update', $categoria->id) }}" method="post">
+            <form action="{{ route('categoria.update', $categoria->id_categoria) }}" method="post">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Categoria</label>
-                    <input type="text" name="nombre_categoria" value="{{ old('nombre_categoria', $categoria->nombre_categoria) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre', $categoria->nombre) }}" class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
