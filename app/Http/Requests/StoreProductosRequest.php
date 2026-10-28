@@ -19,8 +19,7 @@ class StoreProductosRequest extends FormRequest
             'precio' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'estado' => 'required|boolean',
-            'id_categoria' => 'required|integer|exists:categorias,id',
-            'id_tienda' => 'required|integer|exists:tiendas,id',
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'imagen' => 'nullable|string|max:255',
         ];
     }
