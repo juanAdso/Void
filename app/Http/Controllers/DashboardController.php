@@ -43,7 +43,7 @@ class DashboardController extends Controller
                 ->withCount('productos')
                 ->orderByDesc('productos_count')
                 ->limit(5)
-                ->pluck('nombre_categoria')
+                ->pluck('nombre')
                 ->values()
                 ->all(),
             'categoryValues' => Categoria::query()
@@ -58,17 +58,17 @@ class DashboardController extends Controller
 
         $recentActivity = Facturas::with('cliente')
             ->latest('fecha')
-            ->latest('id')
+            ->latest('id_factura')
             ->limit(6)
             ->get()
             ->map(function (Facturas $factura) {
                 $nombre = trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? ''));
 
                 return [
-                    'id' => $factura->id,
+                    'id' => $factura->id_factura,
                     'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($nombre ?: 'Cliente'),
                     'name' => $nombre ?: 'Cliente eliminado',
-                    'description' => 'Factura #' . $factura->id . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
+                    'description' => 'Factura #' . $factura->id_factura . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
                     'status' => ucfirst((string) $factura->estado),
                     'date' => $factura->fecha?->format('d/m/Y') ?? 'Sin fecha',
                 ];
