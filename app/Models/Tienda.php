@@ -10,7 +10,6 @@ class Tienda extends Model
     use HasFactory;
 
     protected $table = 'tiendas';
-    protected $primaryKey = 'id_tienda';
 
     protected $fillable = [
         'nombre',
