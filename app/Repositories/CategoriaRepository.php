@@ -9,7 +9,7 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 {
     public function listarTodo()
     {
-        return Categoria::withCount('productos')->orderBy('id')->get();
+        return Categoria::withCount('productos')->orderBy('id_categoria')->get();
     }
 
     public function guardar(array $datos)
