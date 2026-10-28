@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (!Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
                 'correo' => 'El correo o la contraseña son incorrectos.',
             ]);
