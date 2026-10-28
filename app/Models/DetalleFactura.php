@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetalleFactura extends Model
 {
-    /** @use HasFactory<\Database\Factories\DetalleFacturaFactory> */
     use HasFactory;
-    
-    protected $table = 'detalle_facturas';
+
+    protected $table = 'detalle_factura';
+    protected $primaryKey = 'id_detalle_factura';
+
     protected $fillable = [
         'id_factura',
         'id_producto',
@@ -21,11 +22,11 @@ class DetalleFactura extends Model
 
     public function factura()
     {
-        return $this->belongsTo(Facturas::class, 'id_factura');
+        return $this->belongsTo(Facturas::class, 'id_factura', 'id_factura');
     }
 
     public function producto()
     {
-        return $this->belongsTo(Productos::class, 'id_producto');
+        return $this->belongsTo(Productos::class, 'id_producto', 'id_producto');
     }
 }
