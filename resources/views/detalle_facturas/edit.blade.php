@@ -22,7 +22,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('detalle_facturas.update', $detalle_factura->id) }}" method="post">
+            <form action="{{ route('detalle_facturas.update', $detalle_factura->id_detalle_factura) }}" method="post">
                 @csrf
                 @method('PUT')
 
@@ -30,7 +30,7 @@
                     <label for="" class="block mb-2 font-semibold">Factura</label>
                     <select name="id_factura" required class="w-full border rounded px-3 py-2">
                         @foreach($facturas as $factura)
-                            <option value="{{ $factura->id }}" {{ $detalle_factura->id_factura == $factura->id ? 'selected' : '' }}>Factura #{{ $factura->id }}</option>
+                            <option value="{{ $factura->id_factura_factura }}" {{ $detalle_factura->id_detalle_factura_factura == $factura->id_factura_factura ? 'selected' : '' }}>Factura #{{ $factura->id_factura_factura }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -39,7 +39,7 @@
                     <label for="" class="block mb-2 font-semibold">Producto</label>
                     <select name="id_producto" required class="w-full border rounded px-3 py-2">
                         @foreach($productos as $producto)
-                            <option value="{{ $producto->id }}" {{ $detalle_factura->id_producto == $producto->id ? 'selected' : '' }}>{{ $producto->nombre }}</option>
+                            <option value="{{ $producto->id_producto }}" {{ $detalle_factura->id_detalle_factura_producto == $producto->id_producto ? 'selected' : '' }}>{{ $producto->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
