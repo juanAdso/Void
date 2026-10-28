@@ -16,7 +16,7 @@ use App\Models\Tienda;
 
 $catalogo = function (Request $request) {
     $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
-    $categorias = Categoria::query()->where('estado', true)->orderBy('nombre_categoria')->get();
+    $categorias = Categoria::query()->where('estado', true)->orderBy('nombre')->get();
 
     $productos = Productos::query()
         ->with('categoria')
