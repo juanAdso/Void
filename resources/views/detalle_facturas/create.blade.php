@@ -31,7 +31,7 @@
                     <label for="" class="block mb-2 font-semibold">Factura</label>
                     <select name="id_factura" required class="w-full border rounded px-3 py-2">
                         @foreach($facturas as $factura)
-                            <option value="{{ $factura->id }}" @selected(old('id_factura') == $factura->id)>Factura #{{ $factura->id }}</option>
+                            <option value="{{ $factura->id_factura_factura }}" @selected(old('id_factura') == $factura->id_factura_factura)>Factura #{{ $factura->id_factura_factura }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -40,7 +40,7 @@
                     <label for="" class="block mb-2 font-semibold">Producto</label>
                     <select name="id_producto" required class="w-full border rounded px-3 py-2">
                         @foreach($productos as $producto)
-                            <option value="{{ $producto->id }}" @selected(old('id_producto') == $producto->id)>{{ $producto->nombre }}</option>
+                            <option value="{{ $producto->id_producto }}" @selected(old('id_producto') == $producto->id_producto)>{{ $producto->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
