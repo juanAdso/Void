@@ -20,15 +20,11 @@
             </div>
         @endif
 
-        @if (session('status'))
-            <div class="mt-5 rounded-lg bg-green-50 p-3 text-sm text-green-700">{{ session('status') }}</div>
-        @endif
-
         <form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-5">
             @csrf
             <div>
-                <label for="email" class="mb-2 block text-sm font-semibold">Correo electrónico</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="username" required autofocus class="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100">
+                <label for="correo" class="mb-2 block text-sm font-semibold">Correo electrónico</label>
+                <input id="correo" name="correo" type="email" value="{{ old('correo') }}" autocomplete="username" required autofocus class="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100">
             </div>
             <div>
                 <label for="password" class="mb-2 block text-sm font-semibold">Contraseña</label>
