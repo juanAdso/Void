@@ -13,7 +13,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
     public function listarTodo()
     {
-        return DetalleFactura::with(['factura.cliente', 'producto'])->orderBy('id')->get();
+        return DetalleFactura::with(['factura.cliente', 'producto'])->orderBy('id_detalle_factura')->get();
     }
 
     public function guardar(array $datos)
@@ -38,15 +38,15 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             $precio = (float) $datos['precio_unitario'];
             $detalle = DetalleFactura::create([
-                'id_factura' => $factura->id,
-                'id_producto' => $producto->id,
+                'id_factura' => $factura->id_factura,
+                'id_producto' => $producto->id_producto,
                 'cantidad' => $cantidad,
                 'precio_unitario' => $precio,
                 'subtotal' => round($cantidad * $precio, 2),
             ]);
 
             $producto->decrement('stock', $cantidad);
-            $this->recalcularFactura((int) $factura->id);
+            $this->recalcularFactura((int) $factura->id_factura);
 
             return $detalle;
         });
@@ -64,7 +64,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             }
 
             $detalle->delete();
-            $this->recalcularFactura((int) $factura->id);
+            $this->recalcularFactura((int) $factura->id_factura);
 
             return true;
         });
@@ -80,7 +80,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         return DB::transaction(function () use ($id, $datos) {
             $detalle = DetalleFactura::query()->lockForUpdate()->findOrFail($id);
             $facturaAnterior = Facturas::query()->lockForUpdate()->findOrFail($detalle->id_factura);
-            $facturaNueva = (int) $datos['id_factura'] === (int) $facturaAnterior->id
+            $facturaNueva = (int) $datos['id_factura'] === (int) $facturaAnterior->id_factura
                 ? $facturaAnterior
                 : Facturas::query()->lockForUpdate()->findOrFail($datos['id_factura']);
 
@@ -92,7 +92,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             $productoAnterior = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
             $productoNuevoId = (int) $datos['id_producto'];
-            $productoNuevo = $productoNuevoId === (int) $productoAnterior->id
+            $productoNuevo = $productoNuevoId === (int) $productoAnterior->id_producto
                 ? $productoAnterior
                 : Productos::query()->lockForUpdate()->findOrFail($productoNuevoId);
 
@@ -101,7 +101,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             if ($facturaAnterior->estado !== 'anulada') {
                 $productoAnterior->increment('stock', $cantidadAnterior);
-                if ($productoNuevoId === (int) $productoAnterior->id) {
+                if ($productoNuevoId === (int) $productoAnterior->id_producto) {
                     $productoNuevo->refresh();
                 }
             }
@@ -116,16 +116,16 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             $precio = (float) $datos['precio_unitario'];
 
             $detalle->update([
-                'id_factura' => $facturaNueva->id,
+                'id_factura' => $facturaNueva->id_factura,
                 'id_producto' => $productoNuevoId,
                 'cantidad' => $cantidadNueva,
                 'precio_unitario' => $precio,
                 'subtotal' => round($cantidadNueva * $precio, 2),
             ]);
 
-            $this->recalcularFactura((int) $facturaAnterior->id);
-            if ((int) $facturaNueva->id !== (int) $facturaAnterior->id) {
-                $this->recalcularFactura((int) $facturaNueva->id);
+            $this->recalcularFactura((int) $facturaAnterior->id_factura);
+            if ((int) $facturaNueva->id_factura !== (int) $facturaAnterior->id_factura) {
+                $this->recalcularFactura((int) $facturaNueva->id_factura);
             }
 
             return $detalle->refresh();
@@ -135,7 +135,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     private function recalcularFactura(int $facturaId): void
     {
         $factura = Facturas::query()->lockForUpdate()->findOrFail($facturaId);
-        $subtotal = (float) $factura->detalle_facturas()->sum('subtotal');
+        $subtotal = (float) $factura->detalle_factura()->sum('subtotal');
         $iva = round($subtotal * 0.19, 2);
 
         $factura->update([
