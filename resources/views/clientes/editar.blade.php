@@ -21,7 +21,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('cliente.update', $cliente->id) }}" method="post">
+            <form action="{{ route('cliente.update', $cliente->id_cliente) }}" method="post">
                 @csrf
                 @method('PUT')
 
