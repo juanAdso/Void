@@ -12,6 +12,18 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        User::firstOrCreate(
+            ['correo' => 'test@example.com'],
+            [
+                'nombre' => 'Usuario',
+                'apellido' => 'Prueba',
+                'documento' => '1000000000',
+                'password' => bcrypt('password'),
+                'rol' => 'administrador',
+                'estado' => true,
+            ]
+        );
+
         $this->call([
             CategoriaSeeder::class,
             TiendaSeeder::class,
@@ -20,13 +32,5 @@ class DatabaseSeeder extends Seeder
             FacturasSeeder::class,
             DetalleFacturaSeeder::class,
         ]);
-
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => bcrypt('password'),
-            ]
-        );
     }
 }
