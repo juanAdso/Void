@@ -17,6 +17,8 @@ class FacturasRepository implements FacturasRepositoryInterface
 
     public function guardar(array $datos)
     {
+        $datos['id_usuario'] = auth()->id();
+
         return Facturas::create($datos);
     }
 
