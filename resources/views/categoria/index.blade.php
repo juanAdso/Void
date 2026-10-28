@@ -80,8 +80,8 @@
 
                 @foreach ($categorias as $categoria)
                     <tr class="text-center hover:bg-gray-50">
-                        <td class="border px-4 py-2">{{ $categoria->id}}</td>
-                        <td class="border px-4 py-2">{{ $categoria->nombre_categoria}}</td>
+                        <td class="border px-4 py-2">{{ $categoria->id_categoria}}</td>
+                        <td class="border px-4 py-2">{{ $categoria->nombre}}</td>
                         <td class="border px-4 py-2">{{ $categoria->descripcion}}</td>
                         <td class="border px-4 py-2">
                             @if ($categoria->estado)
@@ -91,8 +91,8 @@
                             @endif
                         </td>
                         <td class="border px-4 py-2">
-                            <a href="{{ route('categoria.edit', $categoria->id)}}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                            <form action="{{ route('categoria.destroy',$categoria->id)}}" method="post">
+                            <a href="{{ route('categoria.edit', $categoria->id_categoria)}}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
+                            <form action="{{ route('categoria.destroy',$categoria->id_categoria)}}" method="post">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-2">Eliminar</button>                         
