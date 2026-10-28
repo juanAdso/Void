@@ -86,7 +86,7 @@
 
                 @foreach($tiendas as $tienda)
 
-                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id_tienda }}"
+                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id_tienda_tienda }}"
                        class="group rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg">
 
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-xl font-bold text-violet-700">
