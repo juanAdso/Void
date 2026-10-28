@@ -22,7 +22,7 @@
         @endif
 
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <form action="{{ route('tiendas.update', $tienda->id) }}" method="POST" class="space-y-6">
+            <form action="{{ route('tiendas.update', $tienda->id_tienda) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
                 @include('tiendas._form', ['tienda' => $tienda])
