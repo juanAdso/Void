@@ -14,8 +14,8 @@ class StoreDetalleFacturaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_factura' => 'required|integer|exists:facturas,id',
-            'id_producto' => 'required|integer|exists:productos,id',
+            'id_factura' => 'required|integer|exists:facturas,id_factura',
+            'id_producto' => 'required|integer|exists:productos,id_producto',
             'cantidad' => 'required|integer|min:1',
             'precio_unitario' => 'required|numeric|min:0',
         ];
