@@ -12,7 +12,7 @@ class FacturasRepository implements FacturasRepositoryInterface
 {
     public function listarTodo()
     {
-        return Facturas::with(['cliente', 'detalle_facturas'])->orderByDesc('fecha')->get();
+        return Facturas::with(['cliente', 'detalle_factura'])->orderByDesc('fecha')->get();
     }
 
     public function guardar(array $datos)
@@ -24,7 +24,7 @@ class FacturasRepository implements FacturasRepositoryInterface
     {
         $factura = Facturas::findOrFail($id);
 
-        if ($factura->detalle_facturas()->exists()) {
+        if ($factura->detalle_factura()->exists()) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class FacturasRepository implements FacturasRepositoryInterface
 
     public function buscarPorId(int $id)
     {
-        return Facturas::with(['cliente', 'detalle_facturas'])->findOrFail($id);
+        return Facturas::with(['cliente', 'detalle_factura'])->findOrFail($id);
     }
 
     public function actualizar(int $id, array $datos)
@@ -42,7 +42,7 @@ class FacturasRepository implements FacturasRepositoryInterface
             $factura = Facturas::query()->lockForUpdate()->findOrFail($id);
             $estadoAnterior = (string) $factura->estado;
             $estadoNuevo = (string) $datos['estado'];
-            $detalles = $factura->detalle_facturas()->get();
+            $detalles = $factura->detalle_factura()->get();
 
             if ($estadoAnterior !== 'anulada' && $estadoNuevo === 'anulada') {
                 foreach ($detalles as $detalle) {
