@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Categoria;
 use App\Models\Productos;
-use App\Models\Tienda;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use RuntimeException;
 
@@ -15,14 +14,9 @@ class ProductosFactory extends Factory
     public function definition(): array
     {
         $categoria = Categoria::query()->inRandomOrder()->first();
-        $tienda = Tienda::query()->inRandomOrder()->first();
 
         if (!$categoria) {
             throw new RuntimeException('Debes crear las categorías antes de generar productos.');
-        }
-
-        if (!$tienda) {
-            throw new RuntimeException('Debes crear las tiendas antes de generar productos.');
         }
 
         $catalogo = [
@@ -100,7 +94,7 @@ class ProductosFactory extends Factory
             ],
         ];
 
-        $nombreCategoria = $categoria->nombre_categoria;
+        $nombreCategoria = $categoria->nombre;
         $opciones = $catalogo[$nombreCategoria] ?? [
             ['nombre' => 'Producto general', 'min' => 10000, 'max' => 150000],
         ];
@@ -114,7 +108,6 @@ class ProductosFactory extends Factory
             'imagen' => null,
             'estado' => true,
             'id_categoria' => $categoria->getKey(),
-            'id_tienda' => $tienda->getKey(),
-        ];
+                    ];
     }
 }
