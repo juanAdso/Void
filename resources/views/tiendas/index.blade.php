@@ -50,7 +50,7 @@
                         <tbody class="divide-y divide-slate-100 bg-white">
                             @foreach ($tiendas as $tienda)
                                 <tr class="transition hover:bg-slate-50">
-                                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">{{ $tienda->id }}</td>
+                                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">{{ $tienda->id_tienda }}</td>
                                     <td class="px-5 py-4">
                                         <div class="font-semibold text-slate-800">{{ $tienda->nombre }}</div>
                                         <div class="mt-1 max-w-md truncate text-sm text-slate-500">{{ $tienda->descripcion ?: 'Sin descripción' }}</div>
@@ -68,9 +68,9 @@
                                     </td>
                                     <td class="whitespace-nowrap px-5 py-4 text-right text-sm">
                                         <div class="flex justify-end gap-2">
-                                            <a href="{{ route('tiendas.show', $tienda->id) }}" class="rounded-md border border-slate-200 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">Ver</a>
-                                            <a href="{{ route('tiendas.edit', $tienda->id) }}" class="rounded-md bg-primary-600 px-3 py-1.5 font-medium text-white hover:bg-primary-700">Editar</a>
-                                            <form action="{{ route('tiendas.destroy', $tienda->id) }}" method="POST" onsubmit="return confirm('¿Deseas eliminar esta tienda?')">
+                                            <a href="{{ route('tiendas.show', $tienda->id_tienda) }}" class="rounded-md border border-slate-200 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">Ver</a>
+                                            <a href="{{ route('tiendas.edit', $tienda->id_tienda) }}" class="rounded-md bg-primary-600 px-3 py-1.5 font-medium text-white hover:bg-primary-700">Editar</a>
+                                            <form action="{{ route('tiendas.destroy', $tienda->id_tienda) }}" method="POST" onsubmit="return confirm('¿Deseas eliminar esta tienda?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50">Eliminar</button>
