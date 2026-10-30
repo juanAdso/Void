@@ -99,8 +99,8 @@
                                 <td class="border px-4 py-2">{{ $cliente->direccion }}</td>
                                 <td class="border px-4 py-2">
                                     <a
-                                        href="{{ route('cliente.edit', $cliente->id_cliente) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                                    <form action="{{ route('cliente.destroy', $cliente->id_cliente) }}" method="post" class="inline-block">
+                                        href="{{ route('cliente.edit', $cliente->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
+                                    <form action="{{ route('cliente.destroy', $cliente->id) }}" method="post" class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

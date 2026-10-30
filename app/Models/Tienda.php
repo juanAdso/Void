@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Productos;
 
 class Tienda extends Model
 {
@@ -24,5 +25,9 @@ class Tienda extends Model
     protected function casts(): array
     {
         return ['estado' => 'boolean'];
+    }
+    public function productos()
+    {
+        return $this->hasMany(Productos::class, 'id_tienda', 'id');
     }
 }

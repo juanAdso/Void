@@ -7,16 +7,19 @@
         <div class="rounded-lg bg-white p-6 shadow-lg">
             <div class="mb-6 flex items-center justify-between">
                 <h2 class="text-3xl font-bold text-gray-700">Listado de Productos</h2>
-                <a href="{{ route('productos.create') }}" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Nuevo Producto</a>
+                <a href="{{ route('productos.create') }}"
+                    class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Nuevo Producto</a>
             </div>
 
             @foreach (['success' => 'green', 'error' => 'red'] as $tipo => $color)
                 @if (session($tipo))
-                    <div class="mb-4 rounded border border-{{ $color }}-400 bg-{{ $color }}-100 px-4 py-3 text-{{ $color }}-700">{{ session($tipo) }}</div>
+                    <div
+                        class="mb-4 rounded border border-{{ $color }}-400 bg-{{ $color }}-100 px-4 py-3 text-{{ $color }}-700">
+                        {{ session($tipo) }}</div>
                 @endif
             @endforeach
 
-            @if($productos->isEmpty())
+            @if ($productos->isEmpty())
                 <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
             @else
                 <div class="overflow-x-auto">
@@ -41,7 +44,8 @@
                                     <td class="border px-4 py-2">{{ $producto->descripcion }}</td>
                                     <td class="border px-4 py-2">{{ number_format($producto->precio, 2, ',', '.') }}</td>
                                     <td class="border px-4 py-2">{{ $producto->stock }}</td>
-                                    <td class="border px-4 py-2">{{ $producto->categoria?->nombre ?? 'Sin categoría' }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->categoria?->nombre ?? 'Sin categoría' }}
+                                    </td>
                                     <td class="border px-4 py-2">
                                         @if ($producto->estado)
                                             <span class="rounded bg-green-500 px-2 py-1 text-white">Activo</span>
@@ -51,11 +55,15 @@
                                     </td>
                                     <td class="border px-4 py-2">
                                         <div class="flex justify-center gap-2">
-                                            <a href="{{ route('productos.edit', $producto->id_producto) }}" class="rounded bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">Editar</a>
-                                            <form action="{{ route('productos.destroy', $producto->id_producto) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?')">
+                                            <a href="{{ route('productos.edit', $producto->id) }}"
+                                                class="rounded bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">Editar</a>
+
+                                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST"
+                                                onsubmit="return confirm('¿Eliminar este producto?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="rounded bg-red-500 px-2 py-2 text-white hover:bg-red-600">Eliminar</button>
+                                                <button type="submit"
+                                                    class="rounded bg-red-500 px-2 py-2 text-white hover:bg-red-600">Eliminar</button>
                                             </form>
                                         </div>
                                     </td>

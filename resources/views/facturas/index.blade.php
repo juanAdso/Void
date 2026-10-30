@@ -105,8 +105,8 @@
                                 
                                 <td class="border px-4 py-2 flex justify-center gap-2">
                                     <a
-                                        href="{{ route('facturas.edit', $factura->id_factura) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                                    <form action="{{ route('facturas.destroy', $factura->id_factura) }}" method="post">
+                                        href="{{ route('facturas.edit', $factura->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
+                                    <form action="{{ route('facturas.destroy', $factura->id) }}" method="post">
                                 
                                         @csrf
                                         @method('DELETE')
