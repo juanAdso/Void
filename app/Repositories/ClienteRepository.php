@@ -9,7 +9,7 @@ class ClienteRepository implements ClienteRepositoryInterface
 {
     public function listarTodo()
     {
-        return Cliente::orderBy('id_cliente')->get();
+        return Cliente::orderBy('id')->get();
     }
 
     public function guardar(array $datos)
