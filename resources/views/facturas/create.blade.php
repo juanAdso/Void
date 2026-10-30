@@ -24,7 +24,7 @@
                     <select id="id_cliente" name="id_cliente" required class="w-full rounded border px-3 py-2">
                         <option value="">Selecciona un cliente</option>
                         @foreach ($clientes as $cliente)
-                            <option value="{{ $cliente->id_cliente }}" @selected(old('id_cliente') == $cliente->id_cliente)>{{ $cliente->nombre }} {{ $cliente->apellido }}</option>
+                            <option value="{{ $cliente->id }}" @selected(old('id_cliente') == $cliente->id)>{{ $cliente->nombre }} {{ $cliente->apellido }}</option>
                         @endforeach
                     </select>
                 </div>

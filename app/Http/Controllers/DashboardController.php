@@ -65,10 +65,10 @@ class DashboardController extends Controller
                 $nombre = trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? ''));
 
                 return [
-                    'id' => $factura->id_factura_factura,
+                    'id' => $factura->id,
                     'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($nombre ?: 'Cliente'),
                     'name' => $nombre ?: 'Cliente eliminado',
-                    'description' => 'Factura #' . $factura->id_factura_factura . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
+                    'description' => 'Factura #' . $factura->id . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
                     'status' => ucfirst((string) $factura->estado),
                     'date' => $factura->fecha?->format('d/m/Y') ?? 'Sin fecha',
                 ];

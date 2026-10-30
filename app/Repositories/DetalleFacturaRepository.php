@@ -13,7 +13,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
     public function listarTodo()
     {
-        return DetalleFactura::with(['factura.cliente', 'producto'])->orderBy('id_detalle_factura')->get();
+        return DetalleFactura::with(['factura.cliente', 'producto'])->orderBy('id')->get();
     }
 
     public function guardar(array $datos)
@@ -38,15 +38,15 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             $precio = (float) $datos['precio_unitario'];
             $detalle = DetalleFactura::create([
-                'id_factura' => $factura->id_factura,
-                'id_producto' => $producto->id_producto,
+                'id_factura' => $factura->id,
+                'id_producto' => $producto->id,
                 'cantidad' => $cantidad,
                 'precio_unitario' => $precio,
                 'subtotal' => round($cantidad * $precio, 2),
             ]);
 
             $producto->decrement('stock', $cantidad);
-            $this->recalcularFactura((int) $factura->id_factura);
+            $this->recalcularFactura((int) $factura->id);
 
             return $detalle;
         });
@@ -116,16 +116,16 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             $precio = (float) $datos['precio_unitario'];
 
             $detalle->update([
-                'id_factura' => $facturaNueva->id_factura,
+                'id_factura' => $facturaNueva->id,
                 'id_producto' => $productoNuevoId,
                 'cantidad' => $cantidadNueva,
                 'precio_unitario' => $precio,
                 'subtotal' => round($cantidadNueva * $precio, 2),
             ]);
 
-            $this->recalcularFactura((int) $facturaAnterior->id_factura);
-            if ((int) $facturaNueva->id_factura !== (int) $facturaAnterior->id_factura) {
-                $this->recalcularFactura((int) $facturaNueva->id_factura);
+            $this->recalcularFactura((int) $facturaAnterior->id);
+            if ((int) $facturaNueva->id !== (int) $facturaAnterior->id) {
+                $this->recalcularFactura((int) $facturaNueva->id);
             }
 
             return $detalle->refresh();

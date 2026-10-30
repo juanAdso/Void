@@ -86,7 +86,7 @@
 
                 @foreach($tiendas as $tienda)
 
-                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id_tienda_tienda }}"
+                    <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id }}"
                        class="group rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg">
 
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-xl font-bold text-violet-700">
@@ -203,8 +203,8 @@
                         <option value="">Todas las categorías</option>
 
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id_categoria }}"
-                                @selected((string) request('categoria') === (string) $categoria->id_categoria)>
+                            <option value="{{ $categoria->id }}"
+                                @selected((string) request('categoria') === (string) $categoria->id)>
                                 {{ $categoria->nombre }}
                             </option>
                         @endforeach

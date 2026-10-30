@@ -14,7 +14,7 @@ class StoreFacturasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_cliente' => 'required|integer|exists:clientes,id_cliente',
+            'id_cliente' => 'required|integer|exists:clientes,id',
             'fecha' => 'required|date',
             'estado' => 'required|in:pendiente,pagada,anulada',
         ];

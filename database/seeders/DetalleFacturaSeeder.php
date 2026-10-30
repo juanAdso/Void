@@ -15,7 +15,7 @@ class DetalleFacturaSeeder extends Seeder
             throw new RuntimeException('Ejecuta FacturasSeeder antes de DetalleFacturaSeeder.');
         }
 
-        foreach (Facturas::query()->orderBy('id_detalle_factura')->get() as $factura) {
+        foreach (Facturas::query()->orderBy('id')->get() as $factura) {
             if (!$factura->detalle_factura()->exists()) {
                 $cantidadDetalles = fake()->numberBetween(1, 4);
 

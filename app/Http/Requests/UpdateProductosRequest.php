@@ -19,7 +19,7 @@ class UpdateProductosRequest extends FormRequest
             'precio' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'estado' => 'required|boolean',
-            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
+            'id_categoria' => 'required|integer|exists:categorias,id',
             'imagen' => 'nullable|string|max:255',
         ];
     }

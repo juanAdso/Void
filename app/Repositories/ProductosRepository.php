@@ -10,7 +10,7 @@ class ProductosRepository implements ProductoRepositoryInterface
 {
     public function listarTodo()
     {
-        return Productos::with('categoria')->orderBy('id_producto')->get();
+        return Productos::with('categoria')->orderBy('id')->get();
     }
 
     public function guardar(array $datos)
