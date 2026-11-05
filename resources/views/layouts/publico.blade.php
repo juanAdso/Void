@@ -26,34 +26,34 @@
     @stack('styles')
 </head>
 
-<body class="min-h-screen bg-white text-gray-900 antialiased">
+<body class="min-h-screen bg-amber-50 text-neutral-950 antialiased">
 
     {{-- Menú público superior --}}
-    <header class="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
+    <header class="sticky top-0 z-50 border-b border-gray-900 bg-neutral-950 backdrop-blur">
         <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
 
             {{-- Logo --}}
             <a href="{{ url('/') }}"
                class="text-2xl font-extrabold tracking-widest">
-                V<span class="text-violet-600">Ø</span>ID
+                <span class= "text-amber-50">V<span class="text-blue-600">Ø</span>ID
             </a>
 
             {{-- Navegación para computador --}}
             <div class="hidden items-center gap-8 md:flex">
                 <a href="{{ url('/#tiendas') }}"
-                   class="text-sm font-medium text-gray-700 transition hover:text-violet-600">
+                   class="text-sm font-medium text-amber-50 transition hover:text-blue-600">
                     Tiendas
                 </a>
 
                 <a href="{{ url('/#productos') }}"
-                   class="text-sm font-medium text-gray-700 transition hover:text-violet-600">
+                   class="text-sm font-medium text-amber-50 transition hover:text-blue-600">
                     Catálogo
                 </a>
             </div>
 
             {{-- Acceso administrativo temporal --}}
             <a href="{{ route('login') }}"
-               class="shrink-0 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-700">
+               class="shrink-0 rounded-lg bg-neutral-950 px-4 py-2.5 text-sm font-semibold text-amber-50 transition hover:bg-blue-600">
                 Iniciar sesión
             </a>
         </nav>
@@ -65,19 +65,19 @@
     </main>
 
     {{-- Pie de página --}}
-    <footer class="mt-16 border-t border-gray-200 bg-gray-950 text-white">
+    <footer class="mt-16 border-t border-amber-50 bg-neutral-950 text-amber-50">
         <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between lg:px-8">
 
             <div>
                 <p class="text-xl font-extrabold tracking-widest">
-                    V<span class="text-violet-400">Ø</span>ID
+                    V<span class="text-blue-600">Ø</span>ID
                 </p>
-                <p class="mt-2 text-sm text-gray-400">
+                <p class="mt-2 text-sm text-amber-50">
                     Explora los catálogos de diferentes tiendas.
                 </p>
             </div>
 
-            <div class="flex flex-wrap gap-5 text-sm text-gray-300">
+            <div class="flex flex-wrap gap-5 text-sm text-amber-50">
                 <a href="{{ url('/') }}" class="hover:text-white">
                     Inicio
                 </a>
@@ -91,7 +91,7 @@
                 </a>
             </div>
 
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-amber-50">
                 © {{ date('Y') }} VOID. Todos los derechos reservados.
             </p>
         </div>

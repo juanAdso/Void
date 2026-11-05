@@ -6,54 +6,54 @@
 @section('content')
 
     {{-- Presentación principal --}}
-    <section class="bg-gray-950 text-white">
+    <section class="bg-neutral-950 text-amber 50">
         <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 md:grid-cols-2 md:py-24 lg:px-8">
 
             <div>
-                <span class="inline-block rounded-full border border-violet-400/40 bg-violet-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-violet-300">
+                <span class="inline-block rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-amber-50">
                     Catálogos en un solo lugar
                 </span>
 
                 <h1 class="mt-6 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-                    Descubre lo que
-                    <span class="text-violet-400">cada tienda</span>
+                    <span class="text-amber-50" >Descubre lo que
+                    <span class="text-blue-600">cada tienda</span>
                     tiene para ti.
                 </h1>
 
-                <p class="mt-5 max-w-xl leading-7 text-gray-300">
+                <p class="mt-5 max-w-xl leading-7 text-amber-50 ">
                     Explora tiendas, conoce sus productos y consulta
                     sus precios y disponibilidad desde un solo lugar.
                 </p>
 
                 <a href="#tiendas"
-                   class="mt-8 inline-flex rounded-lg bg-violet-600 px-6 py-3 font-semibold text-white transition hover:bg-violet-700">
+                   class="mt-8 inline-flex rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500">
                     Explorar tiendas
                 </a>
             </div>
 
             <div class="relative">
-                <div class="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
-                    <p class="text-sm font-medium text-violet-300">
+                <div class="rounded-3xl border border-amber-50 bg-blue-500 p-6 sm:p-8">
+                    <p class="text-lg font-medium text-amber-50">
                         BIENVENIDO A VOID
                     </p>
 
-                    <p class="mt-4 text-3xl font-bold">
+                    <p class="mt-4 text-3xl text-amber-50 font-bold">
                         Tu próxima búsqueda empieza aquí.
                     </p>
 
-                    <p class="mt-4 leading-7 text-gray-400">
+                    <p class="mt-4 leading-7 text-amber-50">
                         Selecciona una tienda para consultar su catálogo
                         y descubrir los productos que ofrece.
                     </p>
 
                     <div class="mt-8 flex flex-wrap gap-3">
-                        <span class="rounded-full bg-white/10 px-4 py-2 text-sm">
+                        <span class="rounded-full bg-amber-50 px-4 py-2 text-sm hover:bg-blue-600">
                             Ropa
                         </span>
-                        <span class="rounded-full bg-white/10 px-4 py-2 text-sm">
+                        <span class="rounded-full bg-amber-50 px-4 py-2 text-sm hover:bg-blue-600">
                             Accesorios
                         </span>
-                        <span class="rounded-full bg-white/10 px-4 py-2 text-sm">
+                        <span class="rounded-full bg-amber-50 px-4 py-2 text-sm hover:bg-blue-600">
                             Nuevos productos
                         </span>
                     </div>
@@ -67,7 +67,7 @@
     <section id="tiendas" class="mx-auto max-w-7xl scroll-mt-24 px-5 py-14 lg:px-8">
 
         <div class="mb-8">
-            <p class="text-sm font-bold uppercase tracking-widest text-violet-600">
+            <p class="text-sm font-bold uppercase tracking-widest text-blue-600">
                 Explora
             </p>
 
@@ -75,7 +75,7 @@
                 Encuentra una tienda
             </h2>
 
-            <p class="mt-3 text-gray-600">
+            <p class="mt-3 text-amber-50">
                 Selecciona una tienda para consultar los productos que tiene disponibles.
             </p>
         </div>
@@ -87,21 +87,21 @@
                 @foreach($tiendas as $tienda)
 
                     <a href="{{ url('/catalogo') }}?tienda={{ $tienda->id }}"
-                       class="group rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg">
+                       class="group rounded-2xl border border-amber-50 p-6 transition hover:-translate-y-1 hover:border-blue-500 hover:shadow-lg">
 
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-xl font-bold text-violet-700">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-xl font-bold text-blue-600">
                             {{ strtoupper(substr($tienda->nombre ?? 'T', 0, 1)) }}
                         </div>
 
-                        <h3 class="mt-5 text-xl font-bold group-hover:text-violet-700">
+                        <h3 class="mt-5 text-xl font-bold group-hover:text-blue-600">
                             {{ $tienda->nombre ?? 'Tienda' }}
                         </h3>
 
-                        <p class="mt-2 text-sm leading-6 text-gray-600">
+                        <p class="mt-2 text-sm leading-6 text-neutral-950">
                             {{ $tienda->descripcion ?? 'Explora el catálogo de esta tienda.' }}
                         </p>
 
-                        <span class="mt-5 inline-block text-sm font-semibold text-violet-700">
+                        <span class="mt-5 inline-block text-sm font-semibold text-blue-600">
                             Ver catálogo →
                         </span>
                     </a>
@@ -112,12 +112,12 @@
 
         @else
 
-            <div class="rounded-2xl border border-dashed border-gray-300 px-6 py-10 text-center">
-                <h3 class="font-bold text-gray-800">
+            <div class="rounded-2xl border border-dashed border-amber-50 px-6 py-10 text-center">
+                <h3 class="font-bold text-neutral-950 text-lg">
                     Próximamente encontrarás tiendas aquí
                 </h3>
 
-                <p class="mt-2 text-sm text-gray-600">
+                <p class="mt-2 text-sm text-neutral-950">
                     Las tiendas aparecerán cuando estén registradas y conectadas al catálogo público.
                 </p>
             </div>
@@ -126,14 +126,14 @@
     </section>
 
     {{-- Buscador y catálogo --}}
-    <section id="productos" class="scroll-mt-24 bg-gray-50 py-14">
+    <section id="productos" class="scroll-mt-24 bg-amber-50 py-14">
 
         <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
             <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
 
                 <div>
-                    <p class="text-sm font-bold uppercase tracking-widest text-violet-600">
+                    <p class="text-sm font-bold uppercase tracking-widest text-blue-600">
                         Catálogo
                     </p>
 
@@ -141,7 +141,7 @@
                         Explora los productos
                     </h2>
 
-                    <p class="mt-3 text-gray-600">
+                    <p class="mt-3 text-neutral-950">
                         Busca productos y consulta sus detalles.
                     </p>
                 </div>
@@ -165,11 +165,11 @@
                         value="{{ request('buscar') }}"
                         placeholder="Buscar un producto..."
                         aria-label="Buscar productos"
-                        class="min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
+                        class="min-w-0 flex-1 rounded-lg border border-amber-50 bg-amber-50 px-4 py-3 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
                     >
 
                     <button type="submit"
-                            class="rounded-lg bg-gray-900 px-5 py-3 font-semibold text-white transition hover:bg-violet-700">
+                            class="rounded-lg bg-neutral-950 px-5 py-3 font-semibold text-amber-50 transition hover:bg-blue-600">
                         Buscar
                     </button>
                 </form>
@@ -191,14 +191,14 @@
                         <input type="hidden" name="buscar" value="{{ request('buscar') }}">
                     @endif
 
-                    <label for="categoria" class="text-sm font-medium text-gray-700">
+                    <label for="categoria" class="text-sm font-medium text-neutral-950">
                         Categoría:
                     </label>
 
                     <select id="categoria"
                             name="categoria"
                             onchange="this.form.submit()"
-                            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-violet-500">
+                            class="rounded-lg border border-amber-50 bg-amber-50 px-4 py-2.5 outline-none focus:border-blue-600">
 
                         <option value="">Todas las categorías</option>
 
@@ -221,10 +221,10 @@
 
                     @if($producto->estado && $producto->stock > 0)
 
-                        <article class="overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
+                        <article class="overflow-hidden rounded-2xl border border-amber-50 bg-amber-50 transition hover:-translate-y-1 hover:shadow-lg">
 
                             {{-- Imagen --}}
-                            <div class="flex h-60 items-center justify-center overflow-hidden bg-gray-100">
+                            <div class="flex h-60 items-center justify-center overflow-hidden bg-amber-50">
 
                                 @if($producto->imagen)
                                     <img
@@ -234,7 +234,7 @@
                                         class="h-full w-full object-cover"
                                     >
                                 @else
-                                    <span class="text-sm text-gray-400">
+                                    <span class="text-sm text-neutral-950">
                                         Imagen no disponible
                                     </span>
                                 @endif
@@ -243,7 +243,7 @@
 
                             <div class="p-5">
 
-                                <p class="text-xs font-semibold uppercase tracking-wider text-violet-600">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
                                     {{ $producto->categoria->nombre ?? 'General' }}
                                 </p>
 
@@ -251,7 +251,7 @@
                                     {{ $producto->nombre }}
                                 </h3>
 
-                                <p class="mt-2 line-clamp-3 text-sm leading-6 text-gray-600">
+                                <p class="mt-2 line-clamp-3 text-sm leading-6 text-neutral-950">
                                     {{ $producto->descripcion }}
                                 </p>
 
@@ -260,7 +260,7 @@
                                         ${{ number_format($producto->precio, 0, ',', '.') }}
                                     </span>
 
-                                    <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                    <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-blue-500">
                                         Disponible
                                     </span>
                                 </div>
@@ -272,12 +272,12 @@
 
                 @empty
 
-                    <div class="col-span-full rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
+                    <div class="col-span-full rounded-2xl border border-dashed border-amber-50 bg-amber-50 px-6 py-12 text-center">
                         <h3 class="text-lg font-bold">
                             Aún no hay productos para mostrar
                         </h3>
 
-                        <p class="mt-2 text-sm text-gray-600">
+                        <p class="mt-2 text-sm text-neutral-950">
                             Prueba otra búsqueda o vuelve más tarde.
                         </p>
                     </div>
