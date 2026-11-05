@@ -87,7 +87,7 @@
 
                         @foreach ($facturas as $factura)
                             <tr class="text-center hover:bg-gray-50">
-                                <td class="border px-4 py-2">{{ $factura->id_factura }}</td>
+                                <td class="border px-4 py-2">{{ $factura->id }}</td>
                                 <td class="border px-4 py-2">{{ $factura->cliente?->nombre ?? 'Cliente eliminado' }} {{ $factura->cliente?->apellido ?? '' }}</td>
                                 <td class="border px-4 py-2">{{ $factura->fecha }}</td>
                                 <td class="border px-4 py-2">{{ $factura->subtotal }}</td>

@@ -12,7 +12,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::firstOrCreate(
+        // 1. Roles y Permisos de Seguridad
+        $this->call([
+            SeguridadSeeder::class,
+        ]);
+
+        // 2. Usuario Administrador de Prueba
+        $admin = User::firstOrCreate(
             ['correo' => 'test@example.com'],
             [
                 'nombre' => 'Usuario',
@@ -24,6 +30,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        if (! $admin->hasRole('administrador')) {
+            $admin->assignRole('administrador');
+        }
+
+        // 3. Seeders comerciales existentes
         $this->call([
             CategoriaSeeder::class,
             TiendaSeeder::class,

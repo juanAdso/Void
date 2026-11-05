@@ -81,7 +81,7 @@
 
                         @foreach ($categorias as $categoria)
                             <tr class="text-center hover:bg-gray-50">
-                                <td class="border px-4 py-2">{{ $categoria->id_categoria }}</td>
+                                <td class="border px-4 py-2">{{ $categoria->id }}</td>
                                 <td class="border px-4 py-2">{{ $categoria->nombre }}</td>
                                 <td class="border px-4 py-2">{{ $categoria->descripcion }}</td>
                                 <td class="border px-4 py-2">

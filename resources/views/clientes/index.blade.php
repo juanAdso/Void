@@ -90,7 +90,7 @@
 
                         @foreach ($clientes as $cliente)
                             <tr class="text-center hover:bg-gray-50">
-                                <td class="border px-4 py-2">{{ $cliente->id_cliente }}</td>
+                                <td class="border px-4 py-2">{{ $cliente->id }}</td>
                                 <td class="border px-4 py-2">{{ $cliente->nombre }}</td>
                                 <td class="border px-4 py-2">{{ $cliente->apellido }}</td>
                                 <td class="border px-4 py-2">{{ $cliente->documento }}</td>
