@@ -14,14 +14,32 @@ use App\Models\Tienda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-$catalogo = function (Request $request) {
+// Vista principal: Exclusivamente presentación y listado de tiendas disponibles
+Route::get('/', function () {
     $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
-    $categorias = Categoria::query()->where('estado', true)->orderBy('nombre')->get();
 
-    $productos = Productos::query()
-        ->with('categoria')
+    return view('welcome', compact('tiendas'));
+})->name('inicio');
+
+// Catálogo por tienda: Muestra los productos y categorías de la tienda seleccionada
+Route::get('/catalogo', function (Request $request) {
+    $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
+    $tiendaSeleccionada = null;
+
+    if ($request->filled('tienda')) {
+        $tiendaSeleccionada = Tienda::query()->where('estado', true)->where('id', $request->integer('tienda'))->first();
+    }
+
+    $productosQuery = Productos::query()
+        ->with(['categoria', 'tienda'])
         ->where('productos.estado', true)
-        ->where('productos.stock', '>', 0)
+        ->where('productos.stock', '>', 0);
+
+    if ($tiendaSeleccionada) {
+        $productosQuery->where('productos.id_tienda', $tiendaSeleccionada->id);
+    }
+
+    $productos = $productosQuery
         ->when($request->filled('categoria'), fn ($query) => $query->where('productos.id_categoria', $request->integer('categoria')))
         ->when($request->filled('buscar'), function ($query) use ($request) {
             $buscar = trim((string) $request->input('buscar'));
@@ -33,11 +51,16 @@ $catalogo = function (Request $request) {
         ->orderBy('productos.nombre')
         ->get();
 
-    return view('layouts.catalogo', compact('tiendas', 'categorias', 'productos'));
-};
+    $categoriaIds = $productos->pluck('id_categoria')->unique()->filter();
+    $categorias = Categoria::query()
+        ->where('estado', true)
+        ->when($categoriaIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $categoriaIds))
+        ->orderBy('nombre')
+        ->get();
 
-Route::get('/', $catalogo)->name('inicio');
-Route::get('/catalogo', $catalogo)->name('catalogo');
+    return view('layouts.catalogo', compact('tiendas', 'tiendaSeleccionada', 'categorias', 'productos'));
+})->name('catalogo');
+
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');

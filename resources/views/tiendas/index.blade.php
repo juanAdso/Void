@@ -67,7 +67,7 @@
                         <tbody class="divide-y divide-slate-100 bg-white">
                             @foreach ($tiendas as $tienda)
                                 <tr class="transition hover:bg-slate-50">
-                                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">{{ $tienda->id_tienda }}
+                                    <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">{{ $tienda->id }}
                                     </td>
                                     <td class="px-5 py-4">
                                         <div class="font-semibold text-slate-800">{{ $tienda->nombre }}</div>

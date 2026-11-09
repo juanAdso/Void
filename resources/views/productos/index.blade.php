@@ -39,7 +39,7 @@
                         <tbody>
                             @foreach ($productos as $producto)
                                 <tr class="text-center hover:bg-gray-50">
-                                    <td class="border px-4 py-2">{{ $producto->id_producto }}</td>
+                                    <td class="border px-4 py-2">{{ $producto->id }}</td>
                                     <td class="border px-4 py-2">{{ $producto->nombre }}</td>
                                     <td class="border px-4 py-2">{{ $producto->descripcion }}</td>
                                     <td class="border px-4 py-2">{{ number_format($producto->precio, 2, ',', '.') }}</td>
