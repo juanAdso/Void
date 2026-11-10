@@ -10,17 +10,18 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable, TieneRolesActivos;
+    use HasFactory, HasRoles, Notifiable,TieneRolesActivos;
 
     protected $table = 'usuarios';
 
     protected $fillable = [
         'nombre',
         'apellido',
-        'documento',
+        'documento', 
         'correo',
         'password',
         'rol',
+        'id_tienda',
         'estado',
     ];
 
@@ -37,5 +38,10 @@ class User extends Authenticatable
     public function getAuthPasswordName(): string
     {
         return 'password';
+    }
+
+    public function tienda()
+    {
+        return $this->belongsTo(Tienda::class, 'id_tienda');
     }
 }

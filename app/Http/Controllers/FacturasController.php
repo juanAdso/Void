@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFacturasRequest;
 use App\Http\Requests\UpdateFacturasRequest;
+use App\Models\Facturas;
+use App\Models\User;
 use App\Services\FacturasService;
 use App\Services\ClienteService;
 
@@ -15,10 +17,14 @@ class FacturasController extends Controller
     ) {}
 
     public function index()
-    {
-        $facturas = $this->facturasService->listarTodo();
-        return view('facturas.index', compact('facturas'));
-    }
+{
+    $tiendaId = auth()->user()->id_tienda;
+
+    $usuariosMiTienda = User::where('id_tienda', $tiendaId)->pluck('id');
+    $facturas = Facturas::whereIn('id_usuario', $usuariosMiTienda)->orderByDesc('fecha')->get();
+
+    return view('facturas.index', compact('facturas'));
+}
 
     public function create()
     {

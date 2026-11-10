@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductosRequest;
 use App\Http\Requests\UpdateProductosRequest;
 use App\Services\ProductosService;
 use App\Services\CategoriaService;
+use App\Models\Productos;
 use App\Services\TiendaService;
 
 class ProductosController extends Controller
@@ -26,7 +27,15 @@ class ProductosController extends Controller
 
     public function index()
     {
-        $productos = $this->productosService->listarTodo();
+        /** @var \App\Models\User $usuario */
+        $usuario = auth()->user();
+        $tiendaId = $usuario ? $usuario->id_tienda : null;
+
+        // Solo lista los productos que pertenecen a la tienda del usuario
+        $productos = Productos::query()
+            ->when($tiendaId, fn($q) => $q->where('id_tienda', $tiendaId))
+            ->get();
+
         return view('productos.index', compact('productos'));
     }
 
@@ -39,9 +48,13 @@ class ProductosController extends Controller
 
     public function store(StoreProductosRequest $request)
     {
-        $this->productosService->guardar($request->validated());
+        $datos = $request->validated();
 
-        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente');
+        $datos['id_tienda'] = auth()->user()->id_tienda;
+
+        $this->productosService->guardar($datos);
+
+        return redirect()->route('productos.index')->with('success', 'Producto creado en tu tienda.');
     }
 
     public function edit(int $id)

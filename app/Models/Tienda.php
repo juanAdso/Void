@@ -30,4 +30,9 @@ class Tienda extends Model
     {
         return $this->hasMany(Productos::class, 'id_tienda', 'id');
     }
+
+    public function usuarios()
+    {
+        return $this->hasMany(User::class, 'id_tienda', 'id');
+    }
 }
