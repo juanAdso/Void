@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Cliente;
 use App\Models\Facturas;
 use App\Models\Productos;
+use App\Models\Tienda;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,6 +26,12 @@ class DashboardController extends Controller
         $totalRevenue = (float) Facturas::whereBetween('fecha', [$inicioMes, $finMes])
             ->where('estado', 'pagada')
             ->sum('total');
+
+        // 4 métricas adicionales
+        $totalTiendas = Tienda::where('estado', true)->count();
+        $totalClientes = Cliente::count();
+        $totalCategorias = Categoria::where('estado', true)->count();
+        $stockBajo = Productos::where('stock', '<=', 10)->count();
 
         $meses = collect(range(5, 0))->map(function (int $mesesAtras) {
             return now()->startOfMonth()->subMonths($mesesAtras);
@@ -62,13 +70,13 @@ class DashboardController extends Controller
             ->limit(6)
             ->get()
             ->map(function (Facturas $factura) {
-                $nombre = trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? ''));
+                $nombre = trim(($factura->cliente?->nombre ?? '').' '.($factura->cliente?->apellido ?? ''));
 
                 return [
                     'id' => $factura->id,
-                    'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($nombre ?: 'Cliente'),
+                    'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($nombre ?: 'Cliente'),
                     'name' => $nombre ?: 'Cliente eliminado',
-                    'description' => 'Factura #' . $factura->id . ' por $' . number_format((float) $factura->total, 2, ',', '.'),
+                    'description' => 'Factura #'.$factura->id.' por $'.number_format((float) $factura->total, 2, ',', '.'),
                     'status' => ucfirst((string) $factura->estado),
                     'date' => $factura->fecha?->format('d/m/Y') ?? 'Sin fecha',
                 ];
@@ -80,6 +88,10 @@ class DashboardController extends Controller
             'totalProducts',
             'totalSales',
             'totalRevenue',
+            'totalTiendas',
+            'totalClientes',
+            'totalCategorias',
+            'stockBajo',
             'recentActivity',
             'chartData'
         ));
