@@ -24,34 +24,36 @@
 
             @php
                 $links = [
-                    ['label' => 'Inicio',   'route' => 'dashboard.index',  'icon' => 'home'],
-                    ['label' => 'Tiendas',    'route' => 'tiendas.index',    'icon' => 'store'],
-                    ['label' => 'Clientes',    'route' => 'cliente.index',      'icon' => 'users'],
-                    ['label' => 'Categorías',  'route' => 'categoria.index', 'icon' => 'tag'],
-                    ['label' => 'Productos',   'route' => 'productos.index',   'icon' => 'box'],
-                    ['label' => 'Facturas',    'route' => 'facturas.index',    'icon' => 'chart'],
-                    ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'cog'],
-                    
+                    ['label' => 'Inicio',              'route' => 'dashboard.index',        'icon' => 'home',   'can' => ['ver dashboard']],
+                    ['label' => 'Tiendas',             'route' => 'tiendas.index',          'icon' => 'store',  'can' => ['ver tiendas']],
+                    ['label' => 'Clientes',            'route' => 'cliente.index',          'icon' => 'users',  'can' => ['ver clientes']],
+                    ['label' => 'Categorías',          'route' => 'categoria.index',        'icon' => 'tag',    'can' => ['ver categorias']],
+                    ['label' => 'Productos',           'route' => 'productos.index',        'icon' => 'box',    'can' => ['ver productos']],
+                    ['label' => 'Facturas',            'route' => 'facturas.index',         'icon' => 'chart',  'can' => ['ver facturas']],
+                    ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'cog',    'can' => ['ver detallefacturas']],
+                    ['label' => 'Seguridad',           'route' => 'dashboard.index',        'icon' => 'shield', 'can' => ['ver seguridad']],
                 ];
             @endphp
 
             @foreach ($links as $link)
-                @php
-                    $active = Route::has($link['route']) && request()->routeIs(explode('.', $link['route'])[0] . '.*');
-                @endphp
-                <a
-                    href="{{ Route::has($link['route']) ? route($link['route']) : '#' }}"
-                    @if($active) aria-current="page" @endif
-                    class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                        {{ $active
-                            ? 'bg-primary-600 text-white shadow-sm'
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
-                >
-                    <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
-                        @include('layouts.partials.icons', ['icon' => $link['icon']])
-                    </span>
-                    <span>{{ $link['label'] }}</span>
-                </a>
+                @if (auth()->check() && auth()->user()->canAny($link['can']))
+                    @php
+                        $active = Route::has($link['route']) && request()->routeIs(explode('.', $link['route'])[0] . '.*');
+                    @endphp
+                    <a
+                        href="{{ Route::has($link['route']) ? route($link['route']) : '#' }}"
+                        @if($active) aria-current="page" @endif
+                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                            {{ $active
+                                ? 'bg-primary-600 text-white shadow-sm'
+                                : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
+                    >
+                        <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                            @include('layouts.partials.icons', ['icon' => $link['icon']])
+                        </span>
+                        <span>{{ $link['label'] }}</span>
+                    </a>
+                @endif
             @endforeach
         </nav>
 

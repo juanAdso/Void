@@ -5,7 +5,7 @@
 
 @section('content')
 
-    {{-- Tarjetas estadísticas --}}
+    {{-- Tarjetas estadísticas (Fila 1) --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <x-stat-card
             label="Total de usuarios"
@@ -26,6 +26,30 @@
             label="Ingresos"
             :value="'$' . number_format($totalRevenue, 2)"
             icon="tag"
+        />
+    </div>
+
+    {{-- Tarjetas estadísticas adicionales (Fila 2) --}}
+    <div class="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+        <x-stat-card
+            label="Tiendas activas"
+            :value="number_format($totalTiendas)"
+            icon="home"
+        />
+        <x-stat-card
+            label="Clientes registrados"
+            :value="number_format($totalClientes)"
+            icon="users"
+        />
+        <x-stat-card
+            label="Categorías activas"
+            :value="number_format($totalCategorias)"
+            icon="tag"
+        />
+        <x-stat-card
+            label="Stock bajo (<= 10)"
+            :value="number_format($stockBajo)"
+            icon="box"
         />
     </div>
 

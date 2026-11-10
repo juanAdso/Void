@@ -12,6 +12,12 @@
         <h1 class="mt-8 text-2xl font-bold">Acceso administrativo</h1>
         <p class="mt-2 text-sm text-slate-500">Ingresa con tu cuenta para administrar tiendas, productos, clientes y facturas.</p>
 
+        @if (session('status'))
+            <div class="mt-5 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                {{ session('status') }}
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                 @foreach ($errors->all() as $error)
@@ -30,10 +36,13 @@
                 <label for="password" class="mb-2 block text-sm font-semibold">Contraseña</label>
                 <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-violet-600 focus:ring-2 focus:ring-violet-100">
             </div>
-            <label class="flex items-center gap-2 text-sm text-slate-600">
-                <input type="checkbox" name="remember" value="1" class="rounded border-slate-300">
-                Mantener sesión iniciada
-            </label>
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 text-slate-600">
+                    <input type="checkbox" name="remember" value="1" class="rounded border-slate-300">
+                    Mantener sesión iniciada
+                </label>
+                <a href="{{ route('password.request') }}" class="font-medium text-violet-600 hover:text-violet-800">¿Olvidaste tu contraseña?</a>
+            </div>
             <button type="submit" class="w-full rounded-lg bg-violet-600 px-4 py-3 font-semibold text-white transition hover:bg-violet-700">Iniciar sesión</button>
         </form>
         <a href="{{ route('inicio') }}" class="mt-6 block text-center text-sm font-medium text-slate-500 hover:text-violet-700">Volver al catálogo público</a>
