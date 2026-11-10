@@ -62,6 +62,10 @@ Route::get('/catalogo', function (Request $request) {
     return view('layouts.catalogo', compact('tiendas', 'tiendaSeleccionada', 'categorias', 'productos'));
 })->name('catalogo');
 
+// Registro público de tiendas
+Route::get('/registro-tienda', [TiendaController::class, 'create'])->name('registro.tienda');
+Route::post('/registro-tienda', [TiendaController::class, 'store'])->name('registro.tienda.store');
+
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');

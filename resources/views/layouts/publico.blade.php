@@ -48,6 +48,11 @@
                    class="text-sm font-medium text-slate-300 transition hover:text-blue-400">
                     Catálogos
                 </a>
+
+                <a href="{{ route('registro.tienda') }}"
+                   class="text-sm font-medium text-slate-300 transition hover:text-blue-400">
+                    Registrar tienda
+                </a>
             </div>
 
             {{-- Acceso administrativo --}}
@@ -87,6 +92,10 @@
 
                 <a href="{{ route('catalogo') }}" class="hover:text-blue-400 transition">
                     Catálogos
+                </a>
+
+                <a href="{{ route('registro.tienda') }}" class="hover:text-blue-400 transition">
+                    Registrar tienda
                 </a>
             </div>
 

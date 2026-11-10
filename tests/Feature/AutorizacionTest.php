@@ -102,3 +102,9 @@ test('ejecutar seguridad seeder multiples veces no duplica roles ni permisos', f
     expect(Role::count())->toBe(2);
     expect(Permission::where('name', 'ver dashboard')->count())->toBe(1);
 });
+
+test('el formulario de registro de tienda es accesible publicamente mediante la ruta registro.tienda', function () {
+    $response = $this->get(route('registro.tienda'));
+    $response->assertOk();
+    $response->assertSee('Registrar tienda');
+});
