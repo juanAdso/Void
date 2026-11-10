@@ -6,6 +6,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetalleFacturaController;
 use App\Http\Controllers\FacturasController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\TiendaController;
 use App\Models\Categoria;
@@ -64,6 +65,12 @@ Route::get('/catalogo', function (Request $request) {
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// Rutas de recuperación de contraseña
+Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [PasswordResetController::class, 'sendResetCode'])->name('password.email');
+Route::get('/password/code', [PasswordResetController::class, 'showResetForm'])->name('password.code');
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 
 Route::middleware('auth')->group(function () {
     // Dashboard
