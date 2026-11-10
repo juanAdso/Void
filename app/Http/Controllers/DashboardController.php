@@ -2,98 +2,95 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categoria;
-use App\Models\Cliente;
 use App\Models\Facturas;
 use App\Models\Productos;
-use App\Models\Tienda;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        /** @var \App\Models\User $usuario */
+        $usuario = auth()->user();
+
+        // Si no hay usuario autenticado por seguridad redirige al login
+        if (!$usuario) {
+            return redirect()->route('login');
+        }
+
+        $tiendaId = $usuario->id_tienda;
+
+        // ==========================================
+        // CASO 1: SI EL USUARIO ES UN EMPLEADO
+        // ==========================================
+        if ($usuario->hasRole('empleado')) {
+            // Ventas realizadas hoy por este empleado
+            $ventasHoy = Facturas::where('id_usuario', $usuario->id)
+                ->whereDate('fecha', today())
+                ->where('estado', 'pagada')
+                ->count();
+
+            // Total de dinero cobrado hoy por este empleado
+            $ingresosHoy = (float) Facturas::where('id_usuario', $usuario->id)
+                ->whereDate('fecha', today())
+                ->where('estado', 'pagada')
+                ->sum('total');
+
+            // Cantidad de productos disponibles en su tienda
+            $productosTienda = Productos::where('id_tienda', $tiendaId)
+                ->where('estado', true)
+                ->count();
+
+            // Últimas 5 facturas generadas por el empleado
+            $facturasRecientes = Facturas::with('cliente')
+                ->where('id_usuario', $usuario->id)
+                ->latest('fecha')
+                ->limit(5)
+                ->get();
+
+            return view('dashboard.empleado', compact(
+                'ventasHoy',
+                'ingresosHoy',
+                'productosTienda',
+                'facturasRecientes'
+            ));
+        }
+
+        // ==========================================
+        // CASO 2: SI EL USUARIO ES EL ADMINISTRADOR
+        // ==========================================
+        // Obtiene todos los usuarios (dueño y empleados) de su tienda
+        $usuariosTienda = User::where('id_tienda', $tiendaId)->pluck('id');
+
+        // Total de productos en inventario de su tienda
+        $totalProductos = Productos::where('id_tienda', $tiendaId)->count();
+
+        // Cantidad de empleados de su tienda
+        $totalEmpleados = User::where('id_tienda', $tiendaId)
+            ->where('rol', 'empleado')
+            ->count();
+
         $inicioMes = now()->startOfMonth()->toDateString();
         $finMes = now()->endOfMonth()->toDateString();
 
-        $totalUsers = User::count();
-        $totalProducts = Productos::count();
-        $totalSales = Facturas::whereBetween('fecha', [$inicioMes, $finMes])
+        // Ventas del mes en su tienda (excluyendo facturas anuladas)
+        $ventasMes = Facturas::whereIn('id_usuario', $usuariosTienda)
+            ->whereBetween('fecha', [$inicioMes, $finMes])
             ->where('estado', 'pagada')
             ->count();
-        $totalRevenue = (float) Facturas::whereBetween('fecha', [$inicioMes, $finMes])
+
+        // Dinero recaudado en el mes
+        $ingresosMes = (float) Facturas::whereIn('id_usuario', $usuariosTienda)
+            ->whereBetween('fecha', [$inicioMes, $finMes])
             ->where('estado', 'pagada')
             ->sum('total');
 
-        // 4 métricas adicionales
-        $totalTiendas = Tienda::where('estado', true)->count();
-        $totalClientes = Cliente::count();
-        $totalCategorias = Categoria::where('estado', true)->count();
-        $stockBajo = Productos::where('stock', '<=', 10)->count();
-
-        $meses = collect(range(5, 0))->map(function (int $mesesAtras) {
-            return now()->startOfMonth()->subMonths($mesesAtras);
-        });
-
-        $chartData = [
-            'months' => $meses->map(fn (Carbon $mes) => $mes->translatedFormat('M'))->values()->all(),
-            'sales' => $meses->map(function (Carbon $mes) {
-                return Facturas::where('estado', 'pagada')
-                    ->whereBetween('fecha', [$mes->copy()->startOfMonth()->toDateString(), $mes->copy()->endOfMonth()->toDateString()])
-                    ->count();
-            })->values()->all(),
-            'users' => $meses->map(function (Carbon $mes) {
-                return User::whereBetween('created_at', [$mes->copy()->startOfMonth(), $mes->copy()->endOfMonth()])->count();
-            })->values()->all(),
-            'categoryLabels' => Categoria::query()
-                ->withCount('productos')
-                ->orderByDesc('productos_count')
-                ->limit(5)
-                ->pluck('nombre')
-                ->values()
-                ->all(),
-            'categoryValues' => Categoria::query()
-                ->withCount('productos')
-                ->orderByDesc('productos_count')
-                ->limit(5)
-                ->pluck('productos_count')
-                ->map(fn ($cantidad) => (int) $cantidad)
-                ->values()
-                ->all(),
-        ];
-
-        $recentActivity = Facturas::with('cliente')
-            ->latest('fecha')
-            ->latest('id_factura')
-            ->limit(6)
-            ->get()
-            ->map(function (Facturas $factura) {
-                $nombre = trim(($factura->cliente?->nombre ?? '').' '.($factura->cliente?->apellido ?? ''));
-
-                return [
-                    'id' => $factura->id,
-                    'avatar' => 'https://ui-avatars.com/api/?name='.urlencode($nombre ?: 'Cliente'),
-                    'name' => $nombre ?: 'Cliente eliminado',
-                    'description' => 'Factura #'.$factura->id.' por $'.number_format((float) $factura->total, 2, ',', '.'),
-                    'status' => ucfirst((string) $factura->estado),
-                    'date' => $factura->fecha?->format('d/m/Y') ?? 'Sin fecha',
-                ];
-            })
-            ->all();
-
-        return view('dashboard.index', compact(
-            'totalUsers',
-            'totalProducts',
-            'totalSales',
-            'totalRevenue',
-            'totalTiendas',
-            'totalClientes',
-            'totalCategorias',
-            'stockBajo',
-            'recentActivity',
-            'chartData'
+        return view('dashboard.admin', compact(
+            'totalProductos',
+            'totalEmpleados',
+            'ventasMes',
+            'ingresosMes'
         ));
     }
 }
