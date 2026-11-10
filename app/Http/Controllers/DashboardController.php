@@ -66,7 +66,7 @@ class DashboardController extends Controller
 
         $recentActivity = Facturas::with('cliente')
             ->latest('fecha')
-            ->latest('id')
+            ->latest('id_factura')
             ->limit(6)
             ->get()
             ->map(function (Facturas $factura) {
