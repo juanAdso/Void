@@ -14,7 +14,7 @@
             <a href="{{ route('inicio') }}" class="text-3xl font-extrabold tracking-widest text-slate-900">
                 V<span class="text-blue-600">Ø</span>ID
             </a>
-            <h1 class="mt-4 text-2xl font-bold">Registra tu tienda en VOID</h1>
+            <h1 class="mt-4 text-2xl font-bold">Registrar tienda en VOID</h1>
             <p class="mt-1 text-sm text-slate-500">Comienza a administrar tus productos y publica tu catálogo gratis.</p>
         </div>
 
@@ -52,6 +52,10 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase text-slate-600">Dirección</label>
                         <input type="text" name="direccion" value="{{ old('direccion') }}" class="mt-1 w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-600">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-600">Correo de la Tienda (opcional)</label>
+                        <input type="email" name="correo_tienda" value="{{ old('correo_tienda') }}" class="mt-1 w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-600" placeholder="contacto@tienda.com">
                     </div>
                 </div>
             </div>

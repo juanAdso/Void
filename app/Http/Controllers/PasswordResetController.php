@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 
 class PasswordResetController extends Controller
 {
@@ -24,6 +25,16 @@ class PasswordResetController extends Controller
      */
     public function sendResetCode(Request $request)
     {
+        $throttleKey = 'password-reset:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->withErrors([
+                'correo' => "Demasiados intentos. Por favor, intenta de nuevo en {$seconds} segundos.",
+            ])->withInput();
+        }
+
         $request->validate([
             'correo' => ['required', 'email'],
         ], [
@@ -31,19 +42,26 @@ class PasswordResetController extends Controller
             'correo.email' => 'Ingresa un correo electrónico válido.',
         ]);
 
+        RateLimiter::hit($throttleKey, 300);
+
         $inputCorreo = trim($request->input('correo'));
 
         // 1. Buscar si corresponde directamente a un usuario
         $user = User::where('correo', $inputCorreo)->first();
+        $tienda = null;
 
         // 2. Si no es un usuario directo, buscar si corresponde a una tienda
-        $tienda = Tienda::where('correo', $inputCorreo)->first();
-
-        if (! $user && $tienda) {
-            // Si coincide con el correo de una tienda, asociamos con el administrador o usuario del sistema
-            $user = User::where('rol', 'administrador')->first();
+        if (! $user) {
+            $tienda = Tienda::where('correo', $inputCorreo)->first();
+            if ($tienda) {
+                // Localizar exclusivamente al administrador asociado a esa tienda
+                $user = User::where('id_tienda', $tienda->id)
+                    ->where('rol', 'administrador')
+                    ->first();
+            }
         }
 
+        // Si no encontramos usuario o si la cuenta está inactiva
         if (! $user) {
             return back()->withErrors([
                 'correo' => 'No encontramos ninguna cuenta o tienda asociada a este correo electrónico.',
@@ -56,11 +74,11 @@ class PasswordResetController extends Controller
             ])->withInput();
         }
 
-        // Generar código numérico de 6 dígitos
+        // Generar código numérico seguro de 6 dígitos
         $codigo = (string) random_int(100000, 999999);
         $correoDestino = $inputCorreo;
 
-        // Almacenar en caché durante 15 minutos
+        // Almacenar en caché durante 15 minutos vinculado al usuario y correo
         Cache::put('password_reset_code_'.$codigo, [
             'user_id' => $user->id,
             'correo' => $correoDestino,
@@ -80,8 +98,12 @@ class PasswordResetController extends Controller
                     ->subject('Código de recuperación de contraseña - VOID');
             });
         } catch (\Throwable $e) {
-            // Si el driver de correo falla en entornos sin servidor SMTP configurado, continuar
+            Cache::forget('password_reset_code_'.$codigo);
             report($e);
+
+            return back()->withErrors([
+                'correo' => 'No se pudo enviar el correo de recuperación. Por favor, intenta de nuevo más tarde.',
+            ])->withInput();
         }
 
         return redirect()->route('password.code')
