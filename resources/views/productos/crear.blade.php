@@ -51,7 +51,7 @@
                     <select id="id_categoria" name="id_categoria" required class="w-full border rounded px-3 py-2">
                         <option value="">Selecciona una categoría</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id_categoria }}" @selected(old('id_categoria') == $categoria->id_categoria)>{{ $categoria->nombre }}</option>
+                            <option value="{{ $categoria->id }}" @selected(old('id_categoria') == $categoria->id)>{{ $categoria->nombre }}</option>
                         @endforeach
                     </select>
                 </div>

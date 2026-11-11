@@ -10,9 +10,15 @@ use Illuminate\Validation\ValidationException;
 
 class FacturasRepository implements FacturasRepositoryInterface
 {
-    public function listarTodo()
+    public function listarTodo(?int $tiendaId = null)
     {
-        return Facturas::with(['cliente', 'detalle_factura'])->orderByDesc('fecha')->get();
+        $query = Facturas::with(['cliente', 'detalle_factura']);
+
+        if ($tiendaId) {
+            $query->whereHas('usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+        }
+
+        return $query->orderByDesc('fecha')->get();
     }
 
     public function guardar(array $datos)
@@ -22,9 +28,15 @@ class FacturasRepository implements FacturasRepositoryInterface
         return Facturas::create($datos);
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, ?int $tiendaId = null)
     {
-        $factura = Facturas::findOrFail($id);
+        $query = Facturas::where('id', $id);
+
+        if ($tiendaId) {
+            $query->whereHas('usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+        }
+
+        $factura = $query->firstOrFail();
 
         if ($factura->detalle_factura()->exists()) {
             return false;
@@ -33,9 +45,15 @@ class FacturasRepository implements FacturasRepositoryInterface
         return $factura->delete();
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, ?int $tiendaId = null)
     {
-        return Facturas::with(['cliente', 'detalle_factura'])->findOrFail($id);
+        $query = Facturas::with(['cliente', 'detalle_factura'])->where('id', $id);
+
+        if ($tiendaId) {
+            $query->whereHas('usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+        }
+
+        return $query->firstOrFail();
     }
 
     public function actualizar(int $id, array $datos)

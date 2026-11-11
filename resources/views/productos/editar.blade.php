@@ -16,7 +16,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('productos.update', $productos->id_producto) }}" method="post">
+            <form action="{{ route('productos.update', $productos->id) }}" method="post">
                 @csrf
                 @method('PUT')
                 <div class="mb-5">
@@ -50,7 +50,7 @@
                     <label for="id_categoria" class="block mb-2 font-semibold">Categoría</label>
                     <select id="id_categoria" name="id_categoria" required class="w-full border rounded px-3 py-2">
                         @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->id_categoria }}" @selected(old('id_categoria', $productos->id_categoria) == $categoria->id_categoria)>{{ $categoria->nombre }}</option>
+                            <option value="{{ $categoria->id }}" @selected(old('id_categoria', $productos->id_categoria) == $categoria->id)>{{ $categoria->nombre }}</option>
                         @endforeach
                     </select>
                 </div>

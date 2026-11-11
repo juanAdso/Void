@@ -10,14 +10,14 @@ class FacturasService
         protected FacturasRepositoryInterface $repository
     ) {}
 
-    public function listarTodo()
+    public function listarTodo(?int $tiendaId = null)
     {
-        return $this->repository->listarTodo();
+        return $this->repository->listarTodo($tiendaId);
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, ?int $tiendaId = null)
     {
-        return $this->repository->buscarPorId($id);
+        return $this->repository->buscarPorId($id, $tiendaId);
     }
 
     public function guardar(array $data)
@@ -35,8 +35,8 @@ class FacturasService
         return $this->repository->actualizar($id, $data);
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, ?int $tiendaId = null)
     {
-        return $this->repository->eliminar($id);
+        return $this->repository->eliminar($id, $tiendaId);
     }
 }

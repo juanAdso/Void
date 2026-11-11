@@ -4,13 +4,13 @@ namespace App\Repositories\Interfaces;
 
 interface FacturasRepositoryInterface
 {
-    public function listarTodo();
+    public function listarTodo(?int $tiendaId = null);
 
-    public function buscarPorId(int $id);
+    public function buscarPorId(int $id, ?int $tiendaId = null);
 
     public function guardar(array $data);
 
     public function actualizar(int $id, array $data);
 
-    public function eliminar(int $id);
+    public function eliminar(int $id, ?int $tiendaId = null);
 }

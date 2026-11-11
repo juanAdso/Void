@@ -11,9 +11,15 @@ use Illuminate\Validation\ValidationException;
 
 class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
-    public function listarTodo()
+    public function listarTodo(?int $tiendaId = null)
     {
-        return DetalleFactura::with(['factura.cliente', 'producto'])->orderBy('id')->get();
+        $query = DetalleFactura::with(['factura.cliente', 'producto']);
+
+        if ($tiendaId) {
+            $query->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+        }
+
+        return $query->orderBy('id')->get();
     }
 
     public function guardar(array $datos)
@@ -52,10 +58,15 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         });
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, ?int $tiendaId = null)
     {
-        return DB::transaction(function () use ($id) {
-            $detalle = DetalleFactura::query()->lockForUpdate()->findOrFail($id);
+        return DB::transaction(function () use ($id, $tiendaId) {
+            $detalleQuery = DetalleFactura::query()->lockForUpdate()->where('id', $id);
+            if ($tiendaId) {
+                $detalleQuery->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+            }
+            $detalle = $detalleQuery->firstOrFail();
+
             $factura = Facturas::query()->lockForUpdate()->findOrFail($detalle->id_factura);
             $producto = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
 
@@ -64,15 +75,21 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             }
 
             $detalle->delete();
-            $this->recalcularFactura((int) $factura->id_factura);
+            $this->recalcularFactura((int) $factura->id);
 
             return true;
         });
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, ?int $tiendaId = null)
     {
-        return DetalleFactura::with(['factura', 'producto'])->findOrFail($id);
+        $query = DetalleFactura::with(['factura', 'producto'])->where('id', $id);
+
+        if ($tiendaId) {
+            $query->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
+        }
+
+        return $query->firstOrFail();
     }
 
     public function actualizar(int $id, array $datos)

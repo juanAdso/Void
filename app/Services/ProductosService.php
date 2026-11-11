@@ -13,24 +13,25 @@ class ProductosService
         $this->productos_repository = $productos_repository;
     }
 
-    public function listarTodo()
+    public function listarTodo(?int $tiendaId = null)
     {
-        return $this->productos_repository->listarTodo();
+        return $this->productos_repository->listarTodo($tiendaId);
     }
 
     public function guardar(array $datos)
     {
-        $this->productos_repository->guardar($datos);
+        return $this->productos_repository->guardar($datos);
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, ?int $tiendaId = null)
     {
-        return $this->productos_repository->eliminar($id);
+        return $this->productos_repository->eliminar($id, $tiendaId);
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, ?int $tiendaId = null)
     {
-        $producto = $this->productos_repository->buscarPorId($id);
+        $producto = $this->productos_repository->buscarPorId($id, $tiendaId);
+
         return $producto;
     }
 
