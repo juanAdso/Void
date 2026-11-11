@@ -2,15 +2,18 @@
 
 namespace App\Repositories;
 
-use App\Models\Productos;
 use App\Models\DetalleFactura;
+use App\Models\Productos;
 use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
 class ProductosRepository implements ProductoRepositoryInterface
 {
-    public function listarTodo()
+    public function listarTodo(?int $tiendaId = null)
     {
-        return Productos::with('categoria')->orderBy('id')->get();
+        return Productos::with('categoria')
+            ->when($tiendaId, fn ($q) => $q->where('id_tienda', $tiendaId))
+            ->orderBy('id')
+            ->get();
     }
 
     public function guardar(array $datos)
@@ -18,9 +21,13 @@ class ProductosRepository implements ProductoRepositoryInterface
         return Productos::create($datos);
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, ?int $tiendaId = null)
     {
-        $producto = Productos::findOrFail($id);
+        $query = Productos::where('id', $id);
+        if ($tiendaId) {
+            $query->where('id_tienda', $tiendaId);
+        }
+        $producto = $query->firstOrFail();
 
         if (DetalleFactura::where('id_producto', $id)->exists()) {
             return false;
@@ -29,9 +36,14 @@ class ProductosRepository implements ProductoRepositoryInterface
         return $producto->delete();
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, ?int $tiendaId = null)
     {
-        return Productos::with('categoria')->findOrFail($id);
+        $query = Productos::with('categoria')->where('id', $id);
+        if ($tiendaId) {
+            $query->where('id_tienda', $tiendaId);
+        }
+
+        return $query->firstOrFail();
     }
 
     public function actualizar(int $id, array $datos)
