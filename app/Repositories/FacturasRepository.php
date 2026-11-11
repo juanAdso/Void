@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Facturas;
+use App\Models\MovimientoInventario;
 use App\Models\Productos;
 use App\Repositories\Interfaces\FacturasRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,9 @@ class FacturasRepository implements FacturasRepositoryInterface
     public function guardar(array $datos)
     {
         $datos['id_usuario'] = auth()->id();
+        $datos['subtotal'] = 0;
+        $datos['iva'] = 0;
+        $datos['total'] = 0;
 
         return Facturas::create($datos);
     }
@@ -38,7 +42,13 @@ class FacturasRepository implements FacturasRepositoryInterface
 
         $factura = $query->firstOrFail();
 
+        // No permitir eliminar facturas con detalles
         if ($factura->detalle_factura()->exists()) {
+            return false;
+        }
+
+        // Tampoco permitir eliminar facturas que ya fueron pagadas o anuladas
+        if ($factura->estado !== 'pendiente') {
             return false;
         }
 
@@ -61,25 +71,71 @@ class FacturasRepository implements FacturasRepositoryInterface
         return DB::transaction(function () use ($id, $datos) {
             $factura = Facturas::query()->lockForUpdate()->findOrFail($id);
             $estadoAnterior = (string) $factura->estado;
-            $estadoNuevo = (string) $datos['estado'];
-            $detalles = $factura->detalle_factura()->get();
+            $estadoNuevo = isset($datos['estado']) ? (string) $datos['estado'] : $estadoAnterior;
 
-            if ($estadoAnterior !== 'anulada' && $estadoNuevo === 'anulada') {
-                foreach ($detalles as $detalle) {
-                    $producto = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
-                    $producto->increment('stock', (int) $detalle->cantidad);
+            // Regla comercial: Una factura anulada es inmutable
+            if ($estadoAnterior === 'anulada') {
+                throw ValidationException::withMessages([
+                    'estado' => 'Una factura anulada es inmutable y no se puede modificar ni reactivar.',
+                ]);
+            }
+
+            // Regla comercial: Una factura pagada no permite cambiar datos comerciales libremente
+            if ($estadoAnterior === 'pagada') {
+                if ($estadoNuevo === 'pendiente') {
+                    throw ValidationException::withMessages([
+                        'estado' => 'Una factura pagada no puede regresar a estado pendiente.',
+                    ]);
                 }
-            } elseif ($estadoAnterior === 'anulada' && $estadoNuevo !== 'anulada') {
-                foreach ($detalles as $detalle) {
-                    $producto = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
 
-                    if ($producto->stock < (int) $detalle->cantidad) {
+                // Si se mantiene en pagada, verificar que no intenten alterar cliente ni fecha
+                if ($estadoNuevo === 'pagada') {
+                    if (isset($datos['id_cliente']) && (int) $datos['id_cliente'] !== (int) $factura->id_cliente) {
                         throw ValidationException::withMessages([
-                            'estado' => 'No se puede reactivar esta factura porque no hay stock suficiente para todos sus productos.',
+                            'id_cliente' => 'No se puede modificar el cliente de una factura pagada.',
                         ]);
                     }
+                    if (isset($datos['fecha']) && $datos['fecha'] !== $factura->fecha?->format('Y-m-d') && $datos['fecha'] !== $factura->fecha?->toDateString()) {
+                        throw ValidationException::withMessages([
+                            'fecha' => 'No se puede modificar la fecha de una factura pagada.',
+                        ]);
+                    }
+                }
+            }
 
-                    $producto->decrement('stock', (int) $detalle->cantidad);
+            // Nunca permitir sobreescribir totales desde el exterior
+            unset($datos['subtotal'], $datos['iva'], $datos['total'], $datos['id_usuario']);
+
+            // Si pasa a anulada (desde pendiente o pagada): devolución controlada de inventario
+            if ($estadoAnterior !== 'anulada' && $estadoNuevo === 'anulada') {
+                // Obtener detalles bloqueando los productos en orden ascendente por ID
+                $detalles = $factura->detalle_factura()->get();
+                $productosIds = $detalles->pluck('id_producto')->unique()->sort()->values();
+
+                if ($productosIds->isNotEmpty()) {
+                    $productosBloqueados = Productos::query()
+                        ->whereIn('id', $productosIds)
+                        ->lockForUpdate()
+                        ->get()
+                        ->keyBy('id');
+
+                    foreach ($detalles as $detalle) {
+                        $producto = $productosBloqueados->get($detalle->id_producto);
+                        if ($producto) {
+                            $cantidad = (int) $detalle->cantidad;
+                            $producto->increment('stock', $cantidad);
+
+                            MovimientoInventario::create([
+                                'id_producto' => $producto->id,
+                                'id_tienda' => $producto->id_tienda,
+                                'id_usuario' => auth()->id() ?? $factura->id_usuario,
+                                'tipo_movimiento' => 'anulacion_factura',
+                                'cantidad' => $cantidad,
+                                'fecha' => now(),
+                                'motivo' => "Restitución por anulación de factura #{$factura->id} (Estado anterior: {$estadoAnterior})",
+                            ]);
+                        }
+                    }
                 }
             }
 

@@ -32,6 +32,7 @@ class UpdateDetalleFacturaRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists('facturas', 'id')->where(function ($query) use ($tiendaId) {
+                    $query->where('estado', 'pendiente');
                     if ($tiendaId) {
                         $query->whereIn('id_usuario', function ($subQuery) use ($tiendaId) {
                             $subQuery->select('id')->from('usuarios')->where('id_tienda', $tiendaId);
@@ -56,7 +57,7 @@ class UpdateDetalleFacturaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_factura.exists' => 'La factura seleccionada no pertenece a tu tienda o no es válida.',
+            'id_factura.exists' => 'La factura seleccionada no pertenece a tu tienda, no existe o no se encuentra en estado pendiente.',
             'id_producto.exists' => 'El producto seleccionado no pertenece a tu tienda o no es válido.',
         ];
     }
