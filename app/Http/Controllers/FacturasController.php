@@ -74,7 +74,7 @@ class FacturasController extends Controller
     {
         $tiendaId = auth()->user()->id_tienda;
         if (! $this->facturasService->eliminar($id, $tiendaId)) {
-            return redirect()->route('facturas.index')->with('error', 'No se puede eliminar una factura que tiene detalles asociados. Elimina primero sus detalles.');
+            return redirect()->route('facturas.index')->with('error', 'No se puede eliminar la factura. Solo se pueden eliminar facturas en estado pendiente y sin detalles asociados.');
         }
 
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada correctamente.');
