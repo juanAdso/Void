@@ -8,6 +8,7 @@ use App\Http\Controllers\DetalleFacturaController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductosController;
+use App\Http\Controllers\RegistroTiendaController;
 use App\Http\Controllers\TiendaController;
 use App\Models\Categoria;
 use App\Models\Productos;
@@ -63,8 +64,8 @@ Route::get('/catalogo', function (Request $request) {
 })->name('catalogo');
 
 // Registro público de tiendas
-Route::get('/registro-tienda', [TiendaController::class, 'create'])->name('registro.tienda');
-Route::post('/registro-tienda', [TiendaController::class, 'store'])->name('registro.tienda.store');
+Route::get('/registro-tienda', [RegistroTiendaController::class, 'create'])->name('registro.tienda');
+Route::post('/registro-tienda', [RegistroTiendaController::class, 'store'])->name('registro.tienda.store');
 
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
