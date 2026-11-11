@@ -4,8 +4,6 @@
 @section('page-title', 'Panel de Control - Administrador')
 
 @section('content')
-
-    {{-- Tarjetas estadísticas --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <x-stat-card
             label="Total de productos"
@@ -29,7 +27,6 @@
         />
     </div>
 
-    {{-- Accesos directos y gestión rápida --}}
     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <x-card title="Productos" subtitle="Gestión de inventario de la tienda">
             <p class="text-sm text-slate-500 mb-4">Administra los productos, precios y disponibilidad de stock en tu tienda.</p>
@@ -47,4 +44,10 @@
         </x-card>
     </div>
 
+    <div class="mt-6">
+        <x-card title="Reportes y Movimientos de Inventario" subtitle="Análisis detallado de stock y rendimiento de ventas">
+            <p class="text-sm text-slate-500 mb-4">Consulta las alertas de stock bajo, productos agotados, historial de movimientos y rendimiento por empleado de tu tienda.</p>
+            <x-button variant="primary" href="{{ route('reportes.index') }}">Abrir panel de reportes &rarr;</x-button>
+        </x-card>
+    </div>
 @endsection

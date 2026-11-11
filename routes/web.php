@@ -5,63 +5,21 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetalleFacturaController;
+use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductosController;
+use App\Http\Controllers\PublicPortalController;
 use App\Http\Controllers\RegistroTiendaController;
+use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TiendaController;
-use App\Models\Categoria;
-use App\Models\Productos;
-use App\Models\Tienda;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Vista principal: Exclusivamente presentación y listado de tiendas disponibles
-Route::get('/', function () {
-    $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
-
-    return view('welcome', compact('tiendas'));
-})->name('inicio');
-
-// Catálogo por tienda: Muestra los productos y categorías de la tienda seleccionada
-Route::get('/catalogo', function (Request $request) {
-    $tiendas = Tienda::query()->where('estado', true)->orderBy('nombre')->get();
-    $tiendaSeleccionada = null;
-
-    if ($request->filled('tienda')) {
-        $tiendaSeleccionada = Tienda::query()->where('estado', true)->where('id', $request->integer('tienda'))->first();
-    }
-
-    $productosQuery = Productos::query()
-        ->with(['categoria', 'tienda'])
-        ->where('productos.estado', true)
-        ->where('productos.stock', '>', 0);
-
-    if ($tiendaSeleccionada) {
-        $productosQuery->where('productos.id_tienda', $tiendaSeleccionada->id);
-    }
-
-    $productos = $productosQuery
-        ->when($request->filled('categoria'), fn ($query) => $query->where('productos.id_categoria', $request->integer('categoria')))
-        ->when($request->filled('buscar'), function ($query) use ($request) {
-            $buscar = trim((string) $request->input('buscar'));
-            $query->where(function ($subquery) use ($buscar) {
-                $subquery->where('productos.nombre', 'like', '%'.$buscar.'%')
-                    ->orWhere('productos.descripcion', 'like', '%'.$buscar.'%');
-            });
-        })
-        ->orderBy('productos.nombre')
-        ->get();
-
-    $categoriaIds = $productos->pluck('id_categoria')->unique()->filter();
-    $categorias = Categoria::query()
-        ->where('estado', true)
-        ->when($categoriaIds->isNotEmpty(), fn ($q) => $q->whereIn('id', $categoriaIds))
-        ->orderBy('nombre')
-        ->get();
-
-    return view('layouts.catalogo', compact('tiendas', 'tiendaSeleccionada', 'categorias', 'productos'));
-})->name('catalogo');
+// Portal público: Directorio de tiendas, catálogo independiente por tienda, ficha de tienda y de producto
+Route::get('/', [PublicPortalController::class, 'index'])->name('inicio');
+Route::get('/catalogo', [PublicPortalController::class, 'catalogo'])->name('catalogo');
+Route::get('/tienda/{id}', [PublicPortalController::class, 'tienda'])->name('portal.tienda');
+Route::get('/producto/{id}', [PublicPortalController::class, 'producto'])->name('portal.producto');
 
 // Registro público de tiendas
 Route::get('/registro-tienda', [RegistroTiendaController::class, 'create'])->name('registro.tienda');
@@ -183,6 +141,11 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar detallefacturas')
         ->name('detalle_facturas.destroy');
 
+    // Inventario y Reportes
+    Route::get('/reportes', [ReportesController::class, 'index'])
+        ->middleware('modulo:ver dashboard')
+        ->name('reportes.index');
+
     // Tiendas
     Route::get('/tiendas', [TiendaController::class, 'index'])
         ->middleware('modulo:ver tiendas')
@@ -205,4 +168,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/tiendas/{tienda}', [TiendaController::class, 'destroy'])
         ->middleware('modulo:eliminar tiendas')
         ->name('tiendas.destroy');
+
+    // Gestión de Empleados (exclusivo administradores)
+    Route::get('/empleados', [EmpleadoController::class, 'index'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.index');
+    Route::get('/empleados/create', [EmpleadoController::class, 'create'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.create');
+    Route::post('/empleados', [EmpleadoController::class, 'store'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.store');
+    Route::get('/empleados/{empleado}/edit', [EmpleadoController::class, 'edit'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.edit');
+    Route::match(['put', 'patch'], '/empleados/{empleado}', [EmpleadoController::class, 'update'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.update');
+    Route::delete('/empleados/{empleado}', [EmpleadoController::class, 'destroy'])
+        ->middleware('modulo:gestionar seguridad')
+        ->name('empleados.destroy');
 });

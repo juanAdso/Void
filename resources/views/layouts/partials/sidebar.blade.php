@@ -1,8 +1,3 @@
-{{--
-    Sidebar principal.
-    Usa la variable de ruta actual (Route::currentRouteName() o request()->routeIs())
-    para resaltar el enlace activo.
---}}
 <aside
     x-cloak
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
@@ -11,27 +6,26 @@
 >
     <div class="h-full flex flex-col">
 
-        {{-- Logo --}}
         <div class="flex items-center gap-3 h-16 px-6 border-b border-slate-800">
             <div class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold">
-                A
+                V
             </div>
-            <span class="text-white font-semibold text-lg tracking-tight">{{ config('app.name', 'AdminPanel') }}</span>
+            <span class="text-white font-semibold text-lg tracking-tight">{{ config('app.name', 'VOID Admin') }}</span>
         </div>
 
-        {{-- Navegación --}}
         <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-1" aria-label="Navegación lateral">
 
             @php
                 $links = [
                     ['label' => 'Inicio',              'route' => 'dashboard.index',        'icon' => 'home',   'can' => ['ver dashboard']],
+                    ['label' => 'Reportes e Inventario', 'route' => 'reportes.index',        'icon' => 'chart',  'can' => ['ver dashboard']],
                     ['label' => 'Tiendas',             'route' => 'tiendas.index',          'icon' => 'store',  'can' => ['ver tiendas']],
                     ['label' => 'Clientes',            'route' => 'cliente.index',          'icon' => 'users',  'can' => ['ver clientes']],
                     ['label' => 'Categorías',          'route' => 'categoria.index',        'icon' => 'tag',    'can' => ['ver categorias']],
                     ['label' => 'Productos',           'route' => 'productos.index',        'icon' => 'box',    'can' => ['ver productos']],
                     ['label' => 'Facturas',            'route' => 'facturas.index',         'icon' => 'chart',  'can' => ['ver facturas']],
                     ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'cog',    'can' => ['ver detallefacturas']],
-                    ['label' => 'Seguridad',           'route' => 'dashboard.index',        'icon' => 'shield', 'can' => ['ver seguridad']],
+                    ['label' => 'Empleados',           'route' => 'empleados.index',        'icon' => 'users',  'can' => ['gestionar seguridad']],
                 ];
             @endphp
 
@@ -57,7 +51,6 @@
             @endforeach
         </nav>
 
-        {{-- Cerrar sesión --}}
         <div class="px-3 py-4 border-t border-slate-800">
             <form method="POST" action="{{ Route::has('logout') ? route('logout') : '#' }}">
                 @csrf
