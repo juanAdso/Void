@@ -7,13 +7,15 @@ use App\Repositories\Interfaces\ClienteRepositoryInterface;
 
 class ClienteRepository implements ClienteRepositoryInterface
 {
-    public function listarTodo(int $tiendaId)
+    public function listarTodo(?int $tiendaId)
     {
-        return Cliente::query()
-            ->where('id_tienda', $tiendaId)
-            ->orderBy('nombre')
-            ->orderBy('apellido')
-            ->get();
+        $consulta = Cliente::query();
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        return $consulta->orderBy('nombre')->orderBy('apellido')->get();
     }
 
     public function guardar(array $datos, int $tiendaId)
@@ -23,11 +25,15 @@ class ClienteRepository implements ClienteRepositoryInterface
         return Cliente::create($datos);
     }
 
-    public function eliminar(int $id, int $tiendaId)
+    public function eliminar(int $id, ?int $tiendaId)
     {
-        $cliente = Cliente::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        $consulta = Cliente::query();
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        $cliente = $consulta->findOrFail($id);
 
         if ($cliente->facturas()->exists()) {
             return false;
@@ -36,19 +42,26 @@ class ClienteRepository implements ClienteRepositoryInterface
         return $cliente->delete();
     }
 
-    public function buscarPorId(int $id, int $tiendaId)
+    public function buscarPorId(int $id, ?int $tiendaId)
     {
-        return Cliente::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        $consulta = Cliente::query();
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        return $consulta->findOrFail($id);
     }
 
-    public function actualizar(int $id, array $datos, int $tiendaId)
+    public function actualizar(int $id, array $datos, ?int $tiendaId)
     {
-        $cliente = Cliente::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        $consulta = Cliente::query();
 
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        $cliente = $consulta->findOrFail($id);
         unset($datos['id_tienda']);
         $cliente->update($datos);
 
