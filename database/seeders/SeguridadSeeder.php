@@ -2,99 +2,85 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
+use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class SeguridadSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Limpiar la caché de permisos
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // 1. Definición exacta de permisos requeridos
         $permisos = [
-            // Dashboard
             'ver dashboard',
-
-            // Tiendas
-            'ver tiendas',
-            'crear tiendas',
-            'editar tiendas',
-            'eliminar tiendas',
-
-            // Categorías
-            'ver categorias',
-            'crear categorias',
-            'editar categorias',
-            'eliminar categorias',
-
-            // Productos
-            'ver productos',
-            'crear productos',
-            'editar productos',
-            'eliminar productos',
-
-            // Clientes
-            'ver clientes',
-            'crear clientes',
-            'editar clientes',
-            'eliminar clientes',
-
-            // Facturas
-            'ver facturas',
-            'crear facturas',
-            'editar facturas',
-            'eliminar facturas',
-
-            // Detalle de facturas
-            'ver detallefacturas',
-            'crear detallefacturas',
-            'editar detallefacturas',
-            'eliminar detallefacturas',
-
-            // Seguridad
-            'ver seguridad',
-            'gestionar seguridad',
+            'ver tiendas', 'crear tiendas', 'editar tiendas', 'eliminar tiendas',
+            'ver categorias', 'crear categorias', 'editar categorias', 'eliminar categorias',
+            'ver productos', 'crear productos', 'editar productos', 'eliminar productos',
+            'ver clientes', 'crear clientes', 'editar clientes', 'eliminar clientes',
+            'ver facturas', 'crear facturas', 'editar facturas', 'eliminar facturas',
+            'ver detallefacturas', 'crear detallefacturas', 'editar detallefacturas', 'eliminar detallefacturas',
+            'ver seguridad', 'gestionar seguridad',
         ];
 
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso, 'guard_name' => 'web']);
         }
 
-        // 2. Crear roles
-        $rolAdmin = Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
-        $rolEmpleado = Role::firstOrCreate(['name' => 'empleado', 'guard_name' => 'web']);
+        /** @var PermissionRegistrar $registrar */
+        $registrar = app(PermissionRegistrar::class);
 
-        // 3. Asignación de permisos al Administrador: Todos los permisos
-        $rolAdmin->syncPermissions(Permission::all());
+        // Un único rol global reservado al superadministrador.
+        $registrar->setPermissionsTeamId(null);
+        $superadministrador = Role::query()->firstOrCreate([
+            'name' => 'superadministrador',
+            'guard_name' => 'web',
+            'id_tienda' => null,
+        ]);
+        $superadministrador->syncPermissions(Permission::query()->where('guard_name', 'web')->get());
 
-        // Sincronizar los roles de cuentas históricas con el campo rol del sistema.
-        // Esto no concede acceso a cuentas sin tienda: el middleware las bloquea.
-        User::query()
-            ->whereIn('rol', ['administrador', 'empleado'])
-            ->each(function (User $user) {
-                $user->syncRoles([$user->rol]);
-            });
+        // Los roles normales existen por tienda, aunque compartan nombre y catálogo
+        // de permisos. Sus asignaciones no se mezclan entre empresas.
+        foreach (Tienda::query()->orderBy('id')->get() as $tienda) {
+            $registrar->setPermissionsTeamId((int) $tienda->id);
 
-        // 4. Asignación de permisos al Empleado
-        $permisosEmpleado = [
-            'ver dashboard',
-            'ver categorias',
-            'ver productos',
-            'ver clientes',
-            'ver facturas',
-            'crear facturas',
-            'ver detallefacturas',
-            'crear detallefacturas',
-        ];
+            $rolAdmin = Role::query()->firstOrCreate([
+                'name' => 'administrador',
+                'guard_name' => 'web',
+                'id_tienda' => $tienda->id,
+            ]);
+            $rolAdmin->syncPermissions(Permission::query()->where('guard_name', 'web')->get());
 
-        $rolEmpleado->syncPermissions($permisosEmpleado);
+            $rolEmpleado = Role::query()->firstOrCreate([
+                'name' => 'empleado',
+                'guard_name' => 'web',
+                'id_tienda' => $tienda->id,
+            ]);
+            $rolEmpleado->syncPermissions([
+                'ver dashboard',
+                'ver categorias',
+                'ver productos',
+                'ver clientes',
+                'ver facturas',
+                'crear facturas',
+                'ver detallefacturas',
+                'crear detallefacturas',
+            ]);
+
+            User::query()
+                ->where('id_tienda', $tienda->id)
+                ->whereIn('rol', ['administrador', 'empleado'])
+                ->each(function (User $usuario) {
+                    $usuario->unsetRelation('roles');
+                    $usuario->syncRoles([$usuario->rol]);
+                });
+        }
+
+        // Nunca asignar roles globales a cuentas normales ni cuentas sin tienda.
+        $registrar->setPermissionsTeamId(null);
+        $registrar->forgetCachedPermissions();
     }
 }
