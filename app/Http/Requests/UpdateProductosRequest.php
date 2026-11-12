@@ -10,18 +10,28 @@ class UpdateProductosRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $tiendaId = $this->user()?->id_tienda;
+        $usuario = $this->user();
         $productoId = $this->route('producto') ?? $this->route('id');
 
-        return $tiendaId && $productoId && Productos::query()
+        if (! $usuario || ! $usuario->estaActivo() || ! $productoId) {
+            return false;
+        }
+
+        if ($usuario->esSuperadministrador()) {
+            return Productos::query()->whereKey($productoId)->exists();
+        }
+
+        return $usuario->id_tienda && Productos::query()
             ->whereKey($productoId)
-            ->where('id_tienda', $tiendaId)
+            ->where('id_tienda', $usuario->id_tienda)
             ->exists();
     }
 
     public function rules(): array
     {
-        $tiendaId = $this->user()->id_tienda;
+        $productoId = $this->route('producto') ?? $this->route('id');
+        $producto = Productos::query()->findOrFail($productoId);
+        $tiendaId = (int) $producto->id_tienda;
 
         return [
             'nombre' => ['required', 'string', 'max:150'],
@@ -41,7 +51,7 @@ class UpdateProductosRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_categoria.exists' => 'La categoría seleccionada no pertenece a tu tienda.',
+            'id_categoria.exists' => 'La categoría seleccionada no pertenece a la tienda del producto.',
         ];
     }
 }
