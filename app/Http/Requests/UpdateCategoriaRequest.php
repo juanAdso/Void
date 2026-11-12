@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Categoria;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -9,13 +10,28 @@ class UpdateCategoriaRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return (bool) $this->user()?->id_tienda;
+        $usuario = $this->user();
+        $categoriaId = $this->route('categorium') ?? $this->route('categoria') ?? $this->route('id');
+
+        if (! $usuario || ! $usuario->estaActivo() || ! $categoriaId) {
+            return false;
+        }
+
+        if ($usuario->esSuperadministrador()) {
+            return Categoria::query()->whereKey($categoriaId)->exists();
+        }
+
+        return $usuario->id_tienda && Categoria::query()
+            ->whereKey($categoriaId)
+            ->where('id_tienda', $usuario->id_tienda)
+            ->exists();
     }
 
     public function rules(): array
     {
-        $tiendaId = $this->user()->id_tienda;
         $categoriaId = $this->route('categorium') ?? $this->route('categoria') ?? $this->route('id');
+        $categoria = Categoria::query()->findOrFail($categoriaId);
+        $tiendaId = (int) $categoria->id_tienda;
 
         return [
             'nombre' => [
