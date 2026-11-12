@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BusquedaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
@@ -36,6 +37,11 @@ Route::get('/password/code', [PasswordResetController::class, 'showResetForm'])-
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 
 Route::middleware('auth')->group(function () {
+    // Búsqueda global: cada resultado respeta los permisos y la tienda del usuario
+    Route::get('/buscar', [BusquedaController::class, 'index'])
+        ->middleware('modulo')
+        ->name('busqueda.global');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('modulo:ver dashboard')
