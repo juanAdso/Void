@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Productos;
+use App\Models\Scopes\TiendaScope;
 use App\Models\Tienda;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class PublicPortalController extends Controller
         $tiendas = Tienda::query()
             ->where('estado', true)
             ->withCount(['productos as total_productos' => function ($query) {
-                $query->where('estado', true);
+                $query->withoutGlobalScope(TiendaScope::class)->where('estado', true);
             }])
             ->orderBy('nombre')
             ->get();
@@ -27,7 +28,8 @@ class PublicPortalController extends Controller
         $tienda = Tienda::query()->whereKey($id)->where('estado', true)->firstOrFail();
 
         $productosDestacados = Productos::query()
-            ->with('categoria')
+            ->withoutGlobalScope(TiendaScope::class)
+            ->with(['categoria' => fn ($query) => $query->withoutGlobalScope(TiendaScope::class)])
             ->where('id_tienda', $tienda->id)
             ->where('estado', true)
             ->where('stock', '>', 0)
@@ -36,6 +38,7 @@ class PublicPortalController extends Controller
             ->get();
 
         $categorias = Categoria::query()
+            ->withoutGlobalScope(TiendaScope::class)
             ->where('id_tienda', $tienda->id)
             ->where('estado', true)
             ->whereIn('id', function ($query) use ($tienda) {
@@ -73,7 +76,11 @@ class PublicPortalController extends Controller
         }
 
         $productosQuery = Productos::query()
-            ->with(['categoria', 'tienda'])
+            ->withoutGlobalScope(TiendaScope::class)
+            ->with([
+                'categoria' => fn ($query) => $query->withoutGlobalScope(TiendaScope::class),
+                'tienda',
+            ])
             ->where('productos.id_tienda', $tiendaSeleccionada->id)
             ->where('productos.estado', true);
 
@@ -106,6 +113,7 @@ class PublicPortalController extends Controller
         $productos = $productosQuery->orderBy('productos.nombre')->paginate(12)->withQueryString();
 
         $categorias = Categoria::query()
+            ->withoutGlobalScope(TiendaScope::class)
             ->where('id_tienda', $tiendaSeleccionada->id)
             ->where('estado', true)
             ->whereIn('id', function ($query) use ($tiendaSeleccionada) {
@@ -123,13 +131,18 @@ class PublicPortalController extends Controller
     public function producto(int $id)
     {
         $producto = Productos::query()
-            ->with(['categoria', 'tienda'])
+            ->withoutGlobalScope(TiendaScope::class)
+            ->with([
+                'categoria' => fn ($query) => $query->withoutGlobalScope(TiendaScope::class),
+                'tienda',
+            ])
             ->whereKey($id)
             ->where('estado', true)
             ->whereHas('tienda', fn ($query) => $query->where('estado', true))
             ->firstOrFail();
 
         $productosRelacionados = Productos::query()
+            ->withoutGlobalScope(TiendaScope::class)
             ->where('id_tienda', $producto->id_tienda)
             ->where('id_categoria', $producto->id_categoria)
             ->where('id', '<>', $producto->id)
