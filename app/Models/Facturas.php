@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Facturas extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATienda;
 
     protected $table = 'facturas';
 
