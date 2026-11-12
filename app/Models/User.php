@@ -10,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable,TieneRolesActivos;
+    use HasFactory, HasRoles, Notifiable, TieneRolesActivos;
 
     protected $table = 'usuarios';
 
@@ -43,5 +43,10 @@ class User extends Authenticatable
     public function tienda()
     {
         return $this->belongsTo(Tienda::class, 'id_tienda');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Facturas::class, 'id_usuario');
     }
 }
