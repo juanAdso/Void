@@ -14,11 +14,31 @@ class ReportesController extends Controller
     public function index(Request $request)
     {
         $usuario = auth()->user();
-        $tiendaId = $usuario?->id_tienda;
+        if ($usuario?->esSuperadministrador()) {
+            $ventasPorTienda = DB::table('tiendas')
+                ->leftJoin('usuarios', 'usuarios.id_tienda', '=', 'tiendas.id')
+                ->leftJoin('facturas', 'facturas.id_usuario', '=', 'usuarios.id')
+                ->select(
+                    'tiendas.id',
+                    'tiendas.nombre',
+                    DB::raw("COUNT(CASE WHEN facturas.estado = 'pagada' THEN 1 END) as ventas_pagadas"),
+                    DB::raw("COALESCE(SUM(CASE WHEN facturas.estado = 'pagada' THEN facturas.total ELSE 0 END), 0) as ingresos")
+                )
+                ->groupBy('tiendas.id', 'tiendas.nombre')
+                ->orderBy('tiendas.nombre')
+                ->get();
 
-        if (!$tiendaId) {
-            abort(403, 'No tienes una tienda asignada para consultar reportes.');
+            $ventasGlobales = (int) Facturas::where('estado', 'pagada')->count();
+            $ingresosGlobales = (float) Facturas::where('estado', 'pagada')->sum('total');
+
+            return view('reportes.superadministrador', compact(
+                'ventasPorTienda',
+                'ventasGlobales',
+                'ingresosGlobales'
+            ));
         }
+
+        $tiendaId = $usuario?->requiereTiendaId();
 
         $productosStockBajo = Productos::query()
             ->with('categoria')
@@ -50,7 +70,7 @@ class ReportesController extends Controller
             ->join('usuarios', 'facturas.id_usuario', '=', 'usuarios.id')
             ->where('productos.id_tienda', $tiendaId)
             ->where('usuarios.id_tienda', $tiendaId)
-            ->where('facturas.estado', '!=', 'anulada')
+            ->where('facturas.estado', 'pagada')
             ->select(
                 'productos.id',
                 'productos.nombre',
