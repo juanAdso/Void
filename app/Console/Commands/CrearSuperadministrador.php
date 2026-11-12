@@ -27,7 +27,7 @@ class CrearSuperadministrador extends Command
 
         /** @var PermissionRegistrar $registrar */
         $registrar = app(PermissionRegistrar::class);
-        $registrar->setPermissionsTeamId(null);
+        $registrar->setPermissionsTeamId(0);
 
         $registrado = User::query()
             ->where('rol', 'superadministrador')
