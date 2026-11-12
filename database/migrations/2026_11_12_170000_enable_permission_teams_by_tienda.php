@@ -11,6 +11,13 @@ return new class extends Migration
     {
         $tableNames = config('permission.table_names');
 
+        // En instalaciones nuevas la migración original de Spatie ya crea los
+        // campos Teams porque config/permission.php tiene teams=true.
+        // En bases existentes se agregan aquí, sin intentar duplicarlos.
+        if (Schema::hasColumn($tableNames['roles'], 'id_tienda')) {
+            return;
+        }
+
         Schema::table($tableNames['roles'], function (Blueprint $table) {
             $table->unsignedBigInteger('id_tienda')->nullable()->after('id');
             $table->dropUnique('roles_name_guard_name_unique');
@@ -33,8 +40,13 @@ return new class extends Migration
             $tiendas = DB::table('tiendas')->orderBy('id')->pluck('id');
 
             foreach ($roles as $rolGlobal) {
-                // El rol global es reservado exclusivamente para el propietario de VOID.
+                // Solo el rol global reservado permanece fuera de las tiendas.
+                // El superadministrador se asigna al contexto especial 0.
                 if ($rolGlobal->name === 'superadministrador') {
+                    DB::table($tableNames['roles'])
+                        ->where('id', $rolGlobal->id)
+                        ->update(['id_tienda' => 0]);
+
                     continue;
                 }
 
@@ -92,22 +104,12 @@ return new class extends Migration
                     }
                 }
 
-                // Los usuarios sin tienda pierden la asignación global heredada y
-                // deben ser conciliados por un proceso administrativo explícito.
-                DB::table($tableNames['model_has_roles'])
-                    ->where('role_id', $rolGlobal->id)
-                    ->delete();
-
-                DB::table($tableNames['role_has_permissions'])
-                    ->where('role_id', $rolGlobal->id)
-                    ->delete();
-
-                DB::table($tableNames['roles'])
-                    ->where('id', $rolGlobal->id)
-                    ->delete();
+                // Las cuentas históricas sin tienda pierden el rol global heredado.
+                DB::table($tableNames['model_has_roles'])->where('role_id', $rolGlobal->id)->delete();
+                DB::table($tableNames['role_has_permissions'])->where('role_id', $rolGlobal->id)->delete();
+                DB::table($tableNames['roles'])->where('id', $rolGlobal->id)->delete();
             }
 
-            // Las asignaciones directas de permisos también quedan ligadas al tenant.
             $asignacionesDirectas = DB::table($tableNames['model_has_permissions'])->get();
 
             foreach ($asignacionesDirectas as $asignacion) {
@@ -139,21 +141,6 @@ return new class extends Migration
                     ->where('model_type', $asignacion->model_type)
                     ->update(['id_tienda' => $usuario->id_tienda]);
             }
-        });
-
-        Schema::table($tableNames['roles'], function (Blueprint $table) {
-            $table->foreign('id_tienda', 'roles_id_tienda_foreign')
-                ->references('id')->on('tiendas')->restrictOnDelete();
-        });
-
-        Schema::table($tableNames['model_has_roles'], function (Blueprint $table) {
-            $table->foreign('id_tienda', 'model_has_roles_id_tienda_foreign')
-                ->references('id')->on('tiendas')->restrictOnDelete();
-        });
-
-        Schema::table($tableNames['model_has_permissions'], function (Blueprint $table) {
-            $table->foreign('id_tienda', 'model_has_permissions_id_tienda_foreign')
-                ->references('id')->on('tiendas')->restrictOnDelete();
         });
     }
 
