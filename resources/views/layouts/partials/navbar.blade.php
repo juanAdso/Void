@@ -20,7 +20,7 @@
         <div class="flex items-center gap-2 sm:gap-4">
 
             {{-- Buscador --}}
-            <form method="GET" action="{{ url()->current() }}" class="relative hidden md:block" role="search">
+            <form method="GET" action="{{ route('busqueda.global') }}" class="relative hidden md:block" role="search">
                 <label for="global-search" class="sr-only">Buscar</label>
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 w-4 h-4 pointer-events-none">
                     @include('layouts.partials.icons', ['icon' => 'search'])
@@ -30,7 +30,7 @@
                     type="search"
                     name="q"
                     value="{{ request('q') }}"
-                    placeholder="Buscar..."
+                    placeholder="Buscar en Void..."
                     class="w-56 lg:w-72 pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
                 >
             </form>

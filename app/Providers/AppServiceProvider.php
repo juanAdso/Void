@@ -33,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\TiendaRepositoryInterface::class,
             \App\Repositories\TiendaRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Interfaces\BusquedaRepositoryInterface::class,
+            \App\Repositories\BusquedaRepository::class
+        );
     }
 
     public function boot(): void
