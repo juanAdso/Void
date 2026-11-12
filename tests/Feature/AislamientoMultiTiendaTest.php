@@ -526,3 +526,48 @@ test('un administrador solo puede actualizar el perfil de su propia tienda', fun
 
     expect($tiendaB->fresh()->nombre)->toBe('Tienda B');
 });
+
+
+test('una tienda no puede crear productos con categorias de otra tienda', function () {
+    $tiendaA = Tienda::factory()->create();
+    $tiendaB = Tienda::factory()->create();
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $categoriaB = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
+
+    $this->actingAs($adminA)->post(route('productos.store'), [
+        'nombre' => 'Producto con categoria ajena',
+        'precio' => 100,
+        'stock' => 5,
+        'estado' => 1,
+        'id_categoria' => $categoriaB->id,
+    ])->assertSessionHasErrors(['id_categoria']);
+
+    expect(Productos::where('nombre', 'Producto con categoria ajena')->exists())->toBeFalse();
+});
+
+test('una tienda no puede crear facturas con clientes de otra tienda', function () {
+    $tiendaA = Tienda::factory()->create();
+    $tiendaB = Tienda::factory()->create();
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $clienteB = Cliente::factory()->create(['id_tienda' => $tiendaB->id]);
+
+    $this->actingAs($adminA)->post(route('facturas.store'), [
+        'id_cliente' => $clienteB->id,
+        'fecha' => '2026-11-12',
+        'estado' => 'pendiente',
+    ])->assertSessionHasErrors(['id_cliente']);
+
+    expect(Facturas::count())->toBe(0);
+});

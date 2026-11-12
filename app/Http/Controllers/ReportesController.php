@@ -47,7 +47,9 @@ class ReportesController extends Controller
         $productosMasVendidos = DB::table('detalle_factura')
             ->join('facturas', 'detalle_factura.id_factura', '=', 'facturas.id')
             ->join('productos', 'detalle_factura.id_producto', '=', 'productos.id')
+            ->join('usuarios', 'facturas.id_usuario', '=', 'usuarios.id')
             ->where('productos.id_tienda', $tiendaId)
+            ->where('usuarios.id_tienda', $tiendaId)
             ->where('facturas.estado', '!=', 'anulada')
             ->select(
                 'productos.id',

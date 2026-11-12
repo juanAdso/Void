@@ -15,7 +15,13 @@ class FacturasRepository implements FacturasRepositoryInterface
     public function listarTodo(int $tiendaId)
     {
         return Facturas::query()
-            ->with(['cliente', 'detalle_factura'])
+            ->with([
+                'cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
+                'detalle_factura' => fn ($query) => $query->whereHas(
+                    'producto',
+                    fn ($producto) => $producto->where('id_tienda', $tiendaId)
+                ),
+            ])
             ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
             ->orderByDesc('fecha')
             ->get();
@@ -53,7 +59,13 @@ class FacturasRepository implements FacturasRepositoryInterface
     public function buscarPorId(int $id, int $tiendaId)
     {
         return Facturas::query()
-            ->with(['cliente', 'detalle_factura'])
+            ->with([
+                'cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
+                'detalle_factura' => fn ($query) => $query->whereHas(
+                    'producto',
+                    fn ($producto) => $producto->where('id_tienda', $tiendaId)
+                ),
+            ])
             ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
             ->findOrFail($id);
     }

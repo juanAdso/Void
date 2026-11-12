@@ -15,8 +15,12 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     public function listarTodo(int $tiendaId)
     {
         return DetalleFactura::query()
-            ->with(['factura.cliente', 'producto'])
+            ->with([
+                'factura.cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
+                'producto',
+            ])
             ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->whereHas('producto', fn ($query) => $query->where('id_tienda', $tiendaId))
             ->orderBy('id')
             ->get();
     }
@@ -82,6 +86,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         return DB::transaction(function () use ($id, $tiendaId) {
             $detalle = DetalleFactura::query()
                 ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->whereHas('producto', fn ($query) => $query->where('id_tienda', $tiendaId))
                 ->lockForUpdate()
                 ->findOrFail($id);
 
@@ -124,8 +129,12 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     public function buscarPorId(int $id, int $tiendaId)
     {
         return DetalleFactura::query()
-            ->with(['factura', 'producto'])
+            ->with([
+                'factura.cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
+                'producto',
+            ])
             ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->whereHas('producto', fn ($query) => $query->where('id_tienda', $tiendaId))
             ->findOrFail($id);
     }
 

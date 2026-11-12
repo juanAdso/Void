@@ -11,7 +11,7 @@ class CategoriaRepository implements CategoriaRepositoryInterface
     {
         return Categoria::query()
             ->where('id_tienda', $tiendaId)
-            ->withCount('productos')
+            ->withCount(['productos' => fn ($query) => $query->where('productos.id_tienda', $tiendaId)])
             ->orderBy('nombre')
             ->get();
     }
