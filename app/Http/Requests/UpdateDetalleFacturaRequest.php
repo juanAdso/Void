@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\DetalleFactura;
+use App\Models\Facturas;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,22 +11,28 @@ class UpdateDetalleFacturaRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $tiendaId = $this->user()?->id_tienda;
+        $usuario = $this->user();
         $detalleId = $this->route('detalle_factura');
 
-        if (! $tiendaId || ! $detalleId) {
+        if (! $usuario || ! $usuario->estaActivo() || ! $detalleId) {
             return false;
         }
 
-        return DetalleFactura::query()
+        if ($usuario->esSuperadministrador()) {
+            return DetalleFactura::query()->whereKey($detalleId)->exists();
+        }
+
+        return $usuario->id_tienda && DetalleFactura::query()
             ->whereKey($detalleId)
-            ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $usuario->id_tienda))
             ->exists();
     }
 
     public function rules(): array
     {
-        $tiendaId = $this->user()->id_tienda;
+        $detalleId = $this->route('detalle_factura');
+        $detalle = DetalleFactura::query()->with('factura.usuario')->findOrFail($detalleId);
+        $tiendaId = (int) $detalle->factura->usuario->id_tienda;
 
         return [
             'id_factura' => [
@@ -51,8 +58,8 @@ class UpdateDetalleFacturaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_factura.exists' => 'La factura seleccionada no pertenece a tu tienda, no existe o no está pendiente.',
-            'id_producto.exists' => 'El producto seleccionado no pertenece a tu tienda o no es válido.',
+            'id_factura.exists' => 'La factura seleccionada debe estar pendiente y pertenecer a la misma tienda del detalle.',
+            'id_producto.exists' => 'El producto seleccionado debe pertenecer a la misma tienda del detalle.',
         ];
     }
 }
