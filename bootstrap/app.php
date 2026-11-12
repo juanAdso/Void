@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\CrearSuperadministrador;
 use App\Http\Middleware\ModuloMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -12,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([CrearSuperadministrador::class])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'modulo' => ModuloMiddleware::class,
