@@ -12,35 +12,34 @@ use Illuminate\Validation\ValidationException;
 
 class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
-    public function listarTodo(?int $tiendaId = null)
+    public function listarTodo(int $tiendaId)
     {
-        $query = DetalleFactura::with(['factura.cliente', 'producto']);
-
-        if ($tiendaId) {
-            $query->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
-        }
-
-        return $query->orderBy('id')->get();
+        return DetalleFactura::query()
+            ->with(['factura.cliente', 'producto'])
+            ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->orderBy('id')
+            ->get();
     }
 
-    public function guardar(array $datos)
+    public function guardar(array $datos, int $tiendaId)
     {
-        return DB::transaction(function () use ($datos) {
-            $factura = Facturas::query()->lockForUpdate()->findOrFail($datos['id_factura']);
+        return DB::transaction(function () use ($datos, $tiendaId) {
+            $factura = Facturas::query()
+                ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->lockForUpdate()
+                ->findOrFail($datos['id_factura']);
 
-            if ($factura->estado === 'anulada') {
+            if ($factura->estado !== 'pendiente') {
                 throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden agregar productos a una factura anulada.',
+                    'id_factura' => 'Solo se pueden agregar productos a facturas pendientes.',
                 ]);
             }
 
-            if ($factura->estado === 'pagada') {
-                throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden agregar productos a una factura pagada.',
-                ]);
-            }
+            $producto = Productos::query()
+                ->where('id_tienda', $tiendaId)
+                ->lockForUpdate()
+                ->findOrFail($datos['id_producto']);
 
-            $producto = Productos::query()->lockForUpdate()->findOrFail($datos['id_producto']);
             $cantidad = (int) $datos['cantidad'];
 
             if ($producto->stock < $cantidad) {
@@ -64,7 +63,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             MovimientoInventario::create([
                 'id_producto' => $producto->id,
-                'id_tienda' => $producto->id_tienda,
+                'id_tienda' => $tiendaId,
                 'id_usuario' => auth()->id() ?? $factura->id_usuario,
                 'tipo_movimiento' => 'venta_detalle',
                 'cantidad' => -$cantidad,
@@ -78,37 +77,36 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         });
     }
 
-    public function eliminar(int $id, ?int $tiendaId = null)
+    public function eliminar(int $id, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $tiendaId) {
-            $detalleQuery = DetalleFactura::query()->lockForUpdate()->where('id', $id);
-            if ($tiendaId) {
-                $detalleQuery->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
-            }
-            $detalle = $detalleQuery->firstOrFail();
+            $detalle = DetalleFactura::query()
+                ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-            $factura = Facturas::query()->lockForUpdate()->findOrFail($detalle->id_factura);
+            $factura = Facturas::query()
+                ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->lockForUpdate()
+                ->findOrFail($detalle->id_factura);
 
-            if ($factura->estado === 'anulada') {
+            if ($factura->estado !== 'pendiente') {
                 throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden eliminar detalles de una factura anulada.',
+                    'id_factura' => 'Solo se pueden retirar detalles de facturas pendientes.',
                 ]);
             }
 
-            if ($factura->estado === 'pagada') {
-                throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden eliminar detalles de una factura pagada. Debe gestionarse mediante devolución controlada.',
-                ]);
-            }
+            $producto = Productos::query()
+                ->where('id_tienda', $tiendaId)
+                ->lockForUpdate()
+                ->findOrFail($detalle->id_producto);
 
-            $producto = Productos::query()->lockForUpdate()->findOrFail($detalle->id_producto);
             $cantidad = (int) $detalle->cantidad;
-
             $producto->increment('stock', $cantidad);
 
             MovimientoInventario::create([
                 'id_producto' => $producto->id,
-                'id_tienda' => $producto->id_tienda,
+                'id_tienda' => $tiendaId,
                 'id_usuario' => auth()->id() ?? $factura->id_usuario,
                 'tipo_movimiento' => 'devolucion_detalle',
                 'cantidad' => $cantidad,
@@ -123,29 +121,30 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         });
     }
 
-    public function buscarPorId(int $id, ?int $tiendaId = null)
+    public function buscarPorId(int $id, int $tiendaId)
     {
-        $query = DetalleFactura::with(['factura', 'producto'])->where('id', $id);
-
-        if ($tiendaId) {
-            $query->whereHas('factura.usuario', fn ($q) => $q->where('id_tienda', $tiendaId));
-        }
-
-        return $query->firstOrFail();
+        return DetalleFactura::query()
+            ->with(['factura', 'producto'])
+            ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->findOrFail($id);
     }
 
-    public function actualizar(int $id, array $datos)
+    public function actualizar(int $id, array $datos, int $tiendaId)
     {
-        return DB::transaction(function () use ($id, $datos) {
-            $detalle = DetalleFactura::query()->lockForUpdate()->findOrFail($id);
+        return DB::transaction(function () use ($id, $datos, $tiendaId) {
+            $detalle = DetalleFactura::query()
+                ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->lockForUpdate()
+                ->findOrFail($id);
+
             $facturaAnteriorId = (int) $detalle->id_factura;
             $facturaNuevaId = (int) $datos['id_factura'];
 
-            // Bloquear facturas involucradas en orden para evitar deadlocks
             $facturasIds = array_unique([$facturaAnteriorId, $facturaNuevaId]);
             sort($facturasIds);
 
             $facturasBloqueadas = Facturas::query()
+                ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
                 ->whereIn('id', $facturasIds)
                 ->lockForUpdate()
                 ->get()
@@ -156,30 +155,24 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             if (! $facturaAnterior || ! $facturaNueva) {
                 throw ValidationException::withMessages([
-                    'id_factura' => 'Factura especificada no encontrada.',
+                    'id_factura' => 'Las facturas deben pertenecer a tu tienda.',
                 ]);
             }
 
-            if ($facturaAnterior->estado === 'anulada' || $facturaNueva->estado === 'anulada') {
+            if ($facturaAnterior->estado !== 'pendiente' || $facturaNueva->estado !== 'pendiente') {
                 throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden modificar ni mover productos de o hacia una factura anulada.',
-                ]);
-            }
-
-            if ($facturaAnterior->estado === 'pagada' || $facturaNueva->estado === 'pagada') {
-                throw ValidationException::withMessages([
-                    'id_factura' => 'No se pueden modificar detalles de una factura pagada.',
+                    'id_factura' => 'Solo se pueden modificar detalles entre facturas pendientes.',
                 ]);
             }
 
             $productoAnteriorId = (int) $detalle->id_producto;
             $productoNuevoId = (int) $datos['id_producto'];
 
-            // Bloquear productos involucrados en orden ascendente para evitar deadlocks
             $productosIds = array_unique([$productoAnteriorId, $productoNuevoId]);
             sort($productosIds);
 
             $productosBloqueados = Productos::query()
+                ->where('id_tienda', $tiendaId)
                 ->whereIn('id', $productosIds)
                 ->lockForUpdate()
                 ->get()
@@ -190,7 +183,7 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 
             if (! $productoAnterior || ! $productoNuevo) {
                 throw ValidationException::withMessages([
-                    'id_producto' => 'Producto especificado no encontrado.',
+                    'id_producto' => 'Los productos deben pertenecer a tu tienda.',
                 ]);
             }
 
@@ -198,52 +191,48 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             $cantidadNueva = (int) $datos['cantidad'];
 
             if ($productoAnteriorId === $productoNuevoId) {
-                // Mismo producto, posible cambio de cantidad
                 $diferencia = $cantidadNueva - $cantidadAnterior;
+
                 if ($diferencia > 0) {
                     if ($productoAnterior->stock < $diferencia) {
                         throw ValidationException::withMessages([
                             'cantidad' => 'No hay suficiente stock para la cantidad solicitada.',
                         ]);
                     }
+
                     $productoAnterior->decrement('stock', $diferencia);
-                    MovimientoInventario::create([
-                        'id_producto' => $productoAnterior->id,
-                        'id_tienda' => $productoAnterior->id_tienda,
-                        'id_usuario' => auth()->id() ?? $facturaNueva->id_usuario,
-                        'tipo_movimiento' => 'ajuste_edicion',
-                        'cantidad' => -$diferencia,
-                        'fecha' => now(),
-                        'motivo' => "Aumento de {$diferencia} unidad(es) en detalle factura #{$facturaNueva->id}",
-                    ]);
+                    $cantidadMovimiento = -$diferencia;
                 } elseif ($diferencia < 0) {
                     $unidadesDevueltas = abs($diferencia);
                     $productoAnterior->increment('stock', $unidadesDevueltas);
+                    $cantidadMovimiento = $unidadesDevueltas;
+                } else {
+                    $cantidadMovimiento = 0;
+                }
+
+                if ($cantidadMovimiento !== 0) {
                     MovimientoInventario::create([
                         'id_producto' => $productoAnterior->id,
-                        'id_tienda' => $productoAnterior->id_tienda,
+                        'id_tienda' => $tiendaId,
                         'id_usuario' => auth()->id() ?? $facturaNueva->id_usuario,
                         'tipo_movimiento' => 'ajuste_edicion',
-                        'cantidad' => $unidadesDevueltas,
+                        'cantidad' => $cantidadMovimiento,
                         'fecha' => now(),
-                        'motivo' => "Disminución de {$unidadesDevueltas} unidad(es) en detalle factura #{$facturaNueva->id}",
+                        'motivo' => "Ajuste de cantidad en detalle factura #{$facturaNueva->id}",
                     ]);
                 }
             } else {
-                // Cambio de producto: restituir stock a producto anterior y descontar de nuevo
                 $productoAnterior->increment('stock', $cantidadAnterior);
+
                 MovimientoInventario::create([
                     'id_producto' => $productoAnterior->id,
-                    'id_tienda' => $productoAnterior->id_tienda,
+                    'id_tienda' => $tiendaId,
                     'id_usuario' => auth()->id() ?? $facturaAnterior->id_usuario,
                     'tipo_movimiento' => 'cambio_producto_restitucion',
                     'cantidad' => $cantidadAnterior,
                     'fecha' => now(),
                     'motivo' => "Restitución por cambio de producto en factura #{$facturaAnterior->id}",
                 ]);
-
-                // Refrescar estado del producto nuevo
-                $productoNuevo->refresh();
 
                 if ($productoNuevo->stock < $cantidadNueva) {
                     throw ValidationException::withMessages([
@@ -252,9 +241,10 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
                 }
 
                 $productoNuevo->decrement('stock', $cantidadNueva);
+
                 MovimientoInventario::create([
                     'id_producto' => $productoNuevo->id,
-                    'id_tienda' => $productoNuevo->id_tienda,
+                    'id_tienda' => $tiendaId,
                     'id_usuario' => auth()->id() ?? $facturaNueva->id_usuario,
                     'tipo_movimiento' => 'cambio_producto_salida',
                     'cantidad' => -$cantidadNueva,
@@ -264,17 +254,16 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             }
 
             $precio = (float) $datos['precio_unitario'];
-            $subtotalDetalle = round($cantidadNueva * $precio, 2);
-
             $detalle->update([
                 'id_factura' => $facturaNueva->id,
                 'id_producto' => $productoNuevo->id,
                 'cantidad' => $cantidadNueva,
                 'precio_unitario' => $precio,
-                'subtotal' => $subtotalDetalle,
+                'subtotal' => round($cantidadNueva * $precio, 2),
             ]);
 
             $this->recalcularFactura((int) $facturaAnterior->id);
+
             if ($facturaNueva->id !== $facturaAnterior->id) {
                 $this->recalcularFactura((int) $facturaNueva->id);
             }
@@ -286,15 +275,13 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
     private function recalcularFactura(int $facturaId): void
     {
         $factura = Facturas::query()->lockForUpdate()->findOrFail($facturaId);
-        $subtotal = (float) $factura->detalle_factura()->sum('subtotal');
-        $subtotalRedondeado = round($subtotal, 2);
-        $iva = round($subtotalRedondeado * 0.19, 2);
-        $total = round($subtotalRedondeado + $iva, 2);
+        $subtotal = round((float) $factura->detalle_factura()->sum('subtotal'), 2);
+        $iva = round($subtotal * 0.19, 2);
 
         $factura->update([
-            'subtotal' => $subtotalRedondeado,
+            'subtotal' => $subtotal,
             'iva' => $iva,
-            'total' => $total,
+            'total' => round($subtotal + $iva, 2),
         ]);
     }
 }

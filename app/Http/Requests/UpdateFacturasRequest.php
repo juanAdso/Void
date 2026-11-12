@@ -4,57 +4,44 @@ namespace App\Http\Requests;
 
 use App\Models\Facturas;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateFacturasRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $tiendaId = $this->user()?->id_tienda;
+        $facturaId = $this->route('factura');
+
+        if (! $tiendaId || ! $facturaId) {
+            return false;
+        }
+
+        return Facturas::query()
+            ->whereKey($facturaId)
+            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->exists();
     }
 
     public function rules(): array
     {
+        $tiendaId = $this->user()->id_tienda;
+
         return [
-            'id_cliente' => 'required|integer|exists:clientes,id',
-            'fecha' => 'required|date',
-            'estado' => 'required|in:pendiente,pagada,anulada',
+            'id_cliente' => [
+                'required',
+                'integer',
+                Rule::exists('clientes', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
+            ],
+            'fecha' => ['required', 'date'],
+            'estado' => ['required', Rule::in(['pendiente', 'pagada', 'anulada'])],
         ];
     }
 
-    public function withValidator($validator): void
+    public function messages(): array
     {
-        $validator->after(function ($validator) {
-            $id = $this->route('factura');
-            if (! $id) {
-                return;
-            }
-
-            $factura = Facturas::find($id);
-            if (! $factura) {
-                return;
-            }
-
-            $nuevoEstado = $this->input('estado');
-
-            if ($factura->estado === 'anulada') {
-                $validator->errors()->add('estado', 'Una factura anulada es inmutable y no se puede modificar.');
-
-                return;
-            }
-
-            if ($factura->estado === 'pagada') {
-                if ($nuevoEstado === 'pendiente') {
-                    $validator->errors()->add('estado', 'Una factura pagada no puede regresar a estado pendiente.');
-                }
-                if ((int) $this->input('id_cliente') !== (int) $factura->id_cliente) {
-                    $validator->errors()->add('id_cliente', 'No se puede cambiar el cliente de una factura pagada.');
-                }
-                $fechaEnviada = $this->input('fecha');
-                $fechaActual = $factura->fecha?->format('Y-m-d') ?? $factura->fecha?->toDateString();
-                if ($fechaEnviada !== $fechaActual) {
-                    $validator->errors()->add('fecha', 'No se puede modificar la fecha de una factura pagada.');
-                }
-            }
-        });
+        return [
+            'id_cliente.exists' => 'El cliente seleccionado no existe o no pertenece a tu tienda.',
+        ];
     }
 }

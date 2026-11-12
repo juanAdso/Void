@@ -16,7 +16,7 @@ class FacturasController extends Controller
 
     public function index()
     {
-        $tiendaId = auth()->user()->id_tienda;
+        $tiendaId = (int) auth()->user()->id_tienda;
         $facturas = $this->facturasService->listarTodo($tiendaId);
 
         return view('facturas.index', compact('facturas'));
@@ -24,55 +24,50 @@ class FacturasController extends Controller
 
     public function create()
     {
-        $clientes = $this->clientesService->listarTodo();
+        $tiendaId = (int) auth()->user()->id_tienda;
+        $clientes = $this->clientesService->listarTodo($tiendaId);
 
         return view('facturas.create', compact('clientes'));
     }
 
     public function store(StoreFacturasRequest $request)
     {
-        $tiendaId = auth()->user()->id_tienda;
-        if (! $tiendaId) {
-            abort(403, 'No tienes una tienda asignada para crear facturas.');
-        }
-
+        $tiendaId = (int) auth()->user()->id_tienda;
         $datos = $request->validated();
         $datos['id_usuario'] = auth()->id();
         $datos['subtotal'] = 0;
         $datos['iva'] = 0;
         $datos['total'] = 0;
 
-        $this->facturasService->guardar($datos);
+        $this->facturasService->guardar($datos, $tiendaId);
 
         return redirect()->route('facturas.index')->with('success', 'Factura creada. Ahora agrega sus productos desde Detalle de facturas.');
     }
 
     public function edit(int $id)
     {
-        $tiendaId = auth()->user()->id_tienda;
+        $tiendaId = (int) auth()->user()->id_tienda;
         $facturas = $this->facturasService->buscarPorId($id, $tiendaId);
-        $clientes = $this->clientesService->listarTodo();
+        $clientes = $this->clientesService->listarTodo($tiendaId);
 
         return view('facturas.edit', compact('facturas', 'clientes'));
     }
 
     public function update(int $id, UpdateFacturasRequest $request)
     {
-        $tiendaId = auth()->user()->id_tienda;
-        // Valida que la factura pertenezca a la tienda del usuario
-        $this->facturasService->buscarPorId($id, $tiendaId);
-
+        $tiendaId = (int) auth()->user()->id_tienda;
         $datos = $request->validated();
-        unset($datos['id_usuario']); // Prevenir reasignación de usuario o manipulación
+        unset($datos['id_usuario'], $datos['id_tienda']);
 
-        $this->facturasService->actualizar($id, $datos);
+        $this->facturasService->actualizar($id, $datos, $tiendaId);
 
         return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.');
     }
 
     public function destroy(int $id)
     {
-        $tiendaId = auth()->user()->id_tienda;
+        $tiendaId = (int) auth()->user()->id_tienda;
+
         if (! $this->facturasService->eliminar($id, $tiendaId)) {
             return redirect()->route('facturas.index')->with('error', 'No se puede eliminar la factura. Solo se pueden eliminar facturas en estado pendiente y sin detalles asociados.');
         }
