@@ -24,7 +24,7 @@ class ModuloMiddleware
         /** @var PermissionRegistrar $registrar */
         $registrar = app(PermissionRegistrar::class);
 
-        // El superadministrador utiliza el contexto global null.
+        // El superadministrador utiliza el contexto global reservado 0.
         $registrar->setPermissionsTeamId(0);
         $user->unsetRelation('roles');
         $user->unsetRelation('permissions');
@@ -32,7 +32,7 @@ class ModuloMiddleware
         $esSuperadministrador = $user->esSuperadministrador();
 
         if ($esSuperadministrador) {
-            $registrar->setPermissionsTeamId(null);
+            $registrar->setPermissionsTeamId(0);
         } else {
             $tiendaId = (int) ($user->id_tienda ?? 0);
 
