@@ -38,7 +38,7 @@ class SeguridadSeeder extends Seeder
         $superadministrador = Role::query()->firstOrCreate([
             'name' => 'superadministrador',
             'guard_name' => 'web',
-            'id_tienda' => null,
+            'id_tienda' => 0,
         ]);
         $superadministrador->syncPermissions(Permission::query()->where('guard_name', 'web')->get());
 
