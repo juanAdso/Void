@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tienda;
 use App\Models\User;
+use App\Services\SeguridadTiendaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 
 class RegistroTiendaController extends Controller
 {
+    public function __construct(private SeguridadTiendaService $seguridadTiendaService) {}
+
     public function create()
     {
         return view('auth.registro-tienda');
@@ -46,6 +49,10 @@ class RegistroTiendaController extends Controller
                 'estado' => true,
             ]);
 
+            // Cada empresa recibe sus propios roles/permisos antes de asignar
+            // al primer administrador. Todo queda dentro de la transacción.
+            $this->seguridadTiendaService->crearRolesIniciales((int) $tienda->id);
+
             $usuario = User::create([
                 'nombre' => $validated['nombre'],
                 'apellido' => $validated['apellido'],
@@ -57,12 +64,13 @@ class RegistroTiendaController extends Controller
                 'estado' => true,
             ]);
 
-            $usuario->assignRole('administrador');
+            $this->seguridadTiendaService->asignarRol($usuario, 'administrador');
 
             return $usuario;
         });
 
         Auth::login($usuario);
+        $request->session()->regenerate();
 
         return redirect()->route('dashboard.index')->with('success', '¡Tienda registrada exitosamente!');
     }
