@@ -22,7 +22,7 @@ test('una tienda puede consultar sus propios productos', function () {
     ]);
     $adminA->assignRole('administrador');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaA->id]);
     $productoA = Productos::factory()->create([
         'id_tienda' => $tiendaA->id,
         'id_categoria' => $categoria->id,
@@ -45,7 +45,7 @@ test('una tienda no puede consultar productos de otra tienda en el listado ni en
     ]);
     $adminA->assignRole('administrador');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
     $productoB = Productos::factory()->create([
         'id_tienda' => $tiendaB->id,
         'id_categoria' => $categoria->id,
@@ -73,7 +73,7 @@ test('una tienda no puede editar productos ajenos manipulando el ID en la URL', 
     ]);
     $adminA->assignRole('administrador');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
     $productoB = Productos::factory()->create([
         'id_tienda' => $tiendaB->id,
         'id_categoria' => $categoria->id,
@@ -105,7 +105,7 @@ test('una tienda no puede eliminar productos ajenos', function () {
     ]);
     $adminA->assignRole('administrador');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
     $productoB = Productos::factory()->create([
         'id_tienda' => $tiendaB->id,
         'id_categoria' => $categoria->id,
@@ -128,7 +128,7 @@ test('crear producto asigna siempre la tienda del usuario autenticado e ignora i
     ]);
     $adminA->assignRole('administrador');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaA->id]);
 
     $this->actingAs($adminA)->post(route('productos.store'), [
         'nombre' => 'Nuevo Producto Seguro',
@@ -164,7 +164,7 @@ test('una tienda no puede consultar ni editar facturas ajenas', function () {
     ]);
     $adminB->assignRole('administrador');
 
-    $cliente = Cliente::factory()->create();
+    $cliente = Cliente::factory()->create(['id_tienda' => $tiendaB->id]);
     $facturaB = Facturas::create([
         'id_cliente' => $cliente->id,
         'id_usuario' => $adminB->id,
@@ -208,8 +208,8 @@ test('una tienda no puede agregar productos de otra tienda a sus facturas', func
     ]);
     $adminA->assignRole('administrador');
 
-    $cliente = Cliente::factory()->create();
-    $categoria = Categoria::factory()->create();
+    $cliente = Cliente::factory()->create(['id_tienda' => $tiendaA->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
 
     $facturaA = Facturas::create([
         'id_cliente' => $cliente->id,
@@ -257,8 +257,8 @@ test('una tienda no puede asociar detalles a facturas de otra tienda', function 
     ]);
     $adminB->assignRole('administrador');
 
-    $cliente = Cliente::factory()->create();
-    $categoria = Categoria::factory()->create();
+    $cliente = Cliente::factory()->create(['id_tienda' => $tiendaB->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaA->id]);
 
     $facturaB = Facturas::create([
         'id_cliente' => $cliente->id,
@@ -306,8 +306,8 @@ test('una tienda no puede consultar ni modificar detalles de factura ajenos', fu
     ]);
     $adminB->assignRole('administrador');
 
-    $cliente = Cliente::factory()->create();
-    $categoria = Categoria::factory()->create();
+    $cliente = Cliente::factory()->create(['id_tienda' => $tiendaB->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $tiendaB->id]);
 
     $facturaB = Facturas::create([
         'id_cliente' => $cliente->id,
@@ -359,7 +359,7 @@ test('un empleado no puede superar los permisos asignados de su tienda', functio
     ]);
     $empleado->assignRole('empleado');
 
-    $categoria = Categoria::factory()->create();
+    $categoria = Categoria::factory()->create(['id_tienda' => $tienda->id]);
     $producto = Productos::factory()->create([
         'id_tienda' => $tienda->id,
         'id_categoria' => $categoria->id,
@@ -392,16 +392,97 @@ test('un usuario con tienda asignada no puede acceder ni modificar tiendas ajena
     $adminA->assignRole('administrador');
 
     // Intentar ver show de Tienda B
-    $this->actingAs($adminA)->get(route('tiendas.show', $tiendaB->id))->assertForbidden();
+    $this->actingAs($adminA)->get(route('tiendas.show', $tiendaB->id))->assertNotFound();
 
     // Intentar ver edit de Tienda B
-    $this->actingAs($adminA)->get(route('tiendas.edit', $tiendaB->id))->assertForbidden();
+    $this->actingAs($adminA)->get(route('tiendas.edit', $tiendaB->id))->assertNotFound();
 
     // Intentar actualizar Tienda B
     $this->actingAs($adminA)->put(route('tiendas.update', $tiendaB->id), [
         'nombre' => 'Tienda B Hackeada',
         'estado' => 1,
-    ])->assertForbidden();
+    ])->assertNotFound();
 
     expect($tiendaB->fresh()->nombre)->toBe('Tienda B Original');
+});
+
+
+test('una tienda no puede consultar, modificar ni eliminar clientes de otra tienda', function () {
+    $tiendaA = Tienda::factory()->create();
+    $tiendaB = Tienda::factory()->create();
+
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $clienteB = Cliente::factory()->create([
+        'id_tienda' => $tiendaB->id,
+        'nombre' => 'Cliente Privado B',
+    ]);
+
+    $index = $this->actingAs($adminA)->get(route('cliente.index'));
+    $index->assertOk();
+    $index->assertDontSee('Cliente Privado B');
+
+    $this->actingAs($adminA)->get(route('cliente.edit', $clienteB->id))->assertNotFound();
+
+    $this->actingAs($adminA)->put(route('cliente.update', $clienteB->id), [
+        'nombre' => 'Cliente alterado',
+        'apellido' => 'Ajeno',
+        'documento' => '9999999999',
+    ])->assertForbidden();
+
+    $this->actingAs($adminA)->delete(route('cliente.destroy', $clienteB->id))->assertNotFound();
+
+    expect($clienteB->fresh()->nombre)->toBe('Cliente Privado B');
+});
+
+test('una tienda no puede consultar ni modificar categorias de otra tienda', function () {
+    $tiendaA = Tienda::factory()->create();
+    $tiendaB = Tienda::factory()->create();
+
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $categoriaB = Categoria::factory()->create([
+        'id_tienda' => $tiendaB->id,
+        'nombre' => 'Categoria Privada B',
+    ]);
+
+    $index = $this->actingAs($adminA)->get(route('categoria.index'));
+    $index->assertOk();
+    $index->assertDontSee('Categoria Privada B');
+
+    $this->actingAs($adminA)->get(route('categoria.edit', $categoriaB->id))->assertNotFound();
+    $this->actingAs($adminA)->delete(route('categoria.destroy', $categoriaB->id))->assertNotFound();
+
+    expect($categoriaB->fresh()->nombre)->toBe('Categoria Privada B');
+});
+
+test('crear cliente siempre asigna la tienda autenticada aunque se manipule id_tienda', function () {
+    $tiendaA = Tienda::factory()->create();
+    $tiendaB = Tienda::factory()->create();
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $this->actingAs($adminA)->post(route('cliente.store'), [
+        'nombre' => 'Cliente Seguro',
+        'apellido' => 'A',
+        'documento' => '2012345678',
+        'id_tienda' => $tiendaB->id,
+    ])->assertRedirect(route('cliente.index'));
+
+    $cliente = Cliente::where('documento', '2012345678')->firstOrFail();
+    expect((int) $cliente->id_tienda)->toBe((int) $tiendaA->id);
 });

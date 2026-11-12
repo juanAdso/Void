@@ -14,11 +14,20 @@ class DetalleFacturaFactory extends Factory
 
     public function definition(): array
     {
-        $factura = Facturas::query()->inRandomOrder()->first();
-        $producto = Productos::query()->where('stock', '>', 0)->inRandomOrder()->first();
+        $factura = Facturas::query()->with('usuario')->inRandomOrder()->first();
 
-        if (!$factura || !$producto) {
-            throw new RuntimeException('Debes tener facturas y productos con stock para generar detalles.');
+        if (! $factura || ! $factura->usuario?->id_tienda) {
+            throw new RuntimeException('Debes tener facturas asociadas a una tienda antes de generar detalles.');
+        }
+
+        $producto = Productos::query()
+            ->where('id_tienda', $factura->usuario->id_tienda)
+            ->where('stock', '>', 0)
+            ->inRandomOrder()
+            ->first();
+
+        if (! $producto) {
+            throw new RuntimeException('Debes tener productos con stock en la tienda de la factura.');
         }
 
         $cantidad = fake()->numberBetween(1, min(3, (int) $producto->stock));

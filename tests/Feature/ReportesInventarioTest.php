@@ -17,7 +17,7 @@ test('el modulo de reportes muestra las alertas de stock bajo y productos agotad
     $admin = User::factory()->create(['id_tienda' => $tienda->id, 'rol' => 'administrador', 'estado' => true]);
     $admin->assignRole('administrador');
 
-    $cat = Categoria::factory()->create(['estado' => true]);
+    $cat = Categoria::factory()->create(['id_tienda' => $tienda->id, 'estado' => true]);
 
     $prodCritico = Productos::factory()->create([
         'id_tienda' => $tienda->id,

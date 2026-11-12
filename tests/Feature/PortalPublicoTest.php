@@ -50,11 +50,12 @@ test('intentar ver una tienda inactiva o inexistente retorna 404', function () {
 test('el catalogo por tienda muestra exclusivamente los productos de la tienda elegida', function () {
     $tiendaA = Tienda::factory()->create(['nombre' => 'Tienda A', 'estado' => true]);
     $tiendaB = Tienda::factory()->create(['nombre' => 'Tienda B', 'estado' => true]);
-    $categoria = Categoria::factory()->create(['estado' => true]);
+    $categoriaA = Categoria::factory()->create(['id_tienda' => $tiendaA->id, 'estado' => true]);
+    $categoriaB = Categoria::factory()->create(['id_tienda' => $tiendaB->id, 'estado' => true]);
 
     $prodA = Productos::factory()->create([
         'id_tienda' => $tiendaA->id,
-        'id_categoria' => $categoria->id,
+        'id_categoria' => $categoriaA->id,
         'nombre' => 'Laptop Gamer Pro',
         'precio' => 1500,
         'stock' => 10,
@@ -63,7 +64,7 @@ test('el catalogo por tienda muestra exclusivamente los productos de la tienda e
 
     $prodB = Productos::factory()->create([
         'id_tienda' => $tiendaB->id,
-        'id_categoria' => $categoria->id,
+        'id_categoria' => $categoriaB->id,
         'nombre' => 'Camisa Elegante',
         'precio' => 50,
         'stock' => 20,
@@ -94,8 +95,8 @@ test('parametro de tienda invalido o vacio en catalogo no muestra catalogo globa
 
 test('filtrado por busqueda, categoria, disponibilidad y precio en catalogo', function () {
     $tienda = Tienda::factory()->create(['estado' => true]);
-    $cat1 = Categoria::factory()->create(['nombre' => 'Tecnología', 'estado' => true]);
-    $cat2 = Categoria::factory()->create(['nombre' => 'Ropa', 'estado' => true]);
+    $cat1 = Categoria::factory()->create(['id_tienda' => $tienda->id, 'nombre' => 'Tecnología', 'estado' => true]);
+    $cat2 = Categoria::factory()->create(['id_tienda' => $tienda->id, 'nombre' => 'Ropa', 'estado' => true]);
 
     $p1 = Productos::factory()->create([
         'id_tienda' => $tienda->id,
@@ -151,7 +152,7 @@ test('un visitante puede ver la ficha individual de un producto con contacto de 
         'telefono' => '3119998877',
         'estado' => true,
     ]);
-    $cat = Categoria::factory()->create(['estado' => true]);
+    $cat = Categoria::factory()->create(['id_tienda' => $tienda->id, 'estado' => true]);
 
     $prod = Productos::factory()->create([
         'id_tienda' => $tienda->id,
@@ -176,7 +177,7 @@ test('un visitante puede ver la ficha individual de un producto con contacto de 
 
 test('producto de tienda inactiva o producto inactivo retorna 404', function () {
     $tiendaInactiva = Tienda::factory()->create(['estado' => false]);
-    $cat = Categoria::factory()->create(['estado' => true]);
+    $cat = Categoria::factory()->create(['id_tienda' => $tiendaInactiva->id, 'estado' => true]);
 
     $prod = Productos::factory()->create([
         'id_tienda' => $tiendaInactiva->id,

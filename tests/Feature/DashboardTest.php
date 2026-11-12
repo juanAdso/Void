@@ -8,7 +8,7 @@ beforeEach(function () {
     $this->seed(SeguridadSeeder::class);
 });
 
-test('administrador sin tienda asignada puede cargar el dashboard sin errores de sql', function () {
+test('administrador sin tienda asignada no puede acceder al dashboard ni obtener datos globales', function () {
     $admin = User::factory()->create([
         'estado' => true,
         'rol' => 'administrador',

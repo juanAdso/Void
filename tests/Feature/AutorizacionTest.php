@@ -12,9 +12,11 @@ beforeEach(function () {
 });
 
 test('administrador tiene acceso a todos los modulos y operaciones', function () {
+    $tienda = Tienda::factory()->create();
     $admin = User::factory()->create([
         'estado' => true,
         'rol' => 'administrador',
+        'id_tienda' => $tienda->id,
     ]);
     $admin->assignRole('administrador');
 
@@ -23,7 +25,7 @@ test('administrador tiene acceso a todos los modulos y operaciones', function ()
 
     // Tiendas
     $this->actingAs($admin)->get(route('tiendas.index'))->assertOk();
-    $this->actingAs($admin)->get(route('tiendas.create'))->assertOk();
+    $this->actingAs($admin)->get(route('tiendas.create'))->assertForbidden();
 
     // Categorias
     $this->actingAs($admin)->get(route('categoria.index'))->assertOk();
@@ -47,9 +49,11 @@ test('administrador tiene acceso a todos los modulos y operaciones', function ()
 });
 
 test('empleado tiene acceso solo a los modulos y operaciones autorizadas', function () {
+    $tienda = Tienda::factory()->create();
     $empleado = User::factory()->create([
         'estado' => true,
         'rol' => 'empleado',
+        'id_tienda' => $tienda->id,
     ]);
     $empleado->assignRole('empleado');
 

@@ -40,12 +40,14 @@ beforeEach(function () {
     $this->usuario->assignRole('administrador');
 
     $this->categoria = Categoria::create([
+        'id_tienda' => $this->tienda->id,
         'nombre' => 'Tecnología',
         'descripcion' => 'Electrónica y cómputo',
         'estado' => true,
     ]);
 
     $this->cliente = Cliente::create([
+        'id_tienda' => $this->tienda->id,
         'nombre' => 'Carlos',
         'apellido' => 'Gomez',
         'documento' => '1122334455',
@@ -500,7 +502,7 @@ test('las transacciones revierten todas las operaciones en caso de fallo', funct
             'id_producto' => $producto->id,
             'cantidad' => 10, // mayor que 5
             'precio_unitario' => 200.00,
-        ]);
+        ], $this->tienda->id);
         $this->fail('Debería fallar por stock insuficiente');
     } catch (ValidationException $e) {
         // Excepción esperada

@@ -14,11 +14,23 @@ class FacturasFactory extends Factory
 
     public function definition(): array
     {
-        $cliente = Cliente::query()->inRandomOrder()->first();
-        $usuario = User::query()->where('estado', true)->inRandomOrder()->first();
+        $usuario = User::query()
+            ->where('estado', true)
+            ->whereNotNull('id_tienda')
+            ->inRandomOrder()
+            ->first();
 
-        if (!$cliente || !$usuario) {
-            throw new RuntimeException('Debes crear usuarios y clientes antes de generar facturas.');
+        if (! $usuario) {
+            throw new RuntimeException('Debes crear usuarios asociados a una tienda antes de generar facturas.');
+        }
+
+        $cliente = Cliente::query()
+            ->where('id_tienda', $usuario->id_tienda)
+            ->inRandomOrder()
+            ->first();
+
+        if (! $cliente) {
+            throw new RuntimeException('Debes crear clientes para la tienda del usuario antes de generar facturas.');
         }
 
         return [
