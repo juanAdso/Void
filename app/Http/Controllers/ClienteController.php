@@ -14,7 +14,7 @@ class ClienteController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Cliente::class);
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
         $clientes = $this->clienteService->listarTodo($tiendaId);
 
         return view('clientes.index', compact('clientes'));
@@ -23,6 +23,7 @@ class ClienteController extends Controller
     public function create()
     {
         $this->authorize('create', Cliente::class);
+        auth()->user()->requiereTiendaId();
 
         return view('clientes.crear');
     }
@@ -30,14 +31,14 @@ class ClienteController extends Controller
     public function store(StoreClienteRequest $request)
     {
         $this->authorize('create', Cliente::class);
-        $this->clienteService->guardar($request->validated(), (int) auth()->user()->id_tienda);
+        $this->clienteService->guardar($request->validated(), auth()->user()->requiereTiendaId());
 
         return redirect()->route('cliente.index')->with('success', 'Cliente creado correctamente.');
     }
 
     public function edit(int $id)
     {
-        $cliente = $this->clienteService->buscarPorId($id, (int) auth()->user()->id_tienda);
+        $cliente = $this->clienteService->buscarPorId($id, auth()->user()->alcanceTiendaId());
         $this->authorize('update', $cliente);
 
         return view('clientes.editar', compact('cliente'));
@@ -45,19 +46,21 @@ class ClienteController extends Controller
 
     public function update(int $id, UpdateClienteRequest $request)
     {
-        $cliente = $this->clienteService->buscarPorId($id, (int) auth()->user()->id_tienda);
+        $tiendaId = auth()->user()->alcanceTiendaId();
+        $cliente = $this->clienteService->buscarPorId($id, $tiendaId);
         $this->authorize('update', $cliente);
-        $this->clienteService->actualizar($id, $request->validated(), (int) auth()->user()->id_tienda);
+        $this->clienteService->actualizar($id, $request->validated(), $tiendaId);
 
         return redirect()->route('cliente.index')->with('success', 'Cliente actualizado correctamente.');
     }
 
     public function destroy(int $id)
     {
-        $cliente = $this->clienteService->buscarPorId($id, (int) auth()->user()->id_tienda);
+        $tiendaId = auth()->user()->alcanceTiendaId();
+        $cliente = $this->clienteService->buscarPorId($id, $tiendaId);
         $this->authorize('delete', $cliente);
 
-        if (! $this->clienteService->eliminar($id, (int) auth()->user()->id_tienda)) {
+        if (! $this->clienteService->eliminar($id, $tiendaId)) {
             return redirect()->route('cliente.index')->with('error', 'No se puede eliminar un cliente que tiene facturas asociadas.');
         }
 
