@@ -7,21 +7,26 @@ use App\Repositories\Interfaces\TiendaRepositoryInterface;
 
 class TiendaRepository implements TiendaRepositoryInterface
 {
-    public function listarTodo(int $tiendaId)
+    public function listarTodo(?int $tiendaId)
     {
-        return Tienda::query()
-            ->withCount('productos')
-            ->whereKey($tiendaId)
-            ->get();
+        $consulta = Tienda::query()->withCount('productos');
+
+        if ($tiendaId !== null) {
+            $consulta->whereKey($tiendaId);
+        }
+
+        return $consulta->orderBy('nombre')->get();
     }
 
-    public function eliminar(int $id, int $tiendaId)
+    public function eliminar(int $id, ?int $tiendaId)
     {
-        $tienda = Tienda::query()->findOrFail($id);
+        $consulta = Tienda::query();
 
-        if ((int) $tienda->id !== $tiendaId) {
-            abort(404);
+        if ($tiendaId !== null) {
+            $consulta->whereKey($tiendaId);
         }
+
+        $tienda = $consulta->findOrFail($id);
 
         if (
             $tienda->productos()->exists()
@@ -36,21 +41,26 @@ class TiendaRepository implements TiendaRepositoryInterface
         return $tienda->delete();
     }
 
-    public function buscarPorId(int $id, int $tiendaId)
+    public function buscarPorId(int $id, ?int $tiendaId)
     {
-        return Tienda::query()
-            ->with('productos')
-            ->whereKey($tiendaId)
-            ->whereKey($id)
-            ->firstOrFail();
+        $consulta = Tienda::query()->with('productos');
+
+        if ($tiendaId !== null) {
+            $consulta->whereKey($tiendaId);
+        }
+
+        return $consulta->whereKey($id)->firstOrFail();
     }
 
-    public function actualizar(int $id, array $datos, int $tiendaId)
+    public function actualizar(int $id, array $datos, ?int $tiendaId)
     {
-        $tienda = Tienda::query()
-            ->whereKey($tiendaId)
-            ->whereKey($id)
-            ->firstOrFail();
+        $consulta = Tienda::query();
+
+        if ($tiendaId !== null) {
+            $consulta->whereKey($tiendaId);
+        }
+
+        $tienda = $consulta->whereKey($id)->firstOrFail();
 
         unset($datos['id_tienda']);
         $tienda->update($datos);
