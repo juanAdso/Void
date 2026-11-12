@@ -24,11 +24,14 @@ class SeguridadServiceProvider extends ServiceProvider
         Gate::policy(Cliente::class, ClientePolicy::class);
         Gate::policy(Categoria::class, CategoriaPolicy::class);
 
-        // El estado inactivo bloquea cualquier habilidad; no existe bypass automático
-        // de permisos para administradores.
         Gate::before(function ($user) {
             if (method_exists($user, 'estaActivo') && ! $user->estaActivo()) {
                 return false;
+            }
+
+            // El rol administrador de una tienda nunca recibe un bypass global.
+            if (method_exists($user, 'esSuperadministrador') && $user->esSuperadministrador()) {
+                return true;
             }
 
             return null;
