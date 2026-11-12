@@ -25,7 +25,7 @@ class ModuloMiddleware
         $registrar = app(PermissionRegistrar::class);
 
         // El superadministrador utiliza el contexto global null.
-        $registrar->setPermissionsTeamId(null);
+        $registrar->setPermissionsTeamId(0);
         $user->unsetRelation('roles');
         $user->unsetRelation('permissions');
 
