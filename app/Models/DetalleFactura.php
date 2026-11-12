@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetalleFactura extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATienda;
 
     protected $table = 'detalle_factura';
 
