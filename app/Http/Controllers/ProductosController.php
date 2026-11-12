@@ -18,7 +18,7 @@ class ProductosController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Productos::class);
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
         $productos = $this->productosService->listarTodo($tiendaId);
 
         return view('productos.index', compact('productos'));
@@ -27,7 +27,7 @@ class ProductosController extends Controller
     public function create()
     {
         $this->authorize('create', Productos::class);
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->requiereTiendaId();
         $categorias = $this->categoriasService->listarTodo($tiendaId);
 
         return view('productos.crear', compact('categorias'));
@@ -36,7 +36,7 @@ class ProductosController extends Controller
     public function store(StoreProductosRequest $request)
     {
         $this->authorize('create', Productos::class);
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->requiereTiendaId();
         $this->productosService->guardar($request->validated(), $tiendaId);
 
         return redirect()->route('productos.index')->with('success', 'Producto creado en tu tienda.');
@@ -44,17 +44,18 @@ class ProductosController extends Controller
 
     public function edit(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
         $producto = $this->productosService->buscarPorId($id, $tiendaId);
         $this->authorize('update', $producto);
-        $categorias = $this->categoriasService->listarTodo($tiendaId);
+        $tiendaProductoId = $tiendaId ?? (int) $producto->id_tienda;
+        $categorias = $this->categoriasService->listarTodo($tiendaProductoId);
 
         return view('productos.editar', ['productos' => $producto, 'categorias' => $categorias]);
     }
 
     public function update(int $id, UpdateProductosRequest $request)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
         $producto = $this->productosService->buscarPorId($id, $tiendaId);
         $this->authorize('update', $producto);
 
@@ -68,7 +69,7 @@ class ProductosController extends Controller
 
     public function destroy(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
         $producto = $this->productosService->buscarPorId($id, $tiendaId);
         $this->authorize('delete', $producto);
 
