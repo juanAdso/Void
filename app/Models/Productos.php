@@ -9,7 +9,7 @@ use App\Models\Tienda;
 
 class Productos extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATienda;
 
     protected $table = 'productos';
 
