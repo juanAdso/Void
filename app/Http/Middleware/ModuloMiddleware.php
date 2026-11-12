@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Spatie\Permission\PermissionRegistrar;
 use Symfony\Component\HttpFoundation\Response;
 
 class ModuloMiddleware
@@ -20,18 +21,38 @@ class ModuloMiddleware
             abort(403, 'Tu cuenta de usuario no está activa.');
         }
 
-        if (! $user->id_tienda) {
-            abort(403, 'Tu cuenta no tiene una tienda asignada. Contacta al administrador.');
-        }
+        /** @var PermissionRegistrar $registrar */
+        $registrar = app(PermissionRegistrar::class);
 
-        $tienda = $user->tienda;
+        // El superadministrador utiliza el contexto global null.
+        $registrar->setPermissionsTeamId(null);
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
 
-        if (! $tienda || ! $tienda->estado) {
-            abort(403, 'La tienda asociada a tu cuenta está inactiva o no existe.');
-        }
+        $esSuperadministrador = $user->esSuperadministrador();
 
-        if (! $user->hasAnyRole(['administrador', 'empleado'])) {
-            abort(403, 'Tu cuenta no tiene un rol administrativo válido.');
+        if ($esSuperadministrador) {
+            $registrar->setPermissionsTeamId(null);
+        } else {
+            $tiendaId = (int) ($user->id_tienda ?? 0);
+
+            if ($tiendaId <= 0) {
+                abort(403, 'Tu cuenta no tiene una tienda asignada. No se permite acceso global.');
+            }
+
+            $registrar->setPermissionsTeamId($tiendaId);
+            $user->unsetRelation('roles');
+            $user->unsetRelation('permissions');
+
+            $tienda = $user->tienda;
+
+            if (! $tienda || ! $tienda->estado) {
+                abort(403, 'La tienda asociada a tu cuenta está inactiva o no existe.');
+            }
+
+            if (! $user->hasAnyRole(['administrador', 'empleado'])) {
+                abort(403, 'Tu cuenta no tiene un rol administrativo válido.');
+            }
         }
 
         if (empty($permisos)) {
