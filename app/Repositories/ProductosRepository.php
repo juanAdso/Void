@@ -9,13 +9,15 @@ use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
 class ProductosRepository implements ProductoRepositoryInterface
 {
-    public function listarTodo(int $tiendaId)
+    public function listarTodo(?int $tiendaId)
     {
-        return Productos::query()
-            ->with('categoria')
-            ->where('id_tienda', $tiendaId)
-            ->orderBy('id')
-            ->get();
+        $consulta = Productos::query()->with('categoria');
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        return $consulta->orderBy('id')->get();
     }
 
     public function guardar(array $datos, int $tiendaId)
@@ -29,11 +31,15 @@ class ProductosRepository implements ProductoRepositoryInterface
         return Productos::create($datos);
     }
 
-    public function eliminar(int $id, int $tiendaId)
+    public function eliminar(int $id, ?int $tiendaId)
     {
-        $producto = Productos::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        $consulta = Productos::query();
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        $producto = $consulta->findOrFail($id);
 
         if (DetalleFactura::where('id_producto', $producto->id)->exists()) {
             return false;
@@ -42,25 +48,33 @@ class ProductosRepository implements ProductoRepositoryInterface
         return $producto->delete();
     }
 
-    public function buscarPorId(int $id, int $tiendaId)
+    public function buscarPorId(int $id, ?int $tiendaId)
     {
-        return Productos::query()
-            ->with('categoria')
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
-    }
+        $consulta = Productos::query()->with('categoria');
 
-    public function actualizar(int $id, array $datos, int $tiendaId)
-    {
-        if (isset($datos['id_categoria'])) {
-            Categoria::query()
-                ->where('id_tienda', $tiendaId)
-                ->findOrFail($datos['id_categoria']);
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
         }
 
-        $producto = Productos::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        return $consulta->findOrFail($id);
+    }
+
+    public function actualizar(int $id, array $datos, ?int $tiendaId)
+    {
+        $consulta = Productos::query();
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        $producto = $consulta->findOrFail($id);
+        $tiendaDestino = $tiendaId ?? (int) $producto->id_tienda;
+
+        if (isset($datos['id_categoria'])) {
+            Categoria::query()
+                ->where('id_tienda', $tiendaDestino)
+                ->findOrFail($datos['id_categoria']);
+        }
 
         unset($datos['id_tienda']);
         $producto->update($datos);
