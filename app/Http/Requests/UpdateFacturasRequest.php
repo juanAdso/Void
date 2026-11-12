@@ -10,22 +10,28 @@ class UpdateFacturasRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $tiendaId = $this->user()?->id_tienda;
+        $usuario = $this->user();
         $facturaId = $this->route('factura');
 
-        if (! $tiendaId || ! $facturaId) {
+        if (! $usuario || ! $usuario->estaActivo() || ! $facturaId) {
             return false;
         }
 
-        return Facturas::query()
+        if ($usuario->esSuperadministrador()) {
+            return Facturas::query()->whereKey($facturaId)->exists();
+        }
+
+        return $usuario->id_tienda && Facturas::query()
             ->whereKey($facturaId)
-            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $usuario->id_tienda))
             ->exists();
     }
 
     public function rules(): array
     {
-        $tiendaId = $this->user()->id_tienda;
+        $facturaId = $this->route('factura');
+        $factura = Facturas::query()->with('usuario')->findOrFail($facturaId);
+        $tiendaId = (int) $factura->usuario->id_tienda;
 
         return [
             'id_cliente' => [
@@ -41,7 +47,7 @@ class UpdateFacturasRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_cliente.exists' => 'El cliente seleccionado no existe o no pertenece a tu tienda.',
+            'id_cliente.exists' => 'El cliente seleccionado no existe o no pertenece a la tienda de la factura.',
         ];
     }
 }
