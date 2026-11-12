@@ -8,7 +8,7 @@ class ProductosService
 {
     public function __construct(private ProductoRepositoryInterface $productos_repository) {}
 
-    public function listarTodo(int $tiendaId)
+    public function listarTodo(?int $tiendaId)
     {
         return $this->productos_repository->listarTodo($tiendaId);
     }
@@ -18,17 +18,17 @@ class ProductosService
         return $this->productos_repository->guardar($datos, $tiendaId);
     }
 
-    public function eliminar(int $id, int $tiendaId)
+    public function eliminar(int $id, ?int $tiendaId)
     {
         return $this->productos_repository->eliminar($id, $tiendaId);
     }
 
-    public function buscarPorId(int $id, int $tiendaId)
+    public function buscarPorId(int $id, ?int $tiendaId)
     {
         return $this->productos_repository->buscarPorId($id, $tiendaId);
     }
 
-    public function actualizar(int $id, array $datos, int $tiendaId)
+    public function actualizar(int $id, array $datos, ?int $tiendaId)
     {
         return $this->productos_repository->actualizar($id, $datos, $tiendaId);
     }
