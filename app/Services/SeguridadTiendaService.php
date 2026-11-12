@@ -43,7 +43,7 @@ class SeguridadTiendaService
             ]);
             $empleado->syncPermissions(self::PERMISOS_EMPLEADO);
         } finally {
-            $registrar->setPermissionsTeamId(null);
+            $registrar->setPermissionsTeamId(0);
         }
     }
 
