@@ -9,10 +9,8 @@ class ClienteSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Cliente::exists()) {
-            return;
+        if (! Cliente::exists()) {
+            Cliente::factory()->count(500)->create();
         }
-
-        Cliente::factory()->count(500)->create();
     }
 }

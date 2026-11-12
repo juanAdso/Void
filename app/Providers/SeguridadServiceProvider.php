@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Categoria;
+use App\Models\Cliente;
+use App\Models\Productos;
+use App\Policies\CategoriaPolicy;
+use App\Policies\ClientePolicy;
+use App\Policies\ProductosPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,8 +20,12 @@ class SeguridadServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Solo se aplica el bloqueo global de cuentas inactivas.
-        // Los administradores no reciben un bypass automático de Policies o permisos Spatie.
+        Gate::policy(Productos::class, ProductosPolicy::class);
+        Gate::policy(Cliente::class, ClientePolicy::class);
+        Gate::policy(Categoria::class, CategoriaPolicy::class);
+
+        // El estado inactivo bloquea cualquier habilidad; no existe bypass automático
+        // de permisos para administradores.
         Gate::before(function ($user) {
             if (method_exists($user, 'estaActivo') && ! $user->estaActivo()) {
                 return false;

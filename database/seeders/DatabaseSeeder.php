@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -12,12 +13,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // 1. Roles y Permisos de Seguridad
         $this->call([
             SeguridadSeeder::class,
+            TiendaSeeder::class,
         ]);
 
-        // 2. Usuario Administrador de Prueba
+        $tiendaInicial = Tienda::query()->orderBy('id')->firstOrFail();
+
         $admin = User::firstOrCreate(
             ['correo' => 'test@example.com'],
             [
@@ -26,18 +28,23 @@ class DatabaseSeeder extends Seeder
                 'documento' => '1000000000',
                 'password' => bcrypt('password'),
                 'rol' => 'administrador',
+                'id_tienda' => $tiendaInicial->id,
                 'estado' => true,
             ]
         );
+
+        // Mantener el usuario de demostración asociado a una tienda para que no obtenga
+        // acceso global accidental. Las credenciales son exclusivamente de desarrollo.
+        if (! $admin->id_tienda) {
+            $admin->forceFill(['id_tienda' => $tiendaInicial->id])->save();
+        }
 
         if (! $admin->hasRole('administrador')) {
             $admin->assignRole('administrador');
         }
 
-        // 3. Seeders comerciales existentes
         $this->call([
             CategoriaSeeder::class,
-            TiendaSeeder::class,
             ClienteSeeder::class,
             ProductosSeeder::class,
             FacturasSeeder::class,

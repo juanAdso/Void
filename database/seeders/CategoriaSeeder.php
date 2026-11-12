@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Categoria;
+use App\Models\Tienda;
 use Illuminate\Database\Seeder;
 
 class CategoriaSeeder extends Seeder
@@ -27,11 +28,19 @@ class CategoriaSeeder extends Seeder
             ['nombre' => 'Mascotas', 'descripcion' => 'Productos para el cuidado de animales.'],
         ];
 
-        foreach ($categorias as $categoria) {
-            Categoria::firstOrCreate(
-                ['nombre' => $categoria['nombre']],
-                ['descripcion' => $categoria['descripcion'], 'estado' => true]
-            );
+        foreach (Tienda::query()->get() as $tienda) {
+            foreach ($categorias as $categoria) {
+                Categoria::firstOrCreate(
+                    [
+                        'id_tienda' => $tienda->id,
+                        'nombre' => $categoria['nombre'],
+                    ],
+                    [
+                        'descripcion' => $categoria['descripcion'],
+                        'estado' => true,
+                    ]
+                );
+            }
         }
     }
 }

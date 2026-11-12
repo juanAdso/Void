@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductosRequest;
 use App\Http\Requests\UpdateProductosRequest;
+use App\Models\Productos;
 use App\Services\CategoriaService;
 use App\Services\ProductosService;
 
@@ -16,6 +17,7 @@ class ProductosController extends Controller
 
     public function index()
     {
+        $this->authorize('viewAny', Productos::class);
         $tiendaId = (int) auth()->user()->id_tienda;
         $productos = $this->productosService->listarTodo($tiendaId);
 
@@ -24,6 +26,7 @@ class ProductosController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Productos::class);
         $tiendaId = (int) auth()->user()->id_tienda;
         $categorias = $this->categoriasService->listarTodo($tiendaId);
 
@@ -32,6 +35,7 @@ class ProductosController extends Controller
 
     public function store(StoreProductosRequest $request)
     {
+        $this->authorize('create', Productos::class);
         $tiendaId = (int) auth()->user()->id_tienda;
         $this->productosService->guardar($request->validated(), $tiendaId);
 
@@ -42,6 +46,7 @@ class ProductosController extends Controller
     {
         $tiendaId = (int) auth()->user()->id_tienda;
         $producto = $this->productosService->buscarPorId($id, $tiendaId);
+        $this->authorize('update', $producto);
         $categorias = $this->categoriasService->listarTodo($tiendaId);
 
         return view('productos.editar', ['productos' => $producto, 'categorias' => $categorias]);
@@ -50,6 +55,9 @@ class ProductosController extends Controller
     public function update(int $id, UpdateProductosRequest $request)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
+        $producto = $this->productosService->buscarPorId($id, $tiendaId);
+        $this->authorize('update', $producto);
+
         $datos = $request->validated();
         unset($datos['id_tienda']);
 
@@ -61,6 +69,8 @@ class ProductosController extends Controller
     public function destroy(int $id)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
+        $producto = $this->productosService->buscarPorId($id, $tiendaId);
+        $this->authorize('delete', $producto);
 
         if (! $this->productosService->eliminar($id, $tiendaId)) {
             return redirect()->route('productos.index')->with('error', 'No se puede eliminar este producto porque está asociado a una factura.');

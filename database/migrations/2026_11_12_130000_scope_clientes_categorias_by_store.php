@@ -20,9 +20,6 @@ return new class extends Migration
         });
 
         DB::transaction(function () {
-            // Una categoría compartida por varias tiendas se clona para cada tienda.
-            // Se conserva el ID original para la primera tienda y se remapean los productos
-            // de las demás tiendas a sus respectivas copias.
             $categorias = DB::table('categorias')->orderBy('id')->get();
 
             foreach ($categorias as $categoria) {
@@ -33,7 +30,6 @@ return new class extends Migration
                     ->pluck('id_tienda')
                     ->all();
 
-                // Las categorías sin productos se replican para todas las tiendas conocidas.
                 if (count($tiendaIds) === 0) {
                     $tiendaIds = DB::table('tiendas')->orderBy('id')->pluck('id')->all();
                 }
@@ -63,8 +59,6 @@ return new class extends Migration
                 }
             }
 
-            // Un cliente utilizado por facturas de varias tiendas se clona y cada factura
-            // conserva su cliente, ahora perteneciente a la tienda que emitió la factura.
             $clientes = DB::table('clientes')->orderBy('id')->get();
 
             foreach ($clientes as $cliente) {
@@ -77,10 +71,16 @@ return new class extends Migration
                     ->pluck('usuarios.id_tienda')
                     ->all();
 
-                // Los clientes sin factura asociada o con facturas de usuarios sin tienda
-                // permanecen sin asignar; no se adjudican datos históricos arbitrariamente.
+                $tieneFacturasSinTienda = DB::table('facturas')
+                    ->join('usuarios', 'usuarios.id', '=', 'facturas.id_usuario')
+                    ->where('facturas.id_cliente', $cliente->id)
+                    ->whereNull('usuarios.id_tienda')
+                    ->exists();
+
                 foreach ($tiendaIds as $index => $tiendaId) {
-                    if ($index === 0) {
+                    // Si existen facturas sin tienda, la fila original se conserva sin asignar
+                    // y se crea una copia para cada comercio identificable.
+                    if ($index === 0 && ! $tieneFacturasSinTienda) {
                         DB::table('clientes')
                             ->where('id', $cliente->id)
                             ->update(['id_tienda' => $tiendaId, 'updated_at' => now()]);
@@ -125,7 +125,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Reunir las copias por su clave histórica antes de volver al esquema compartido.
         DB::transaction(function () {
             $categorias = DB::table('categorias')
                 ->select('nombre', DB::raw('MIN(id) as id'))
