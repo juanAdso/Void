@@ -34,7 +34,7 @@ class SeguridadSeeder extends Seeder
         $registrar = app(PermissionRegistrar::class);
 
         // Un único rol global reservado al superadministrador.
-        $registrar->setPermissionsTeamId(null);
+        $registrar->setPermissionsTeamId(0);
         $superadministrador = Role::query()->firstOrCreate([
             'name' => 'superadministrador',
             'guard_name' => 'web',
