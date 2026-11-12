@@ -11,13 +11,15 @@ class EmpleadoController extends Controller
 {
     public function index()
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = auth()->user()->alcanceTiendaId();
 
-        $empleados = User::query()
-            ->where('id_tienda', $tiendaId)
-            ->where('rol', 'empleado')
-            ->orderBy('nombre')
-            ->get();
+        $consulta = User::query()->with('tienda')->where('rol', 'empleado');
+
+        if ($tiendaId !== null) {
+            $consulta->where('id_tienda', $tiendaId);
+        }
+
+        $empleados = $consulta->orderBy('nombre')->get();
 
         return view('empleados.index', compact('empleados'));
     }
