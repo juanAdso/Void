@@ -6,37 +6,30 @@ use App\Repositories\Interfaces\ProductoRepositoryInterface;
 
 class ProductosService
 {
-    private ProductoRepositoryInterface $productos_repository;
+    public function __construct(private ProductoRepositoryInterface $productos_repository) {}
 
-    public function __construct(ProductoRepositoryInterface $productos_repository)
-    {
-        $this->productos_repository = $productos_repository;
-    }
-
-    public function listarTodo(?int $tiendaId = null)
+    public function listarTodo(int $tiendaId)
     {
         return $this->productos_repository->listarTodo($tiendaId);
     }
 
-    public function guardar(array $datos)
+    public function guardar(array $datos, int $tiendaId)
     {
-        return $this->productos_repository->guardar($datos);
+        return $this->productos_repository->guardar($datos, $tiendaId);
     }
 
-    public function eliminar(int $id, ?int $tiendaId = null)
+    public function eliminar(int $id, int $tiendaId)
     {
         return $this->productos_repository->eliminar($id, $tiendaId);
     }
 
-    public function buscarPorId(int $id, ?int $tiendaId = null)
+    public function buscarPorId(int $id, int $tiendaId)
     {
-        $producto = $this->productos_repository->buscarPorId($id, $tiendaId);
-
-        return $producto;
+        return $this->productos_repository->buscarPorId($id, $tiendaId);
     }
 
-    public function actualizar(int $id, array $datos)
+    public function actualizar(int $id, array $datos, int $tiendaId)
     {
-        $this->productos_repository->actualizar($id, $datos);
+        return $this->productos_repository->actualizar($id, $datos, $tiendaId);
     }
 }

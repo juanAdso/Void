@@ -7,27 +7,18 @@ use Illuminate\Support\ServiceProvider;
 
 class SeguridadServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap services.
-     */
     public function boot(): void
     {
-        // Concede implícitamente todos los permisos al rol 'administrador' a nivel de Gate
-        Gate::before(function ($user, $ability) {
+        // Solo se aplica el bloqueo global de cuentas inactivas.
+        // Los administradores no reciben un bypass automático de Policies o permisos Spatie.
+        Gate::before(function ($user) {
             if (method_exists($user, 'estaActivo') && ! $user->estaActivo()) {
                 return false;
-            }
-
-            if (method_exists($user, 'hasRole') && $user->hasRole('administrador')) {
-                return true;
             }
 
             return null;

@@ -21,7 +21,12 @@ class TiendaRepository implements TiendaRepositoryInterface
     {
         $tienda = Tienda::findOrFail($id);
 
-        if ($tienda->productos()->exists()) {
+        if (
+            $tienda->productos()->exists()
+            || $tienda->usuarios()->exists()
+            || $tienda->clientes()->exists()
+            || $tienda->categorias()->exists()
+        ) {
             return false;
         }
 

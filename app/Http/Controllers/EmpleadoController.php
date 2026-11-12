@@ -11,12 +11,11 @@ class EmpleadoController extends Controller
 {
     public function index()
     {
-        $usuario = auth()->user();
-        $tiendaId = $usuario?->id_tienda;
+        $tiendaId = (int) auth()->user()->id_tienda;
 
         $empleados = User::query()
+            ->where('id_tienda', $tiendaId)
             ->where('rol', 'empleado')
-            ->when($tiendaId, fn ($q) => $q->where('id_tienda', $tiendaId))
             ->orderBy('nombre')
             ->get();
 
@@ -25,20 +24,18 @@ class EmpleadoController extends Controller
 
     public function create()
     {
+        abort_unless(auth()->user()->hasRole('administrador'), 403);
+
         return view('empleados.create');
     }
 
     public function store(StoreEmpleadoRequest $request)
     {
         $admin = auth()->user();
-        $tiendaId = $admin?->id_tienda;
-
-        if (!$tiendaId) {
-            abort(403, 'Debes tener una tienda asignada para registrar empleados.');
-        }
+        abort_unless($admin->hasRole('administrador') && $admin->id_tienda, 403);
 
         $datos = $request->validated();
-        $datos['id_tienda'] = $tiendaId;
+        $datos['id_tienda'] = $admin->id_tienda;
         $datos['rol'] = 'empleado';
         $datos['password'] = Hash::make($datos['password']);
 
@@ -51,14 +48,12 @@ class EmpleadoController extends Controller
     public function edit(int $id)
     {
         $admin = auth()->user();
-        $empleado = User::query()
-            ->where('id', $id)
-            ->where('rol', 'empleado')
-            ->firstOrFail();
+        abort_unless($admin->hasRole('administrador') && $admin->id_tienda, 403);
 
-        if ($admin->id_tienda && (int) $empleado->id_tienda !== (int) $admin->id_tienda) {
-            abort(403, 'No tienes autorización para editar empleados de otra tienda.');
-        }
+        $empleado = User::query()
+            ->where('id_tienda', $admin->id_tienda)
+            ->where('rol', 'empleado')
+            ->findOrFail($id);
 
         return view('empleados.edit', compact('empleado'));
     }
@@ -66,26 +61,22 @@ class EmpleadoController extends Controller
     public function update(int $id, UpdateEmpleadoRequest $request)
     {
         $admin = auth()->user();
-        $empleado = User::query()
-            ->where('id', $id)
-            ->where('rol', 'empleado')
-            ->firstOrFail();
+        abort_unless($admin->hasRole('administrador') && $admin->id_tienda, 403);
 
-        if ($admin->id_tienda && (int) $empleado->id_tienda !== (int) $admin->id_tienda) {
-            abort(403, 'No tienes autorización para modificar empleados de otra tienda.');
-        }
+        $empleado = User::query()
+            ->where('id_tienda', $admin->id_tienda)
+            ->where('rol', 'empleado')
+            ->findOrFail($id);
 
         $datos = $request->validated();
 
-        if (!empty($datos['password'])) {
+        if (! empty($datos['password'])) {
             $datos['password'] = Hash::make($datos['password']);
         } else {
             unset($datos['password']);
         }
 
-        unset($datos['id_tienda']);
-        unset($datos['rol']);
-
+        unset($datos['id_tienda'], $datos['rol']);
         $empleado->update($datos);
 
         return redirect()->route('empleados.index')->with('success', 'Información del empleado actualizada correctamente.');
@@ -94,17 +85,16 @@ class EmpleadoController extends Controller
     public function destroy(int $id)
     {
         $admin = auth()->user();
-        $empleado = User::query()
-            ->where('id', $id)
-            ->where('rol', 'empleado')
-            ->firstOrFail();
+        abort_unless($admin->hasRole('administrador') && $admin->id_tienda, 403);
 
-        if ($admin->id_tienda && (int) $empleado->id_tienda !== (int) $admin->id_tienda) {
-            abort(403, 'No tienes autorización para eliminar empleados de otra tienda.');
-        }
+        $empleado = User::query()
+            ->where('id_tienda', $admin->id_tienda)
+            ->where('rol', 'empleado')
+            ->findOrFail($id);
 
         if ($empleado->facturas()->exists()) {
             $empleado->update(['estado' => false]);
+
             return redirect()->route('empleados.index')->with('success', 'El empleado posee facturas emitidas, por lo que fue desactivado del sistema.');
         }
 

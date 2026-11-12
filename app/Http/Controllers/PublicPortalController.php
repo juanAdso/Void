@@ -13,8 +13,8 @@ class PublicPortalController extends Controller
     {
         $tiendas = Tienda::query()
             ->where('estado', true)
-            ->withCount(['productos as total_productos' => function ($q) {
-                $q->where('estado', true);
+            ->withCount(['productos as total_productos' => function ($query) {
+                $query->where('estado', true);
             }])
             ->orderBy('nombre')
             ->get();
@@ -24,10 +24,7 @@ class PublicPortalController extends Controller
 
     public function tienda(int $id)
     {
-        $tienda = Tienda::query()
-            ->where('id', $id)
-            ->where('estado', true)
-            ->firstOrFail();
+        $tienda = Tienda::query()->whereKey($id)->where('estado', true)->firstOrFail();
 
         $productosDestacados = Productos::query()
             ->with('categoria')
@@ -39,6 +36,7 @@ class PublicPortalController extends Controller
             ->get();
 
         $categorias = Categoria::query()
+            ->where('id_tienda', $tienda->id)
             ->where('estado', true)
             ->whereIn('id', function ($query) use ($tienda) {
                 $query->select('id_categoria')
@@ -59,17 +57,18 @@ class PublicPortalController extends Controller
 
         if ($request->has('tienda')) {
             $tiendaId = $request->input('tienda');
-            if (empty($tiendaId)) {
+
+            if (empty($tiendaId) || ! ctype_digit((string) $tiendaId)) {
                 abort(404, 'Tienda no especificada.');
             }
 
             $tiendaSeleccionada = Tienda::query()
-                ->where('id', (int) $tiendaId)
+                ->whereKey((int) $tiendaId)
                 ->where('estado', true)
                 ->firstOrFail();
         }
 
-        if (!$tiendaSeleccionada) {
+        if (! $tiendaSeleccionada) {
             return view('layouts.catalogo', compact('tiendas', 'tiendaSeleccionada'));
         }
 
@@ -80,9 +79,7 @@ class PublicPortalController extends Controller
 
         if ($request->input('disponibilidad') === 'agotados') {
             $productosQuery->where('productos.stock', '<=', 0);
-        } elseif ($request->input('disponibilidad') === 'todos') {
-            // todos
-        } else {
+        } elseif ($request->input('disponibilidad') !== 'todos') {
             $productosQuery->where('productos.stock', '>', 0);
         }
 
@@ -92,9 +89,9 @@ class PublicPortalController extends Controller
 
         if ($request->filled('buscar')) {
             $buscar = trim((string) $request->input('buscar'));
-            $productosQuery->where(function ($subquery) use ($buscar) {
-                $subquery->where('productos.nombre', 'like', '%' . $buscar . '%')
-                    ->orWhere('productos.descripcion', 'like', '%' . $buscar . '%');
+            $productosQuery->where(function ($query) use ($buscar) {
+                $query->where('productos.nombre', 'like', '%'.$buscar.'%')
+                    ->orWhere('productos.descripcion', 'like', '%'.$buscar.'%');
             });
         }
 
@@ -106,12 +103,10 @@ class PublicPortalController extends Controller
             $productosQuery->where('productos.precio', '<=', (float) $request->input('precio_max'));
         }
 
-        $productos = $productosQuery
-            ->orderBy('productos.nombre')
-            ->paginate(12)
-            ->withQueryString();
+        $productos = $productosQuery->orderBy('productos.nombre')->paginate(12)->withQueryString();
 
         $categorias = Categoria::query()
+            ->where('id_tienda', $tiendaSeleccionada->id)
             ->where('estado', true)
             ->whereIn('id', function ($query) use ($tiendaSeleccionada) {
                 $query->select('id_categoria')
@@ -129,17 +124,15 @@ class PublicPortalController extends Controller
     {
         $producto = Productos::query()
             ->with(['categoria', 'tienda'])
-            ->where('id', $id)
+            ->whereKey($id)
             ->where('estado', true)
-            ->whereHas('tienda', function ($q) {
-                $q->where('estado', true);
-            })
+            ->whereHas('tienda', fn ($query) => $query->where('estado', true))
             ->firstOrFail();
 
         $productosRelacionados = Productos::query()
             ->where('id_tienda', $producto->id_tienda)
             ->where('id_categoria', $producto->id_categoria)
-            ->where('id', '!=', $producto->id)
+            ->where('id', '<>', $producto->id)
             ->where('estado', true)
             ->where('stock', '>', 0)
             ->limit(4)

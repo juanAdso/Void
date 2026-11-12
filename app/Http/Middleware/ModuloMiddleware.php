@@ -8,12 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ModuloMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
-     * @param  string  ...$permisos
-     */
     public function handle(Request $request, Closure $next, ...$permisos): Response
     {
         $user = $request->user();
@@ -22,25 +16,28 @@ class ModuloMiddleware
             return redirect()->guest(route('login'));
         }
 
-        if (method_exists($user, 'estaActivo') && ! $user->estaActivo()) {
+        if (! $user->estaActivo()) {
             abort(403, 'Tu cuenta de usuario no está activa.');
         }
 
-        // Si no se pasaron permisos específicos, solo se requería estar autenticado y activo
-        if (empty($permisos)) {
-            return $next($request);
+        // Todo usuario de los módulos administrativos debe pertenecer a una tienda.
+        // Un id_tienda nulo nunca debe convertirse en permiso para consultar datos globales.
+        if (! $user->id_tienda) {
+            abort(403, 'Tu cuenta no tiene una tienda asignada. Contacta al administrador.');
         }
 
-        // Si tiene el rol administrador, tiene acceso completo
-        if (method_exists($user, 'hasRole') && $user->hasRole('administrador')) {
-            return $next($request);
+        if (! $user->hasAnyRole(['administrador', 'empleado'])) {
+            abort(403, 'Tu cuenta no tiene un rol administrativo válido.');
         }
 
-        // Comprueba si el usuario tiene alguno de los permisos especificados
         foreach ($permisos as $permiso) {
             if ($user->can($permiso)) {
                 return $next($request);
             }
+        }
+
+        if (empty($permisos)) {
+            return $next($request);
         }
 
         abort(403, 'No tienes autorización para acceder a este módulo u operación.');
