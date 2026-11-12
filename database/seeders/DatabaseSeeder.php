@@ -6,6 +6,7 @@ use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,8 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SeguridadSeeder::class,
             TiendaSeeder::class,
+            SeguridadSeeder::class,
         ]);
 
         $tiendaInicial = Tienda::query()->orderBy('id')->firstOrFail();
@@ -33,15 +34,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Mantener el usuario de demostración asociado a una tienda para que no obtenga
-        // acceso global accidental. Las credenciales son exclusivamente de desarrollo.
         if (! $admin->id_tienda) {
             $admin->forceFill(['id_tienda' => $tiendaInicial->id])->save();
         }
 
-        if (! $admin->hasRole('administrador')) {
-            $admin->assignRole('administrador');
-        }
+        /** @var PermissionRegistrar $registrar */
+        $registrar = app(PermissionRegistrar::class);
+        $registrar->setPermissionsTeamId((int) $tiendaInicial->id);
+        $admin->unsetRelation('roles');
+        $admin->syncRoles(['administrador']);
+        $registrar->setPermissionsTeamId(null);
 
         $this->call([
             CategoriaSeeder::class,
