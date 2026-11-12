@@ -12,6 +12,7 @@ class Categoria extends Model
     protected $table = 'categorias';
 
     protected $fillable = [
+        'id_tienda',
         'nombre',
         'descripcion',
         'estado',
@@ -20,6 +21,11 @@ class Categoria extends Model
     protected function casts(): array
     {
         return ['estado' => 'boolean'];
+    }
+
+    public function tienda()
+    {
+        return $this->belongsTo(Tienda::class, 'id_tienda', 'id');
     }
 
     public function productos()

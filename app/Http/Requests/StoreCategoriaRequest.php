@@ -2,28 +2,25 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoriaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        return (bool) $this->user()?->id_tienda;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $tiendaId = $this->user()->id_tienda;
+
         return [
-            'nombre' => 'required|string|max:100',
+            'nombre' => [
+                'required', 'string', 'max:100',
+                Rule::unique('categorias', 'nombre')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
+            ],
             'descripcion' => 'nullable|string|max:255',
             'estado' => 'required|boolean',
         ];
@@ -33,9 +30,7 @@ class StoreCategoriaRequest extends FormRequest
     {
         return [
             'nombre.required' => 'El nombre de la categoría es obligatorio.',
-            'nombre.string' => 'El nombre de la categoría debe ser una cadena de texto.',
-            'nombre.max' => 'El nombre de la categoría no puede tener más de 100 caracteres.',
-            'descripcion.string' => 'La descripción debe ser una cadena de texto.',
+            'nombre.unique' => 'Ya existe una categoría con ese nombre en tu tienda.',
             'estado.required' => 'El estado es obligatorio.',
             'estado.boolean' => 'El estado debe ser verdadero o falso.',
         ];

@@ -8,28 +8,28 @@ class ClienteService
 {
     public function __construct(private ClienteRepositoryInterface $cliente_repository) {}
 
-    public function listarTodo()
+    public function listarTodo(int $tiendaId)
     {
-        return $this->cliente_repository->listarTodo();
+        return $this->cliente_repository->listarTodo($tiendaId);
     }
 
-    public function guardar(array $datos)
+    public function guardar(array $datos, int $tiendaId)
     {
-        return $this->cliente_repository->guardar($datos);
+        return $this->cliente_repository->guardar($datos, $tiendaId);
     }
 
-    public function eliminar(int $id)
+    public function eliminar(int $id, int $tiendaId)
     {
-        return $this->cliente_repository->eliminar($id);
+        return $this->cliente_repository->eliminar($id, $tiendaId);
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, int $tiendaId)
     {
-        return $this->cliente_repository->buscarPorId($id);
+        return $this->cliente_repository->buscarPorId($id, $tiendaId);
     }
 
-    public function actualizar(int $id, array $datos)
+    public function actualizar(int $id, array $datos, int $tiendaId)
     {
-        return $this->cliente_repository->actualizar($id, $datos);
+        return $this->cliente_repository->actualizar($id, $datos, $tiendaId);
     }
 }

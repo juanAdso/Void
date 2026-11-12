@@ -12,6 +12,7 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = [
+        'id_tienda',
         'nombre',
         'apellido',
         'documento',
@@ -19,6 +20,11 @@ class Cliente extends Model
         'correo',
         'direccion',
     ];
+
+    public function tienda()
+    {
+        return $this->belongsTo(Tienda::class, 'id_tienda', 'id');
+    }
 
     public function facturas()
     {
