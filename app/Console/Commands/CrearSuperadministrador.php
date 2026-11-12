@@ -75,7 +75,7 @@ class CrearSuperadministrador extends Command
             $rol = Role::query()->firstOrCreate([
                 'name' => 'superadministrador',
                 'guard_name' => 'web',
-                'id_tienda' => null,
+                'id_tienda' => 0,
             ]);
 
             $rol->syncPermissions(Permission::query()->where('guard_name', 'web')->get());
