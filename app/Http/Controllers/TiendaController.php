@@ -11,8 +11,7 @@ class TiendaController extends Controller
 
     public function index()
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $tiendas = $this->tiendaService->listarTodo($tiendaId);
+        $tiendas = $this->tiendaService->listarTodo(auth()->user()->alcanceTiendaId());
 
         return view('tiendas.index', compact('tiendas'));
     }
@@ -29,27 +28,24 @@ class TiendaController extends Controller
 
     public function show(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
+        $tienda = $this->tiendaService->buscarPorId($id, auth()->user()->alcanceTiendaId());
 
         return view('tiendas.show', compact('tienda'));
     }
 
     public function edit(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
+        $tienda = $this->tiendaService->buscarPorId($id, auth()->user()->alcanceTiendaId());
 
         return view('tiendas.edit', compact('tienda'));
     }
 
     public function update(int $id, UpdateTiendaRequest $request)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
         $datos = $request->validated();
         unset($datos['id_tienda']);
 
-        $this->tiendaService->actualizar($id, $datos, $tiendaId);
+        $this->tiendaService->actualizar($id, $datos, auth()->user()->alcanceTiendaId());
 
         return redirect()->route('tiendas.index')->with('success', 'Tienda actualizada correctamente.');
     }
