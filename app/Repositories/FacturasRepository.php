@@ -12,19 +12,21 @@ use Illuminate\Validation\ValidationException;
 
 class FacturasRepository implements FacturasRepositoryInterface
 {
-    public function listarTodo(int $tiendaId)
+    public function listarTodo(?int $tiendaId)
     {
-        return Facturas::query()
-            ->with([
-                'cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
-                'detalle_factura' => fn ($query) => $query->whereHas(
-                    'producto',
-                    fn ($producto) => $producto->where('id_tienda', $tiendaId)
-                ),
-            ])
-            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-            ->orderByDesc('fecha')
-            ->get();
+        $consulta = Facturas::query()->with([
+            'cliente',
+            'detalle_factura.producto',
+        ]);
+
+        if ($tiendaId !== null) {
+            $consulta->whereHas(
+                'usuario',
+                fn ($query) => $query->where('id_tienda', $tiendaId)
+            );
+        }
+
+        return $consulta->orderByDesc('fecha')->get();
     }
 
     public function guardar(array $datos, int $tiendaId)
@@ -43,11 +45,18 @@ class FacturasRepository implements FacturasRepositoryInterface
         return Facturas::create($datos);
     }
 
-    public function eliminar(int $id, int $tiendaId)
+    public function eliminar(int $id, ?int $tiendaId)
     {
-        $factura = Facturas::query()
-            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-            ->findOrFail($id);
+        $consulta = Facturas::query();
+
+        if ($tiendaId !== null) {
+            $consulta->whereHas(
+                'usuario',
+                fn ($query) => $query->where('id_tienda', $tiendaId)
+            );
+        }
+
+        $factura = $consulta->findOrFail($id);
 
         if ($factura->detalle_factura()->exists() || $factura->estado !== 'pendiente') {
             return false;
@@ -56,30 +65,48 @@ class FacturasRepository implements FacturasRepositoryInterface
         return $factura->delete();
     }
 
-    public function buscarPorId(int $id, int $tiendaId)
+    public function buscarPorId(int $id, ?int $tiendaId)
     {
-        return Facturas::query()
-            ->with([
-                'cliente' => fn ($query) => $query->where('id_tienda', $tiendaId),
-                'detalle_factura' => fn ($query) => $query->whereHas(
-                    'producto',
-                    fn ($producto) => $producto->where('id_tienda', $tiendaId)
-                ),
-            ])
-            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-            ->findOrFail($id);
+        $consulta = Facturas::query()->with([
+            'cliente',
+            'detalle_factura.producto',
+        ]);
+
+        if ($tiendaId !== null) {
+            $consulta->whereHas(
+                'usuario',
+                fn ($query) => $query->where('id_tienda', $tiendaId)
+            );
+        }
+
+        return $consulta->findOrFail($id);
     }
 
-    public function actualizar(int $id, array $datos, int $tiendaId)
+    public function actualizar(int $id, array $datos, ?int $tiendaId)
     {
         return DB::transaction(function () use ($id, $datos, $tiendaId) {
-            $factura = Facturas::query()
-                ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-                ->lockForUpdate()
-                ->findOrFail($id);
+            $consulta = Facturas::query()->lockForUpdate();
+
+            if ($tiendaId !== null) {
+                $consulta->whereHas(
+                    'usuario',
+                    fn ($query) => $query->where('id_tienda', $tiendaId)
+                );
+            }
+
+            $factura = $consulta->findOrFail($id);
+            $tiendaFacturaId = (int) $factura->usuario->id_tienda;
+
+            if ($tiendaFacturaId <= 0) {
+                throw ValidationException::withMessages([
+                    'id_factura' => 'La factura no está asociada a una tienda válida.',
+                ]);
+            }
 
             if (isset($datos['id_cliente'])) {
-                Cliente::query()->where('id_tienda', $tiendaId)->findOrFail($datos['id_cliente']);
+                Cliente::query()
+                    ->where('id_tienda', $tiendaFacturaId)
+                    ->findOrFail($datos['id_cliente']);
             }
 
             $estadoAnterior = (string) $factura->estado;
@@ -121,7 +148,7 @@ class FacturasRepository implements FacturasRepositoryInterface
 
                 if ($productosIds->isNotEmpty()) {
                     $productosBloqueados = Productos::query()
-                        ->where('id_tienda', $tiendaId)
+                        ->where('id_tienda', $tiendaFacturaId)
                         ->whereIn('id', $productosIds)
                         ->lockForUpdate()
                         ->get()
@@ -141,7 +168,7 @@ class FacturasRepository implements FacturasRepositoryInterface
 
                         MovimientoInventario::create([
                             'id_producto' => $producto->id,
-                            'id_tienda' => $tiendaId,
+                            'id_tienda' => $tiendaFacturaId,
                             'id_usuario' => auth()->id() ?? $factura->id_usuario,
                             'tipo_movimiento' => 'anulacion_factura',
                             'cantidad' => $cantidad,
