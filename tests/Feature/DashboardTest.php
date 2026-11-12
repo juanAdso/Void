@@ -18,14 +18,7 @@ test('administrador sin tienda asignada no puede acceder al dashboard ni obtener
 
     $response = $this->actingAs($admin)->get(route('dashboard.index'));
 
-    $response->assertOk();
-    $response->assertViewIs('dashboard.admin');
-    $response->assertViewHasAll([
-        'totalProductos' => 0,
-        'totalEmpleados' => 0,
-        'ventasMes' => 0,
-        'ingresosMes' => 0.0,
-    ]);
+    $response->assertForbidden();
 });
 
 test('administrador con tienda asignada puede cargar el dashboard', function () {

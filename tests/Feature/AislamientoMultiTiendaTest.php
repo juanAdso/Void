@@ -90,7 +90,7 @@ test('una tienda no puede editar productos ajenos manipulando el ID en la URL', 
         'id_categoria' => $categoria->id,
     ]);
 
-    $response->assertNotFound();
+    $response->assertForbidden();
     expect($productoB->fresh()->nombre)->toBe('Original B');
 });
 
@@ -189,7 +189,7 @@ test('una tienda no puede consultar ni editar facturas ajenas', function () {
         'id_cliente' => $cliente->id,
         'fecha' => '2026-03-02',
         'estado' => 'pagada',
-    ])->assertNotFound();
+    ])->assertForbidden();
 
     // Admin A no debe poder eliminar factura B
     $this->actingAs($adminA)->delete(route('facturas.destroy', $facturaB->id))->assertNotFound();
@@ -433,7 +433,7 @@ test('una tienda no puede consultar, modificar ni eliminar clientes de otra tien
         'nombre' => 'Cliente alterado',
         'apellido' => 'Ajeno',
         'documento' => '9999999999',
-    ])->assertForbidden();
+    ])->assertNotFound();
 
     $this->actingAs($adminA)->delete(route('cliente.destroy', $clienteB->id))->assertNotFound();
 
@@ -485,4 +485,18 @@ test('crear cliente siempre asigna la tienda autenticada aunque se manipule id_t
 
     $cliente = Cliente::where('documento', '2012345678')->firstOrFail();
     expect((int) $cliente->id_tienda)->toBe((int) $tiendaA->id);
+});
+
+
+test('los usuarios de una tienda inactiva no pueden acceder a modulos administrativos', function () {
+    $tienda = Tienda::factory()->create(['estado' => false]);
+    $admin = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tienda->id,
+    ]);
+    $admin->assignRole('administrador');
+
+    $this->actingAs($admin)->get(route('dashboard.index'))->assertForbidden();
+    $this->actingAs($admin)->get(route('productos.index'))->assertForbidden();
 });

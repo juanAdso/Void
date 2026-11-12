@@ -112,3 +112,17 @@ test('el formulario de registro de tienda es accesible publicamente mediante la 
     $response->assertOk();
     $response->assertSee('Registrar tienda');
 });
+
+
+test('el rol administrador no evita la comprobacion de permisos granulares', function () {
+    $tienda = Tienda::factory()->create();
+    $admin = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tienda->id,
+    ]);
+    $admin->assignRole('administrador');
+    $admin->revokePermissionTo('ver clientes');
+
+    $this->actingAs($admin)->get(route('cliente.index'))->assertForbidden();
+});

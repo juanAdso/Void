@@ -6,35 +6,25 @@ use App\Repositories\Interfaces\TiendaRepositoryInterface;
 
 class TiendaService
 {
-    private TiendaRepositoryInterface $tienda_repository;
+    public function __construct(private TiendaRepositoryInterface $tienda_repository) {}
 
-    public function __construct(TiendaRepositoryInterface $tienda_repository)
+    public function listarTodo(int $tiendaId)
     {
-        $this->tienda_repository = $tienda_repository;
+        return $this->tienda_repository->listarTodo($tiendaId);
     }
 
-    public function listarTodo()
+    public function eliminar(int $id, int $tiendaId)
     {
-        return $this->tienda_repository->listarTodo();
+        return $this->tienda_repository->eliminar($id, $tiendaId);
     }
 
-    public function guardar(array $datos)
+    public function buscarPorId(int $id, int $tiendaId)
     {
-        return $this->tienda_repository->guardar($datos);
+        return $this->tienda_repository->buscarPorId($id, $tiendaId);
     }
 
-    public function eliminar(int $id)
+    public function actualizar(int $id, array $datos, int $tiendaId)
     {
-        return $this->tienda_repository->eliminar($id);
-    }
-
-    public function buscarPorId(int $id)
-    {
-        return $this->tienda_repository->buscarPorId($id);
-    }
-
-    public function actualizar(int $id, array $datos)
-    {
-        return $this->tienda_repository->actualizar($id, $datos);
+        return $this->tienda_repository->actualizar($id, $datos, $tiendaId);
     }
 }

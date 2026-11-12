@@ -74,6 +74,14 @@ class SeguridadSeeder extends Seeder
         // 3. Asignación de permisos al Administrador: Todos los permisos
         $rolAdmin->syncPermissions(Permission::all());
 
+        // Sincronizar los roles de cuentas históricas con el campo rol del sistema.
+        // Esto no concede acceso a cuentas sin tienda: el middleware las bloquea.
+        User::query()
+            ->whereIn('rol', ['administrador', 'empleado'])
+            ->each(function (User $user) {
+                $user->syncRoles([$user->rol]);
+            });
+
         // 4. Asignación de permisos al Empleado
         $permisosEmpleado = [
             'ver dashboard',

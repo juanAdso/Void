@@ -7,25 +7,28 @@ use App\Repositories\Interfaces\TiendaRepositoryInterface;
 
 class TiendaRepository implements TiendaRepositoryInterface
 {
-    public function listarTodo()
+    public function listarTodo(int $tiendaId)
     {
-        return Tienda::withCount('productos')->orderBy('id', 'desc')->get();
+        return Tienda::query()
+            ->withCount('productos')
+            ->whereKey($tiendaId)
+            ->get();
     }
 
-    public function guardar(array $datos)
+    public function eliminar(int $id, int $tiendaId)
     {
-        return Tienda::create($datos);
-    }
+        $tienda = Tienda::query()->findOrFail($id);
 
-    public function eliminar(int $id)
-    {
-        $tienda = Tienda::findOrFail($id);
+        if ((int) $tienda->id !== $tiendaId) {
+            abort(404);
+        }
 
         if (
             $tienda->productos()->exists()
             || $tienda->usuarios()->exists()
             || $tienda->clientes()->exists()
             || $tienda->categorias()->exists()
+            || $tienda->movimientosInventario()->exists()
         ) {
             return false;
         }
@@ -33,14 +36,23 @@ class TiendaRepository implements TiendaRepositoryInterface
         return $tienda->delete();
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId(int $id, int $tiendaId)
     {
-        return Tienda::with('productos')->findOrFail($id);
+        return Tienda::query()
+            ->with('productos')
+            ->whereKey($tiendaId)
+            ->whereKey($id)
+            ->firstOrFail();
     }
 
-    public function actualizar(int $id, array $datos)
+    public function actualizar(int $id, array $datos, int $tiendaId)
     {
-        $tienda = Tienda::findOrFail($id);
+        $tienda = Tienda::query()
+            ->whereKey($tiendaId)
+            ->whereKey($id)
+            ->firstOrFail();
+
+        unset($datos['id_tienda']);
         $tienda->update($datos);
 
         return $tienda->refresh();

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateTiendaRequest;
 use App\Services\TiendaService;
-use Illuminate\Support\Collection;
 
 class TiendaController extends Controller
 {
@@ -13,7 +12,7 @@ class TiendaController extends Controller
     public function index()
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-        $tiendas = collect([$this->tiendaService->buscarPorId($tiendaId)]);
+        $tiendas = $this->tiendaService->listarTodo($tiendaId);
 
         return view('tiendas.index', compact('tiendas'));
     }
@@ -31,10 +30,7 @@ class TiendaController extends Controller
     public function show(int $id)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-
-        abort_unless($id === $tiendaId, 404);
-
-        $tienda = $this->tiendaService->buscarPorId($tiendaId);
+        $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
 
         return view('tiendas.show', compact('tienda'));
     }
@@ -42,10 +38,7 @@ class TiendaController extends Controller
     public function edit(int $id)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-
-        abort_unless($id === $tiendaId, 404);
-
-        $tienda = $this->tiendaService->buscarPorId($tiendaId);
+        $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
 
         return view('tiendas.edit', compact('tienda'));
     }
@@ -53,13 +46,10 @@ class TiendaController extends Controller
     public function update(int $id, UpdateTiendaRequest $request)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-
-        abort_unless($id === $tiendaId, 404);
-
         $datos = $request->validated();
         unset($datos['id_tienda']);
 
-        $this->tiendaService->actualizar($tiendaId, $datos);
+        $this->tiendaService->actualizar($id, $datos, $tiendaId);
 
         return redirect()->route('tiendas.index')->with('success', 'Tienda actualizada correctamente.');
     }
