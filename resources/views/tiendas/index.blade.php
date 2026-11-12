@@ -9,10 +9,6 @@
                 <h1 class="text-3xl font-bold text-slate-800">Tiendas</h1>
                 <p class="mt-1 text-sm text-slate-500">Administra las tiendas disponibles en VOID.</p>
             </div>
-            <a href="{{ route('tiendas.create') }}"
-                class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700">
-                Registrar tienda
-            </a>
         </div>
 
         @if (session('error'))
@@ -38,9 +34,6 @@
                     <h2 class="text-lg font-semibold text-slate-700">No hay tiendas registradas</h2>
                     <p class="mt-1 text-sm text-slate-500">Registra la primera tienda para comenzar a organizar sus
                         catálogos.</p>
-                    <a href="{{ route('tiendas.create') }}"
-                        class="mt-5 inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">Crear
-                        tienda</a>
                 </div>
             @else
                 <div class="overflow-x-auto">
@@ -95,13 +88,6 @@
                                             <a href="{{ route('tiendas.edit', $tienda->id) }}"
                                                 class="rounded-md bg-primary-600 px-3 py-1.5 font-medium text-white hover:bg-primary-700">Editar</a>
 
-                                            <form action="{{ route('tiendas.destroy', $tienda->id) }}" method="POST"
-                                                onsubmit="return confirm('¿Deseas eliminar esta tienda?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50">Eliminar</button>
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>

@@ -500,3 +500,29 @@ test('los usuarios de una tienda inactiva no pueden acceder a modulos administra
     $this->actingAs($admin)->get(route('dashboard.index'))->assertForbidden();
     $this->actingAs($admin)->get(route('productos.index'))->assertForbidden();
 });
+
+
+test('un administrador solo puede actualizar el perfil de su propia tienda', function () {
+    $tiendaA = Tienda::factory()->create(['nombre' => 'Tienda A']);
+    $tiendaB = Tienda::factory()->create(['nombre' => 'Tienda B']);
+    $adminA = User::factory()->create([
+        'estado' => true,
+        'rol' => 'administrador',
+        'id_tienda' => $tiendaA->id,
+    ]);
+    $adminA->assignRole('administrador');
+
+    $this->actingAs($adminA)->put(route('tiendas.update', $tiendaA->id), [
+        'nombre' => 'Tienda A Actualizada',
+        'estado' => 1,
+    ])->assertRedirect(route('tiendas.index'));
+
+    expect($tiendaA->fresh()->nombre)->toBe('Tienda A Actualizada');
+
+    $this->actingAs($adminA)->put(route('tiendas.update', $tiendaB->id), [
+        'nombre' => 'Tienda B Manipulada',
+        'estado' => 1,
+    ])->assertNotFound();
+
+    expect($tiendaB->fresh()->nombre)->toBe('Tienda B');
+});
