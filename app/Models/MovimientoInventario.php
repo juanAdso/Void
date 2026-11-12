@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MovimientoInventario extends Model
 {
-    use HasFactory;
+    use HasFactory, PerteneceATienda;
 
     protected $table = 'movimientos_inventario';
 
