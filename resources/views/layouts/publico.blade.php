@@ -27,17 +27,21 @@
 
 <body class="min-h-screen bg-slate-50 text-neutral-950 antialiased flex flex-col justify-between">
 
+
+
     {{-- Menú público superior --}}
     <header class="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/95 backdrop-blur text-amber-50">
         <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
 
-            {{-- Logo --}}
-            <a href="{{ url('/') }}" class="text-2xl font-extrabold tracking-widest text-amber-50">
-                V<span class="text-blue-500">Ø</span>ID
-            </a>
+            {{-- Logo a la izquierda --}}
+            <div class="flex flex-1 items-center justify-start">
+                <a href="{{ url('/') }}" class="text-2xl font-extrabold tracking-widest text-amber-50">
+                    V<span class="text-blue-500">Ø</span>ID
+                </a>
+            </div>
 
-            {{-- Navegación para computador --}}
-            <div class="hidden items-center gap-8 md:flex">
+            {{-- Navegación centrada --}}
+            <div class="hidden flex-1 items-center justify-center gap-8 md:flex">
                 <a href="{{ url('/#tiendas') }}"
                     class="text-sm font-medium text-slate-300 transition hover:text-blue-400">
                     Tiendas
@@ -47,23 +51,25 @@
                     class="text-sm font-medium text-slate-300 transition hover:text-blue-400">
                     Catálogos
                 </a>
+            </div>
+
+            {{-- Botones a la derecha --}}
+            <div class="flex flex-1 items-center justify-end gap-4">
+                <a href="{{ route('login') }}"
+                    class="shrink-0 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-amber-50 transition hover:bg-blue-500 shadow-sm">
+                    Iniciar sesión
+                </a>
 
                 <a href="{{ route('registro.tienda') }}"
-                   class="text-sm font-medium text-slate-300 transition hover:text-blue-400">
-                    Registrar tienda
+                    class="shrink-0 text-sm font-semibold text-blue-500 transition hover:text-blue-400">
+                    Registrar mi tienda
                 </a>
             </div>
 
-            {{-- Acceso administrativo --}}
-            <a href="{{ route('login') }}"
-                class="shrink-0 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-amber-50 transition hover:bg-blue-500 shadow-sm">
-                Iniciar sesión
-            </a>
-            <a href="{{ route('registro.tienda') }}" class="text-sm font-semibold text-blue-500 hover:text-blue-400">
-                Registrar mi tienda
-            </a>
         </nav>
     </header>
+
+
 
     {{-- Contenido de cada página pública --}}
     <main class="flex-1">

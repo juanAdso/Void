@@ -21,37 +21,44 @@
                 </div>
             @endif
 
-            <form action="{{ route('cliente.update', $cliente->id_cliente) }}" method="post">
+            <form action="{{ route('cliente.update', ['cliente' => $cliente->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Cliente</label>
-                    <input type="text" name="nombre" value="{{ old('nombre', $cliente->nombre) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre', $cliente->nombre) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Apellido</label>
-                    <input type="text" name="apellido" value="{{ old('apellido', $cliente->apellido) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="apellido" value="{{ old('apellido', $cliente->apellido) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Documento</label>
-                    <input type="text" name="documento" value="{{ old('documento', $cliente->documento) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="documento" value="{{ old('documento', $cliente->documento) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Telefono</label>
-                    <input type="text" name="telefono" value="{{ old('telefono', $cliente->telefono) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="telefono" value="{{ old('telefono', $cliente->telefono) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Correo</label>
-                    <input type="email" name="correo" value="{{ old('correo', $cliente->correo) }}" class="w-full border rounded px-3 py-2">
+                    <input type="email" name="correo" value="{{ old('correo', $cliente->correo) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Dirección</label>
-                    <input type="text" name="direccion" value="{{ old('direccion', $cliente->direccion) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="direccion" value="{{ old('direccion', $cliente->direccion) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
                 </div>
 
             </form>

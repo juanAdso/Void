@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateTiendaRequest;
 use App\Services\TiendaService;
+use Illuminate\Support\Facades\Auth;
 
 class TiendaController extends Controller
 {
@@ -11,7 +12,7 @@ class TiendaController extends Controller
 
     public function index()
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = (int) Auth::user()?->id_tienda;
         $tiendas = $this->tiendaService->listarTodo($tiendaId);
 
         return view('tiendas.index', compact('tiendas'));
@@ -29,7 +30,7 @@ class TiendaController extends Controller
 
     public function show(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = (int) Auth::user()?->id_tienda;
         $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
 
         return view('tiendas.show', compact('tienda'));
@@ -37,7 +38,7 @@ class TiendaController extends Controller
 
     public function edit(int $id)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = (int) Auth::user()?->id_tienda;
         $tienda = $this->tiendaService->buscarPorId($id, $tiendaId);
 
         return view('tiendas.edit', compact('tienda'));
@@ -45,7 +46,7 @@ class TiendaController extends Controller
 
     public function update(int $id, UpdateTiendaRequest $request)
     {
-        $tiendaId = (int) auth()->user()->id_tienda;
+        $tiendaId = (int) Auth::user()?->id_tienda;
         $datos = $request->validated();
         unset($datos['id_tienda']);
 
