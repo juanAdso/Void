@@ -4,7 +4,9 @@
 @section('title', 'Tiendas')
 
 @section('content')
-    @php($mostrarAcciones = auth()->user()->canAny(['ver tiendas', 'editar tiendas']))
+    @php(
+    $mostrarAcciones = auth()->user()->canAny(['ver tiendas', 'editar tiendas'])
+)
     <div class="container mx-auto max-w-7xl">
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -55,7 +57,9 @@
                                     class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                                     Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
+                                    <th
+                                        class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        Acciones</th>
                                 @endif
                             </tr>
                         </thead>
