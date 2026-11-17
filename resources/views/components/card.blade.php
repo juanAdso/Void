@@ -6,13 +6,13 @@
 --}}
 @props(['title' => null, 'subtitle' => null, 'padding' => true])
 
-<div {{ $attributes->merge(['class' => 'bg-white rounded-xl border border-slate-200 shadow-sm']) }}>
+<div {{ $attributes->merge(['class' => 'void-card bg-neutral-900 rounded-2xl border border-neutral-800 shadow-lg shadow-black/10']) }}>
     @if ($title)
-        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+        <div class="px-5 sm:px-6 py-4 border-b border-neutral-800 flex items-center justify-between gap-4">
             <div>
-                <h3 class="text-base font-semibold text-slate-800">{{ $title }}</h3>
+                <h3 class="text-base font-semibold text-neutral-100">{{ $title }}</h3>
                 @if ($subtitle)
-                    <p class="text-sm text-slate-400 mt-0.5">{{ $subtitle }}</p>
+                    <p class="text-sm text-neutral-500 mt-0.5">{{ $subtitle }}</p>
                 @endif
             </div>
             @isset($actions)

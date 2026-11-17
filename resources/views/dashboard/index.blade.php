@@ -126,17 +126,17 @@
                 datasets: [{
                     label: 'Ventas',
                     data: @json($chartData['sales']),
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79,70,229,0.08)',
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245,158,11,0.10)',
                     tension: 0.35,
                     fill: true,
-                    pointRadius: 3,
+                    pointRadius: 3,\n                    pointHoverRadius: 5,
                 }]
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                animation: { duration: 750, easing: 'easeOutQuart' },\n                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, grid: { color: '#292929' } }, x: { grid: { display: false } } }
             }
         });
 
@@ -147,7 +147,7 @@
                 datasets: [{
                     label: 'Usuarios registrados',
                     data: @json($chartData['users']),
-                    backgroundColor: '#818cf8',
+                    backgroundColor: '#3b82f6',
                     borderRadius: 6,
                     maxBarThickness: 36,
                 }]
@@ -165,7 +165,7 @@
                 labels: @json($chartData['categoryLabels']),
                 datasets: [{
                     data: @json($chartData['categoryValues']),
-                    backgroundColor: ['#4f46e5', '#818cf8', '#c7d2fe', '#a5b4fc', '#312e81'],
+                    backgroundColor: ['#3b82f6', '#f59e0b', '#2563eb', '#d97706', '#1e40af'],
                     borderWidth: 0,
                 }]
             },

@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-20 bg-neutral-950 border-b border-neutral-800 text-amber-50 shadow-sm">
+<header class="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/95 text-amber-50 shadow-lg shadow-black/10 backdrop-blur-xl">
     <div class="h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
 
         <div class="flex items-center gap-4 min-w-0">
@@ -43,12 +43,12 @@
                     @click="open = !open"
                     @click.outside="open = false"
                     type="button"
-                    class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl border border-transparent hover:border-neutral-800 hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     aria-haspopup="true"
                     :aria-expanded="open.toString()"
                 >
                     <img
-                        class="w-8 h-8 rounded-full object-cover ring-1 ring-neutral-700"
+                        class="w-8 h-8 rounded-full object-cover ring-1 ring-blue-500/40"
                         src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name ?? 'Admin') }}"
                         alt="Avatar de {{ auth()->user()->name ?? 'Usuario' }}"
                     >
@@ -65,8 +65,13 @@
 
                 <div
                     x-show="open" x-cloak
-                    x-transition
-                    class="absolute right-0 mt-2 w-52 bg-neutral-900 rounded-xl shadow-lg border border-neutral-800 overflow-hidden py-1"
+                    x-transition:enter="transition ease-out duration-150"
+                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                    x-transition:leave="transition ease-in duration-100"
+                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                    class="absolute right-0 mt-2 w-52 origin-top-right bg-neutral-900 rounded-xl shadow-2xl shadow-black/40 border border-neutral-800 overflow-hidden py-1"
                 >
                     <form method="POST" action="{{ Route::has('logout') ? route('logout') : '#' }}">
                         @csrf

@@ -3,7 +3,7 @@
     Uso:
     <x-table :headers="['Nombre', 'Descripción', 'Estado', 'Fecha', 'Acciones']">
         @foreach ($items as $item)
-            <tr class="hover:bg-slate-50">
+            <tr class="hover:bg-neutral-950">
                 <td class="px-5 py-3.5">
                     <div class="flex items-center gap-3">
                         <img src="{{ $item->avatar_url }}" class="w-8 h-8 rounded-full object-cover" alt="">
@@ -24,12 +24,12 @@
 --}}
 @props(['headers' => []])
 
-<div class="w-full max-w-full overflow-x-auto">
-    <table class="min-w-max w-full divide-y divide-slate-100">
+<div class="w-full max-w-full overflow-x-auto rounded-xl">
+    <table class="min-w-max w-full divide-y divide-neutral-800">
         <thead>
             <tr class="bg-slate-50">
                 @foreach ($headers as $header)
-                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider whitespace-nowrap">
                         {{ $header }}
                     </th>
                 @endforeach
