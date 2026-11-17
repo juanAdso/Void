@@ -1,16 +1,16 @@
 <aside
     x-cloak
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-950 text-slate-300 transform transition-transform duration-200 ease-in-out lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-40 w-64 bg-neutral-950 text-slate-300 transform transition-transform duration-200 ease-in-out lg:translate-x-0"
     aria-label="Menú principal"
 >
     <div class="h-full flex flex-col">
 
-        <div class="flex items-center gap-3 h-16 px-6 border-b border-slate-800">
-            <div class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold">
-                V
+        <div class="flex items-center gap-3 h-16 px-6 border-b border-neutral-800">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-amber-50 font-bold">
+                Ø
             </div>
-            <span class="text-white font-semibold text-lg tracking-tight">{{ config('app.name', 'VOID Admin') }}</span>
+            <span class="text-amber-50 font-semibold text-lg tracking-tight">{{ config('app.name', 'VOID Admin') }}</span>
         </div>
 
         <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-1" aria-label="Navegación lateral">
@@ -39,8 +39,8 @@
                         @if($active) aria-current="page" @endif
                         class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                             {{ $active
-                                ? 'bg-primary-600 text-white shadow-sm'
-                                : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-slate-300 hover:bg-neutral-800 hover:text-amber-50' }}"
                     >
                         <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
                             @include('layouts.partials.icons', ['icon' => $link['icon']])
@@ -51,12 +51,12 @@
             @endforeach
         </nav>
 
-        <div class="px-3 py-4 border-t border-slate-800">
+        <div class="px-3 py-4 border-t border-neutral-800">
             <form method="POST" action="{{ Route::has('logout') ? route('logout') : '#' }}">
                 @csrf
                 <button
                     type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-neutral-800 hover:text-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
                     aria-label="Cerrar sesión"
                 >
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

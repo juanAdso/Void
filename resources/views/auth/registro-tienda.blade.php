@@ -6,7 +6,7 @@
     <title>Registrar mi Tienda | VOID</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 px-4 py-10 text-slate-100 flex items-center justify-center">
+<body class="min-h-screen bg-neutral-950 px-4 py-10 text-slate-100 flex items-center justify-center">
 
     <main class="w-full max-w-2xl rounded-2xl bg-white p-8 text-slate-900 shadow-2xl">
         {{-- Logotipo y Encabezado --}}

@@ -100,7 +100,7 @@
 
                 <div class="rounded-2xl border border-slate-200 p-6 bg-slate-50 sm:col-span-2 lg:col-span-1">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
                             📍
                         </div>
                         <div>

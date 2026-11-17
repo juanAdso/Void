@@ -57,7 +57,7 @@
 
 <div class="mb-5">
                     <button type="submit"
-                        class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+                        class="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2">Guardar</button>
                 </div>
 
             </form>
