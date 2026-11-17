@@ -21,7 +21,7 @@
                 <h3 id="modal-title-{{ $name }}" class="text-base font-semibold text-neutral-100">
                     {{ $title }}</h3>
                 <button @click="show = false" type="button"
-                    class="text-neutral-500 hover:text-amber-300 focus:outline-none" aria-label="Cerrar modal">
+                    class="text-neutral-300 hover:text-amber-300 focus:outline-none" aria-label="Cerrar modal">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M6 18L18 6M6 6l12 12" />

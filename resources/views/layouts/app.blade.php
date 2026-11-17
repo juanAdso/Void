@@ -380,6 +380,205 @@
                 transition-duration: .01ms !important
             }
         }
+    
+        .void-admin .void-main {
+            background:
+                radial-gradient(900px circle at 4% 0, rgb(37 99 235 / 9%), transparent 48%),
+                radial-gradient(760px circle at 96% 8%, rgb(245 158 11 / 6%), transparent 44%),
+                #0b0f16;
+        }
+
+        .void-admin main {
+            color: #f4f6fa;
+        }
+
+        .void-admin main .bg-white {
+            background: #151b25 !important;
+        }
+
+        .void-admin main .bg-slate-50,
+        .void-admin main .bg-gray-50 {
+            background: #111821 !important;
+        }
+
+        .void-admin main .bg-slate-100,
+        .void-admin main .bg-gray-100 {
+            background: #1b2430 !important;
+        }
+
+        .void-admin main .bg-slate-200,
+        .void-admin main .bg-gray-200 {
+            background: #273342 !important;
+        }
+
+        .void-admin main [class~="text-neutral-500"],
+        .void-admin main [class~="text-neutral-600"],
+        .void-admin main [class~="text-slate-500"],
+        .void-admin main [class~="text-slate-600"],
+        .void-admin main [class~="text-gray-500"],
+        .void-admin main [class~="text-gray-600"],
+        .void-admin main [class~="text-zinc-500"],
+        .void-admin main [class~="text-zinc-600"] {
+            color: #b7c1d0 !important;
+        }
+
+        .void-admin main [class~="text-slate-400"],
+        .void-admin main [class~="text-neutral-400"],
+        .void-admin main [class~="text-gray-400"],
+        .void-admin main [class~="text-zinc-400"] {
+            color: #c5ceda !important;
+        }
+
+        .void-admin main [class~="text-slate-700"],
+        .void-admin main [class~="text-slate-800"],
+        .void-admin main [class~="text-slate-900"],
+        .void-admin main [class~="text-gray-700"],
+        .void-admin main [class~="text-gray-800"],
+        .void-admin main [class~="text-gray-900"] {
+            color: #edf1f7 !important;
+        }
+
+        .void-admin main .border-slate-100,
+        .void-admin main .border-slate-200,
+        .void-admin main .border-gray-100,
+        .void-admin main .border-gray-200 {
+            border-color: #303b4b !important;
+        }
+
+        .void-admin main .border-slate-300,
+        .void-admin main .border-gray-300 {
+            border-color: #405064 !important;
+        }
+
+        .void-admin main [class~="hover:bg-slate-50"]:hover,
+        .void-admin main [class~="hover:bg-gray-50"]:hover {
+            background: #202c3b !important;
+        }
+
+        .void-admin main input::placeholder,
+        .void-admin main textarea::placeholder {
+            color: #9aa8ba !important;
+            opacity: 1;
+        }
+
+        .void-admin main input:not([type=checkbox]):not([type=radio]):not([type=file]),
+        .void-admin main select,
+        .void-admin main textarea {
+            background-color: #101720;
+            border-color: #405064;
+        }
+
+        .void-admin main input:focus,
+        .void-admin main select:focus,
+        .void-admin main textarea:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 24%);
+        }
+
+        .void-admin main table {
+            width: 100%;
+            color: #e5eaf1;
+            background: #131923;
+            border-color: #303b4b;
+        }
+
+        .void-admin main thead th {
+            color: #edf1f7 !important;
+            background: #1c2633;
+        }
+
+        .void-admin main tbody td {
+            color: #dce2eb;
+        }
+
+        .void-admin main tbody tr {
+            border-color: #2b3544;
+        }
+
+        .void-admin main tbody tr:hover {
+            background: #1a2532;
+        }
+
+        .void-admin main a:focus-visible,
+        .void-admin main button:focus-visible,
+        .void-admin main input:focus-visible,
+        .void-admin main select:focus-visible,
+        .void-admin main textarea:focus-visible {
+            outline: 2px solid #60a5fa;
+            outline-offset: 2px;
+        }
+
+        .void-card {
+            background: linear-gradient(145deg, #18212d 0%, #121720 100%) !important;
+            border-color: #303b4b !important;
+            box-shadow: 0 18px 40px rgb(0 0 0 / 18%);
+        }
+
+        .void-card>div:first-child {
+            border-color: #303b4b !important;
+        }
+
+        .void-card h3 {
+            color: #f4f6fa !important;
+        }
+
+        .void-stat-card {
+            background: linear-gradient(145deg, #1a2431 0%, #111720 100%) !important;
+            border-color: #354254 !important;
+            box-shadow: 0 18px 40px rgb(0 0 0 / 20%);
+        }
+
+        .void-stat-card p:first-child {
+            color: #c5ceda !important;
+        }
+
+        .void-stat-card p:last-child {
+            color: #ffffff !important;
+        }
+
+        .void-page-heading {
+            position: relative;
+            border-bottom-color: #303b4b;
+            padding-bottom: 1.35rem;
+        }
+
+        .void-page-heading:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 6rem;
+            height: 2px;
+            background: linear-gradient(90deg, var(--void-amber), var(--void-blue));
+            border-radius: 999px;
+        }
+
+        .void-page-heading h1,
+        .void-page-heading h2 {
+            color: #f8fafc !important;
+        }
+
+        .void-page-heading p:not(.void-page-eyebrow) {
+            color: #c0cad7 !important;
+        }
+
+        .void-admin aside nav a {
+            min-height: 2.75rem;
+        }
+
+        .void-admin aside nav a:not([aria-current=page]) {
+            color: #c0cad7;
+        }
+
+        .void-admin aside nav a:not([aria-current=page]):hover {
+            color: #ffffff;
+        }
+
+        .table-scroll-toolbar {
+            color: #b7c1d0;
+        }
+
+
     </style>
 
     @stack('styles')

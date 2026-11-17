@@ -22,7 +22,7 @@
                     role="search">
                     <label for="global-search" class="sr-only">Buscar</label>
                     <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 w-4 h-4 pointer-events-none">
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 w-4 h-4 pointer-events-none">
                         @include('layouts.partials.icons', ['icon' => 'search'])
                     </span>
                     <input id="global-search" type="search" name="q" value="{{ request('q') }}"
@@ -42,11 +42,11 @@
                         <span class="block text-sm font-medium text-slate-200">
                             {{ trim((auth()->user()->nombre ?? '') . ' ' . (auth()->user()->apellido ?? '')) ?: auth()->user()->name ?? 'Usuario' }}
                         </span>
-                        <span class="block text-[10px] uppercase tracking-wider text-slate-500">
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-400">
                             {{ auth()->user()->rol === 'superadministrador' ? 'Superadministrador VOID' : ucfirst(auth()->user()->rol ?? 'Cuenta') }}
                         </span>
                     </span>
-                    <span class="w-4 h-4 text-slate-500 hidden sm:block">@include('layouts.partials.icons', ['icon' => 'chevron-down'])</span>
+                    <span class="w-4 h-4 text-slate-400 hidden sm:block">@include('layouts.partials.icons', ['icon' => 'chevron-down'])</span>
                 </button>
 
                 <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150"

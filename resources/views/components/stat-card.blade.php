@@ -2,7 +2,7 @@
 <div class="void-stat-card rounded-2xl border border-neutral-800 bg-neutral-900 p-5 sm:p-6 shadow-lg shadow-black/10">
     <div class="flex items-start justify-between gap-4">
         <div class="min-w-0">
-            <p class="text-sm font-medium text-neutral-400">{{ $label }}</p>
+            <p class="text-sm font-semibold text-neutral-300">{{ $label }}</p>
             <p class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-neutral-50">{{ $value }}</p>
         </div>
         <div
@@ -28,7 +28,7 @@
                 @endif
                 {{ $change }}
             </span>
-            <span class="text-neutral-500">vs. mes anterior</span>
+            <span class="text-neutral-400">vs. mes anterior</span>
         </div>
     @endif
 </div>

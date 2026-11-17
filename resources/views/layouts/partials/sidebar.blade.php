@@ -95,7 +95,7 @@
                 Ø</div>
             <div>
                 <span class="block text-amber-50 font-extrabold text-lg tracking-[0.18em]">VOID</span>
-                <span class="block text-[10px] uppercase tracking-widest text-slate-500">
+                <span class="block text-[10px] uppercase tracking-widest text-slate-400">
                     {{ $esSuperadministrador ? 'Administración global' : 'Panel de empresa' }}
                 </span>
             </div>
@@ -106,7 +106,7 @@
                 @if (auth()->check() && (!isset($link['can']) || auth()->user()->canAny($link['can'])))
                     @php $active = request()->routeIs($link['active']); @endphp
                     <a href="{{ route($link['route']) }}" @if ($active) aria-current="page" @endif
-                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $active ? 'bg-blue-600/15 border border-blue-500/20 text-amber-300 shadow-inner shadow-blue-950/20' : 'text-slate-400 hover:bg-neutral-900 hover:text-amber-50 hover:translate-x-0.5' }}">
+                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $active ? 'bg-blue-600/15 border border-blue-500/20 text-amber-300 shadow-inner shadow-blue-950/20' : 'text-slate-300 hover:bg-neutral-900 hover:text-amber-50 hover:translate-x-0.5' }}">
                         <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
                             @include('layouts.partials.icons', ['icon' => $link['icon']])
                         </span>
@@ -120,7 +120,7 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-950/40 hover:text-red-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-red-950/40 hover:text-red-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
                     aria-label="Cerrar sesión">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
