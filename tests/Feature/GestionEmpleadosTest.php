@@ -90,3 +90,53 @@ test('un empleado no tiene permiso para acceder a la gestion de empleados', func
     $this->actingAs($emp)->get(route('empleados.create'))->assertForbidden();
     $this->actingAs($emp)->post(route('empleados.store'), [])->assertForbidden();
 });
+
+test('un administrador puede actualizar los datos de un empleado de su tienda', function () {
+    $tienda = Tienda::factory()->create(['estado' => true]);
+    $admin = User::factory()->create(['id_tienda' => $tienda->id, 'rol' => 'administrador', 'estado' => true]);
+    $admin->assignRole('administrador');
+
+    $empleado = User::factory()->create([
+        'id_tienda' => $tienda->id,
+        'rol' => 'empleado',
+        'estado' => true,
+    ]);
+    $empleado->assignRole('empleado');
+
+    $this->actingAs($admin)
+        ->put(route('empleados.update', $empleado->id), [
+            'nombre' => 'Nombre Actualizado',
+            'apellido' => 'Apellido Actualizado',
+            'documento' => $empleado->documento,
+            'correo' => $empleado->correo,
+            'estado' => 1,
+        ])
+        ->assertRedirect(route('empleados.index'));
+
+    $this->assertDatabaseHas('usuarios', [
+        'id' => $empleado->id,
+        'nombre' => 'Nombre Actualizado',
+        'apellido' => 'Apellido Actualizado',
+        'id_tienda' => $tienda->id,
+        'rol' => 'empleado',
+    ]);
+});
+
+test('un administrador puede eliminar un empleado sin facturas de su tienda', function () {
+    $tienda = Tienda::factory()->create(['estado' => true]);
+    $admin = User::factory()->create(['id_tienda' => $tienda->id, 'rol' => 'administrador', 'estado' => true]);
+    $admin->assignRole('administrador');
+
+    $empleado = User::factory()->create([
+        'id_tienda' => $tienda->id,
+        'rol' => 'empleado',
+        'estado' => true,
+    ]);
+    $empleado->assignRole('empleado');
+
+    $this->actingAs($admin)
+        ->delete(route('empleados.destroy', $empleado->id))
+        ->assertRedirect(route('empleados.index'));
+
+    $this->assertDatabaseMissing('usuarios', ['id' => $empleado->id]);
+});
