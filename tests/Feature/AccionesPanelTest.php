@@ -218,7 +218,11 @@ test('la consulta de factura integra los detalles y las acciones del administrad
         'subtotal' => 25000,
     ]);
 
-    $this->admin->givePermissionTo(['editar detallefacturas', 'eliminar detallefacturas']);
+    Role::findByName('administrador')->givePermissionTo(['editar detallefacturas', 'eliminar detallefacturas']);
+    $this->admin->refresh();
+    $this->actingAs($this->admin);
+
+    expect($this->admin->can('eliminar detallefacturas'))->toBeTrue();
 
     $this->get(route('facturas.show', $factura->id))
         ->assertOk()
