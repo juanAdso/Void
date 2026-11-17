@@ -228,7 +228,7 @@ test('la consulta de factura integra los detalles y las acciones del administrad
         ->assertSee('¿Eliminar la factura #', false)
         ->assertSee('29.750,00');
 
-    $this->get('/detalle_facturas')->assertNotFound();
+    $this->get('/detalle_facturas')->assertStatus(405);
     $this->get('/detalle_facturas/create')->assertNotFound();
 });
 
