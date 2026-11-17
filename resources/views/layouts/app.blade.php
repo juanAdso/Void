@@ -380,7 +380,7 @@
                 transition-duration: .01ms !important
             }
         }
-    
+
         .void-admin .void-main {
             background:
                 radial-gradient(900px circle at 4% 0, rgb(37 99 235 / 9%), transparent 48%),
@@ -577,8 +577,6 @@
         .table-scroll-toolbar {
             color: #b7c1d0;
         }
-
-
     </style>
 
     @stack('styles')
