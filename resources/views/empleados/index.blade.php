@@ -20,11 +20,13 @@
                 <tr class="hover:bg-slate-50">
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm">
+                            <div
+                                class="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm">
                                 {{ strtoupper(substr($empleado->nombre, 0, 1)) }}
                             </div>
                             <div>
-                                <span class="font-medium text-slate-800 block">{{ $empleado->nombre }} {{ $empleado->apellido }}</span>
+                                <span class="font-medium text-slate-800 block">{{ $empleado->nombre }}
+                                    {{ $empleado->apellido }}</span>
                                 <span class="text-xs text-slate-400">Rol: Empleado</span>
                             </div>
                         </div>
@@ -36,21 +38,25 @@
                         {{ $empleado->correo }}
                     </td>
                     <td class="px-5 py-3.5">
-                        @if($empleado->estado)
+                        @if ($empleado->estado)
                             <x-badge status="activo" />
                         @else
                             <x-badge status="inactivo" />
                         @endif
                     </td>
-                    <td class="px-5 py-3.5"><div class="flex min-w-[180px] flex-wrap items-center gap-2">
-                            <a href="{{ route('empleados.edit', $empleado->id) }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">
+                    <td class="px-5 py-3.5">
+                        <div class="flex min-w-[180px] flex-wrap items-center gap-2">
+                            <a href="{{ route('empleados.edit', $empleado->id) }}"
+                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">
                                 Editar
                             </a>
 
-                            <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que deseas eliminar o desactivar a este empleado?')">
+                            <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST"
+                                onsubmit="return confirm('¿Confirmas que deseas eliminar o desactivar a este empleado?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">
+                                <button type="submit"
+                                    class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">
                                     Eliminar
                                 </button>
                             </form>

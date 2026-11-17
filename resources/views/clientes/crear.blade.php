@@ -13,51 +13,58 @@
 
             </h2>
 
-            @if($errors->any())
+            @if ($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-5">
                     <ul>
-                        @foreach($errors->all() as $error)
+                        @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
-            <form action="{{ route('cliente.store')}}" method="post">
-            @csrf
+            <form action="{{ route('cliente.store') }}" method="post">
+                @csrf
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre</label>
-                    <input type="text" name="nombre" value="{{ old('nombre') }}" required class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre') }}" required
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Apellido</label>
-                    <input type="text" name="apellido" value="{{ old('apellido') }}" required class="w-full border rounded px-3 py-2">
+                    <input type="text" name="apellido" value="{{ old('apellido') }}" required
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Documento</label>
-                    <input type="text" name="documento" value="{{ old('documento') }}" required class="w-full border rounded px-3 py-2">
+                    <input type="text" name="documento" value="{{ old('documento') }}" required
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Telefono</label>
-                    <input type="text" name="telefono" value="{{ old('telefono') }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="telefono" value="{{ old('telefono') }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Correo</label>
-                    <input type="email" name="correo" value="{{ old('correo') }}" class="w-full border rounded px-3 py-2">
+                    <input type="email" name="correo" value="{{ old('correo') }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Dirección</label>
-                    <input type="text" name="direccion" value="{{ old('direccion') }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="direccion" value="{{ old('direccion') }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2">Guardar</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2">Guardar</button>
                 </div>
 
             </form>

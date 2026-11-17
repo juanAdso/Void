@@ -1,7 +1,7 @@
-
 @props(['title' => null, 'subtitle' => null, 'padding' => true])
 
-<div {{ $attributes->merge(['class' => 'void-card bg-neutral-900 rounded-2xl border border-neutral-800 shadow-lg shadow-black/10']) }}>
+<div
+    {{ $attributes->merge(['class' => 'void-card bg-neutral-900 rounded-2xl border border-neutral-800 shadow-lg shadow-black/10']) }}>
     @if ($title)
         <div class="px-5 sm:px-6 py-4 border-b border-neutral-800 flex items-center justify-between gap-4">
             <div>

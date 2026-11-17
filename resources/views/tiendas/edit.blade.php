@@ -5,7 +5,8 @@
 @section('content')
     <div class="mx-auto max-w-4xl">
         <div class="mb-6">
-            <a href="{{ route('tiendas.index') }}" class="text-sm font-medium text-primary-600 hover:text-primary-800">&larr; Volver a tiendas</a>
+            <a href="{{ route('tiendas.index') }}" class="text-sm font-medium text-primary-600 hover:text-primary-800">&larr;
+                Volver a tiendas</a>
             <h1 class="mt-3 text-3xl font-bold text-slate-800">Editar tienda</h1>
             <p class="mt-1 text-sm text-slate-500">Actualiza la información de {{ $tienda->nombre }}.</p>
         </div>
@@ -22,13 +23,17 @@
         @endif
 
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <form action="{{ route('tiendas.update', $tienda->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('tiendas.update', $tienda->id) }}" method="POST" enctype="multipart/form-data"
+                class="space-y-6">
                 @csrf
                 @method('PUT')
                 @include('tiendas._form', ['tienda' => $tienda])
                 <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
-                    <a href="{{ route('tiendas.index') }}" class="rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancelar</a>
-                    <button type="submit" class="rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">Actualizar tienda</button>
+                    <a href="{{ route('tiendas.index') }}"
+                        class="rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancelar</a>
+                    <button type="submit"
+                        class="rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700">Actualizar
+                        tienda</button>
                 </div>
             </form>
         </div>
@@ -36,15 +41,15 @@
 @endsection
 
 @push('scripts')
-<script>
-    function previsualizarLogo(evento) {
-        const imagen = document.getElementById('vista-logo');
-        const archivo = evento.target.files && evento.target.files[0];
+    <script>
+        function previsualizarLogo(evento) {
+            const imagen = document.getElementById('vista-logo');
+            const archivo = evento.target.files && evento.target.files[0];
 
-        if (!archivo) return;
+            if (!archivo) return;
 
-        imagen.src = URL.createObjectURL(archivo);
-        imagen.classList.remove('hidden');
-    }
-</script>
+            imagen.src = URL.createObjectURL(archivo);
+            imagen.classList.remove('hidden');
+        }
+    </script>
 @endpush

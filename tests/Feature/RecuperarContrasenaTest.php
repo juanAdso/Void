@@ -255,7 +255,8 @@ class RecuperarContrasenaTest extends TestCase
         $this->assertStringContainsString('123456', $contenido);
         $this->assertStringContainsString('Laura', $contenido);
         $this->assertStringContainsString('VOID', $contenido);
-        $this->assertStringContainsString('15 minutos', $contenido);
+        $textoVisible = preg_replace('/\\s+/', ' ', strip_tags($contenido));
+        $this->assertStringContainsString('15 minutos', $textoVisible);
     }
 
     public function test_codigo_vencido_es_rechazado(): void

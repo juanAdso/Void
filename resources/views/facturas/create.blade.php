@@ -24,13 +24,15 @@
                     <select id="id_cliente" name="id_cliente" required class="w-full rounded border px-3 py-2">
                         <option value="">Selecciona un cliente</option>
                         @foreach ($clientes as $cliente)
-                            <option value="{{ $cliente->id }}" @selected(old('id_cliente') == $cliente->id)>{{ $cliente->nombre }} {{ $cliente->apellido }}</option>
+                            <option value="{{ $cliente->id }}" @selected(old('id_cliente') == $cliente->id)>{{ $cliente->nombre }}
+                                {{ $cliente->apellido }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="mb-5">
                     <label for="fecha" class="mb-2 block font-semibold">Fecha</label>
-                    <input id="fecha" type="date" name="fecha" value="{{ old('fecha', now()->toDateString()) }}" required class="w-full rounded border px-3 py-2">
+                    <input id="fecha" type="date" name="fecha" value="{{ old('fecha', now()->toDateString()) }}"
+                        required class="w-full rounded border px-3 py-2">
                 </div>
                 <div class="mb-5">
                     <label for="estado" class="mb-2 block font-semibold">Estado</label>
@@ -40,9 +42,11 @@
                         <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
                     </select>
                 </div>
-                <p class="mb-5 text-sm text-gray-500">El subtotal, el IVA y el total se calculan automáticamente al agregar productos desde Detalle de facturas.</p>
+                <p class="mb-5 text-sm text-gray-500">El subtotal, el IVA y el total se calculan automáticamente al agregar
+                    productos desde Detalle de facturas.</p>
                 <div class="flex gap-3">
-                    <button type="submit" class="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700">Crear factura</button>
+                    <button type="submit" class="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700">Crear
+                        factura</button>
                     <a href="{{ route('facturas.index') }}" class="rounded border px-5 py-2">Cancelar</a>
                 </div>
             </form>

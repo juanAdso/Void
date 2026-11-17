@@ -8,7 +8,8 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">Inventario y Reportes de Tienda</h1>
-                <p class="text-sm text-slate-500">Métricas comerciales, movimientos de stock y análisis de ventas en tiempo real.</p>
+                <p class="text-sm text-slate-500">Métricas comerciales, movimientos de stock y análisis de ventas en tiempo
+                    real.</p>
             </div>
         </div>
 
@@ -22,16 +23,19 @@
         <x-card title="Ingresos por Período Personalizado" subtitle="Consulta las ventas recaudadas en un rango de fechas">
             <form action="{{ route('reportes.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
                 <div>
-                    <label for="fecha_inicio" class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha inicio</label>
+                    <label for="fecha_inicio" class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha
+                        inicio</label>
                     <input type="date" id="fecha_inicio" name="fecha_inicio" value="{{ $fechaInicio }}"
-                           class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:border-primary-500">
+                        class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:border-primary-500">
                 </div>
                 <div>
-                    <label for="fecha_fin" class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha fin</label>
+                    <label for="fecha_fin" class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha
+                        fin</label>
                     <input type="date" id="fecha_fin" name="fecha_fin" value="{{ $fechaFin }}"
-                           class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:border-primary-500">
+                        class="rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:border-primary-500">
                 </div>
-                <button type="submit" class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
+                <button type="submit"
+                    class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
                     Consultar Período
                 </button>
             </form>
@@ -49,7 +53,8 @@
         </x-card>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <x-card title="Alertas de Stock Bajo (≤ 5 unidades)" subtitle="Productos con inventario crítico que requieren reabastecimiento" :padding="false">
+            <x-card title="Alertas de Stock Bajo (≤ 5 unidades)"
+                subtitle="Productos con inventario crítico que requieren reabastecimiento" :padding="false">
                 <x-table :headers="['Producto', 'Categoría', 'Stock']">
                     @forelse($productosStockBajo as $prod)
                         <tr class="hover:bg-amber-50/50">
@@ -106,7 +111,8 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <x-card title="Top 10 Productos Más Vendidos" subtitle="Mayor rotación en ventas de la tienda" :padding="false">
+            <x-card title="Top 10 Productos Más Vendidos" subtitle="Mayor rotación en ventas de la tienda"
+                :padding="false">
                 <x-table :headers="['Producto', 'Unidades Vendidas', 'Ingresos Generados']">
                     @forelse($productosMasVendidos as $top)
                         <tr class="hover:bg-slate-50">
@@ -130,7 +136,8 @@
                 </x-table>
             </x-card>
 
-            <x-card title="Rendimiento por Empleado" subtitle="Ventas registradas y recaudadas por colaborador" :padding="false">
+            <x-card title="Rendimiento por Empleado" subtitle="Ventas registradas y recaudadas por colaborador"
+                :padding="false">
                 <x-table :headers="['Empleado', 'Facturas Pagadas', 'Ingresos Totales']">
                     @forelse($ventasPorEmpleado as $colaborador)
                         <tr class="hover:bg-slate-50">
@@ -155,14 +162,18 @@
             </x-card>
         </div>
 
-        <x-card title="Historial de Movimientos de Inventario" subtitle="Auditoría de ingresos, salidas, ventas y devoluciones" :padding="false">
+        <x-card title="Historial de Movimientos de Inventario"
+            subtitle="Auditoría de ingresos, salidas, ventas y devoluciones" :padding="false">
             @if ($productoFiltro)
-                <div class="mx-5 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
+                <div
+                    class="mx-5 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
                     <p class="text-sm text-blue-200">
                         Mostrando movimientos de <strong>{{ $productoFiltro->nombre }}</strong>
                         <span class="text-blue-300/80">(#{{ $productoFiltro->id }})</span>
                     </p>
-                    <a href="{{ route('reportes.index') }}" class="text-xs font-semibold text-blue-300 transition hover:text-amber-300">Ver todos los movimientos →</a>
+                    <a href="{{ route('reportes.index') }}"
+                        class="text-xs font-semibold text-blue-300 transition hover:text-amber-300">Ver todos los
+                        movimientos →</a>
                 </div>
             @endif
 
@@ -176,7 +187,8 @@
                             {{ $mov->producto->nombre ?? 'Producto #' . $mov->id_producto }}
                         </td>
                         <td class="px-5 py-3">
-                            <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold
+                            <span
+                                class="rounded-full px-2.5 py-0.5 text-xs font-semibold
                                 {{ str_contains($mov->tipo_movimiento, 'venta') ? 'bg-red-50 text-red-700' : '' }}
                                 {{ str_contains($mov->tipo_movimiento, 'devolucion') || str_contains($mov->tipo_movimiento, 'restitucion') ? 'bg-emerald-50 text-emerald-700' : '' }}
                                 {{ !str_contains($mov->tipo_movimiento, 'venta') && !str_contains($mov->tipo_movimiento, 'devolucion') && !str_contains($mov->tipo_movimiento, 'restitucion') ? 'bg-slate-100 text-slate-700' : '' }}">

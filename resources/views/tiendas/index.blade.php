@@ -66,9 +66,12 @@
                                     <td class="px-5 py-4">
                                         <div class="flex items-center gap-3">
                                             @if ($tienda->logo_url)
-                                                <img src="{{ $tienda->logo_url }}" alt="Logo de {{ $tienda->nombre }}" loading="lazy" class="h-12 w-12 shrink-0 rounded-lg border border-slate-200 bg-white object-contain p-1">
+                                                <img src="{{ $tienda->logo_url }}" alt="Logo de {{ $tienda->nombre }}"
+                                                    loading="lazy"
+                                                    class="h-12 w-12 shrink-0 rounded-lg border border-slate-200 bg-white object-contain p-1">
                                             @else
-                                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-lg font-bold text-slate-500">
+                                                <div
+                                                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-lg font-bold text-slate-500">
                                                     {{ strtoupper(substr($tienda->nombre, 0, 1)) }}
                                                 </div>
                                             @endif

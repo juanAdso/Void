@@ -1,4 +1,3 @@
-
 @props(['type' => 'info'])
 @php
     $map = [
@@ -12,7 +11,10 @@
 <div x-data="{ show: true }" x-show="show" x-transition.opacity.duration.200ms role="alert"
     {{ $attributes->merge(['class' => "flex items-start gap-3 border rounded-xl px-4 py-3 text-sm shadow-lg shadow-black/10 $classes"]) }}>
     <div class="flex-1">{{ $slot }}</div>
-    <button @click="show = false" type="button" class="{{ $iconColor }} hover:opacity-70 focus:outline-none" aria-label="Cerrar alerta">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    <button @click="show = false" type="button" class="{{ $iconColor }} hover:opacity-70 focus:outline-none"
+        aria-label="Cerrar alerta">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
     </button>
 </div>

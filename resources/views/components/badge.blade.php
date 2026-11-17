@@ -1,4 +1,3 @@
-
 @props(['status'])
 @php
     $map = [
@@ -9,4 +8,5 @@
     $key = strtolower($status);
     $classes = $map[$key] ?? 'bg-neutral-800 text-neutral-300 ring-neutral-600/50';
 @endphp
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset {{ $classes }}">{{ $status }}</span>
+<span
+    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset {{ $classes }}">{{ $status }}</span>

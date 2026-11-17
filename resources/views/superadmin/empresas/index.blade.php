@@ -14,13 +14,20 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Empresa</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Administradores</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Empleados</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Productos</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Clientes</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Estado</th>
-                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Acciones</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Empresa
+                        </th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Administradores</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Empleados</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Productos</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Clientes</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Estado
+                        </th>
+                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -36,17 +43,23 @@
                             <td class="px-5 py-4 text-sm text-slate-600">{{ $empresa->clientes_count }}</td>
                             <td class="px-5 py-4">
                                 @if ($empresa->estado)
-                                    <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Activa</span>
+                                    <span
+                                        class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Activa</span>
                                 @else
-                                    <span class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">Suspendida</span>
+                                    <span
+                                        class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">Suspendida</span>
                                 @endif
                             </td>
                             <td class="whitespace-nowrap px-5 py-4 text-right">
-                                <a href="{{ route('superadmin.empresas.show', $empresa) }}" class="font-semibold text-blue-600 hover:text-blue-800">Ver y administrar</a>
+                                <a href="{{ route('superadmin.empresas.show', $empresa) }}"
+                                    class="font-semibold text-blue-600 hover:text-blue-800">Ver y administrar</a>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="px-5 py-10 text-center text-sm text-slate-500">No hay empresas registradas.</td></tr>
+                        <tr>
+                            <td colspan="7" class="px-5 py-10 text-center text-sm text-slate-500">No hay empresas
+                                registradas.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>

@@ -3,7 +3,9 @@ name: Calidad y limpieza
 on:
   push:
     branches:
+      - main
       - fix/auditoria-final-void
+      - fix/formato-global-void
 
 permissions:
   contents: write
@@ -39,8 +41,14 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Actualizar el bloqueo de dependencias frontend
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
       - name: Instalar dependencias frontend
         run: npm ci
+
+      - name: Formatear vistas y recursos frontend
+        run: npm run format:frontend
 
       - name: Compilar frontend
         run: npm run build

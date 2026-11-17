@@ -14,42 +14,42 @@ VOID (Virtual Organization Inventory and Design) es una aplicación web multiemp
 
 1. Clona el repositorio e instala las dependencias:
 
-   ```bash
-   composer install
-   npm ci
-   ```
+    ```bash
+    composer install
+    npm ci
+    ```
 
 2. Crea el archivo de entorno. En PowerShell:
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
+    ```powershell
+    Copy-Item .env.example .env
+    ```
 
 3. Genera la clave de la aplicación:
 
-   ```bash
-   php artisan key:generate
-   ```
+    ```bash
+    php artisan key:generate
+    ```
 
 4. Configura la base de datos en `.env`. El ejemplo utiliza MySQL con una base de datos llamada `void`; créala antes de migrar. También puedes configurar SQLite cambiando `DB_CONNECTION` y `DB_DATABASE`.
 
 5. Ejecuta las migraciones y los seeders:
 
-   ```bash
-   php artisan migrate --seed
-   ```
+    ```bash
+    php artisan migrate --seed
+    ```
 
 6. Configura el correo SMTP como se explica en la sección correspondiente y compila los recursos:
 
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```
 
 7. Inicia el servidor local:
 
-   ```bash
-   php artisan serve
-   ```
+    ```bash
+    php artisan serve
+    ```
 
 No ejecutes `php artisan migrate:fresh --seed` en una base de datos que contenga información que necesites conservar: elimina todas las tablas antes de recrearlas.
 
@@ -79,12 +79,12 @@ Los clientes son registros comerciales asociados a una tienda, no roles de acces
 
 En entornos distintos de producción, los seeders crean dos tiendas de ejemplo y estas cuentas:
 
-| Rol | Correo |
-|---|---|
-| Administrador de Horizonte | `admin.horizonte@void.test` |
-| Empleado de Horizonte | `empleado.horizonte@void.test` |
-| Administrador de Nova | `admin.nova@void.test` |
-| Empleado de Nova | `empleado.nova@void.test` |
+| Rol                        | Correo                         |
+| -------------------------- | ------------------------------ |
+| Administrador de Horizonte | `admin.horizonte@void.test`    |
+| Empleado de Horizonte      | `empleado.horizonte@void.test` |
+| Administrador de Nova      | `admin.nova@void.test`         |
+| Empleado de Nova           | `empleado.nova@void.test`      |
 
 La contraseña predeterminada de demostración es `VoidDemo2026!`. Puede modificarse mediante `VOID_DEMO_PASSWORD`. Estas credenciales son exclusivamente para desarrollo local; no habilites datos de demostración ni conserves estas contraseñas en producción.
 

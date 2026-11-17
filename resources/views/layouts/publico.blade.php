@@ -27,19 +27,14 @@
 
 <body class="min-h-screen bg-slate-50 text-neutral-950 antialiased flex flex-col justify-between">
 
-
-
-
     <header class="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/95 backdrop-blur text-amber-50">
         <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-
 
             <div class="flex flex-1 items-center justify-start">
                 <a href="{{ url('/') }}" class="text-2xl font-extrabold tracking-widest text-amber-50">
                     V<span class="text-blue-500">Ø</span>ID
                 </a>
             </div>
-
 
             <div class="hidden flex-1 items-center justify-center gap-8 md:flex">
                 <a href="{{ url('/#tiendas') }}"
@@ -52,7 +47,6 @@
                     Catálogos
                 </a>
             </div>
-
 
             <div class="flex flex-1 items-center justify-end gap-4">
                 <a href="{{ route('login') }}"
@@ -69,13 +63,9 @@
         </nav>
     </header>
 
-
-
-
     <main class="flex-1">
         @yield('content')
     </main>
-
 
     <footer class="border-t border-neutral-800 bg-neutral-950 text-amber-50">
         <div
