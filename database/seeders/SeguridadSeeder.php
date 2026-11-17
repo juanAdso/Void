@@ -71,6 +71,8 @@ class SeguridadSeeder extends Seeder
         // 2. Crear roles
         $rolAdmin = Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
         $rolEmpleado = Role::firstOrCreate(['name' => 'empleado', 'guard_name' => 'web']);
+        // Rol global independiente: nunca se asigna desde registros públicos ni desde cuentas de empresa.
+        Role::firstOrCreate(['name' => 'superadministrador', 'guard_name' => 'web']);
 
         // 3. Asignación de permisos al Administrador: Todos los permisos
         $rolAdmin->syncPermissions(Permission::all());

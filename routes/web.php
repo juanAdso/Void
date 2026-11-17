@@ -14,6 +14,7 @@ use App\Http\Controllers\PublicPortalController;
 use App\Http\Controllers\RegistroTiendaController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TiendaController;
+use App\Http\Controllers\SuperadministradorController;
 use Illuminate\Support\Facades\Route;
 
 // Portal público: Directorio de tiendas, catálogo independiente por tienda, ficha de tienda y de producto
@@ -29,6 +30,16 @@ Route::post('/registro-tienda', [RegistroTiendaController::class, 'store'])->nam
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// Centro de administración global de VOID: exclusivo del superadministrador.
+Route::prefix('superadministrador')->name('superadmin.')->middleware(['auth', 'superadministrador'])->group(function () {
+    Route::get('/', [SuperadministradorController::class, 'dashboard'])->name('dashboard');
+    Route::get('/empresas', [SuperadministradorController::class, 'empresas'])->name('empresas.index');
+    Route::get('/empresas/{tienda}', [SuperadministradorController::class, 'showEmpresa'])->name('empresas.show');
+    Route::patch('/empresas/{tienda}/estado', [SuperadministradorController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
+    Route::post('/empresas/{tienda}/administradores', [SuperadministradorController::class, 'storeAdministrador'])->name('empresas.administradores.store');
+    Route::patch('/empresas/{tienda}/usuarios/{usuario}/estado', [SuperadministradorController::class, 'cambiarEstadoUsuario'])->name('empresas.usuarios.estado');
+});
 
 // Rutas de recuperación de contraseña
 Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');

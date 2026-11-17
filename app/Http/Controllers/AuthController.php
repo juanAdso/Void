@@ -26,10 +26,24 @@ class AuthController extends Controller
 
         $user = User::where('correo', $credentials['correo'])->first();
 
-        if ($user && Hash::check($credentials['password'], $user->password) && ! $user->estado) {
-            throw ValidationException::withMessages([
-                'correo' => 'Tu cuenta se encuentra inactiva. Comunícate con el administrador.',
-            ]);
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            if (! $user->estado) {
+                throw ValidationException::withMessages([
+                    'correo' => 'Tu cuenta se encuentra inactiva. Comunícate con el administrador.',
+                ]);
+            }
+
+            if ($user->rol === 'superadministrador') {
+                if (! $user->hasRole('superadministrador') || $user->id_tienda !== null) {
+                    throw ValidationException::withMessages([
+                        'correo' => 'La cuenta global no está configurada correctamente. Comunícate con soporte.',
+                    ]);
+                }
+            } elseif (! $user->id_tienda || ! $user->tienda || ! $user->tienda->estado) {
+                throw ValidationException::withMessages([
+                    'correo' => 'La empresa asociada a esta cuenta está inactiva o no disponible.',
+                ]);
+            }
         }
 
         if (! Auth::attempt(['correo' => $credentials['correo'], 'password' => $credentials['password'], 'estado' => true], $remember)) {
@@ -39,6 +53,10 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+
+        if ($user->hasRole('superadministrador')) {
+            return redirect()->route('superadmin.dashboard');
+        }
 
         return redirect()->intended(route('dashboard.index'));
     }

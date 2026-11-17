@@ -1,3 +1,26 @@
+@php
+    $esSuperadministrador = auth()->check() && auth()->user()->hasRole('superadministrador');
+
+    if ($esSuperadministrador) {
+        $links = [
+            ['label' => 'Centro de control', 'route' => 'superadmin.dashboard', 'active' => 'superadmin.dashboard', 'icon' => 'home'],
+            ['label' => 'Empresas', 'route' => 'superadmin.empresas.index', 'active' => 'superadmin.empresas.*', 'icon' => 'store'],
+        ];
+    } else {
+        $links = [
+            ['label' => 'Inicio', 'route' => 'dashboard.index', 'active' => 'dashboard.*', 'icon' => 'home', 'can' => ['ver dashboard']],
+            ['label' => 'Reportes e Inventario', 'route' => 'reportes.index', 'active' => 'reportes.*', 'icon' => 'chart', 'can' => ['ver dashboard']],
+            ['label' => 'Tiendas', 'route' => 'tiendas.index', 'active' => 'tiendas.*', 'icon' => 'store', 'can' => ['ver tiendas']],
+            ['label' => 'Clientes', 'route' => 'cliente.index', 'active' => 'cliente.*', 'icon' => 'users', 'can' => ['ver clientes']],
+            ['label' => 'Categorías', 'route' => 'categoria.index', 'active' => 'categoria.*', 'icon' => 'tag', 'can' => ['ver categorias']],
+            ['label' => 'Productos', 'route' => 'productos.index', 'active' => 'productos.*', 'icon' => 'box', 'can' => ['ver productos']],
+            ['label' => 'Facturas', 'route' => 'facturas.index', 'active' => 'facturas.*', 'icon' => 'chart', 'can' => ['ver facturas']],
+            ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'active' => 'detalle_facturas.*', 'icon' => 'cog', 'can' => ['ver detallefacturas']],
+            ['label' => 'Empleados', 'route' => 'empleados.index', 'active' => 'empleados.*', 'icon' => 'users', 'can' => ['gestionar seguridad']],
+        ];
+    }
+@endphp
+
 <aside
     x-cloak
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
@@ -5,42 +28,24 @@
     aria-label="Menú principal"
 >
     <div class="h-full flex flex-col">
-
         <div class="flex items-center gap-3 h-16 px-6 border-b border-neutral-800">
-            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-amber-50 font-bold">
-                Ø
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-amber-50 font-bold">Ø</div>
+            <div>
+                <span class="block text-amber-50 font-semibold text-lg tracking-tight">VOID</span>
+                <span class="block text-[10px] uppercase tracking-widest text-slate-500">
+                    {{ $esSuperadministrador ? 'Administración global' : 'Panel de empresa' }}
+                </span>
             </div>
-            <span class="text-amber-50 font-semibold text-lg tracking-tight">{{ config('app.name', 'VOID Admin') }}</span>
         </div>
 
         <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-1" aria-label="Navegación lateral">
-
-            @php
-                $links = [
-                    ['label' => 'Inicio',              'route' => 'dashboard.index',        'icon' => 'home',   'can' => ['ver dashboard']],
-                    ['label' => 'Reportes e Inventario', 'route' => 'reportes.index',        'icon' => 'chart',  'can' => ['ver dashboard']],
-                    ['label' => 'Tiendas',             'route' => 'tiendas.index',          'icon' => 'store',  'can' => ['ver tiendas']],
-                    ['label' => 'Clientes',            'route' => 'cliente.index',          'icon' => 'users',  'can' => ['ver clientes']],
-                    ['label' => 'Categorías',          'route' => 'categoria.index',        'icon' => 'tag',    'can' => ['ver categorias']],
-                    ['label' => 'Productos',           'route' => 'productos.index',        'icon' => 'box',    'can' => ['ver productos']],
-                    ['label' => 'Facturas',            'route' => 'facturas.index',         'icon' => 'chart',  'can' => ['ver facturas']],
-                    ['label' => 'Detalle de Facturas', 'route' => 'detalle_facturas.index', 'icon' => 'cog',    'can' => ['ver detallefacturas']],
-                    ['label' => 'Empleados',           'route' => 'empleados.index',        'icon' => 'users',  'can' => ['gestionar seguridad']],
-                ];
-            @endphp
-
             @foreach ($links as $link)
-                @if (auth()->check() && auth()->user()->canAny($link['can']))
-                    @php
-                        $active = Route::has($link['route']) && request()->routeIs(explode('.', $link['route'])[0] . '.*');
-                    @endphp
+                @if (auth()->check() && (!isset($link['can']) || auth()->user()->canAny($link['can'])))
+                    @php $active = request()->routeIs($link['active']); @endphp
                     <a
-                        href="{{ Route::has($link['route']) ? route($link['route']) : '#' }}"
+                        href="{{ route($link['route']) }}"
                         @if($active) aria-current="page" @endif
-                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                            {{ $active
-                                ? 'bg-blue-600 text-white shadow-sm'
-                                : 'text-slate-300 hover:bg-neutral-800 hover:text-amber-50' }}"
+                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-300 hover:bg-neutral-800 hover:text-amber-50' }}"
                     >
                         <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
                             @include('layouts.partials.icons', ['icon' => $link['icon']])
@@ -52,7 +57,7 @@
         </nav>
 
         <div class="px-3 py-4 border-t border-neutral-800">
-            <form method="POST" action="{{ Route::has('logout') ? route('logout') : '#' }}">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button
                     type="submit"

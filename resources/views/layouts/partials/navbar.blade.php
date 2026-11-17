@@ -50,8 +50,13 @@
                         src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name ?? 'Admin') }}"
                         alt="Avatar de {{ auth()->user()->name ?? 'Usuario' }}"
                     >
-                    <span class="hidden sm:block text-sm font-medium text-slate-200">
-                        {{ auth()->user()->name ?? 'Administrador' }}
+                    <span class="hidden sm:block text-right">
+                        <span class="block text-sm font-medium text-slate-200">
+                            {{ trim((auth()->user()->nombre ?? '') . ' ' . (auth()->user()->apellido ?? '')) ?: (auth()->user()->name ?? 'Usuario') }}
+                        </span>
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-500">
+                            {{ auth()->user()->rol === 'superadministrador' ? 'Superadministrador VOID' : ucfirst(auth()->user()->rol ?? 'Cuenta') }}
+                        </span>
                     </span>
                     <span class="w-4 h-4 text-slate-500 hidden sm:block">@include('layouts.partials.icons', ['icon' => 'chevron-down'])</span>
                 </button>
