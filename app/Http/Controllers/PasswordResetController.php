@@ -22,11 +22,11 @@ class PasswordResetController extends Controller
     }
 
     /**
-     * Genera y envía un código de 6 dígitos al correo correspondiente.
+     * Genera y envía un código de recuperación a cualquier usuario activo.
      */
     public function sendResetCode(Request $request)
     {
-        $throttleKey = 'password-reset:'.$request->ip();
+        $throttleKey = 'password-reset:' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -45,27 +45,35 @@ class PasswordResetController extends Controller
 
         RateLimiter::hit($throttleKey, 300);
 
-        $inputCorreo = trim($request->input('correo'));
+        $correoDestino = trim($request->input('correo'));
 
-        // 1. Buscar si corresponde directamente a un usuario
-        $user = User::where('correo', $inputCorreo)->first();
+        /*
+         * Buscar primero por el correo personal del usuario.
+         * Esta consulta no filtra por rol: permite recuperar cuentas de
+         * administradores, empleados y superadministradores.
+         */
+        $user = User::where('correo', $correoDestino)->first();
         $tienda = null;
 
-        // 2. Si no es un usuario directo, buscar si corresponde a una tienda
+        /*
+         * Si el correo no pertenece directamente a un usuario, permitir
+         * la recuperación mediante el correo general de una tienda.
+         * En ese caso, el código queda vinculado a su administrador activo.
+         */
         if (! $user) {
-            $tienda = Tienda::where('correo', $inputCorreo)->first();
+            $tienda = Tienda::where('correo', $correoDestino)->first();
+
             if ($tienda) {
-                // Localizar exclusivamente al administrador asociado a esa tienda
                 $user = User::where('id_tienda', $tienda->id)
                     ->where('rol', 'administrador')
+                    ->where('estado', true)
                     ->first();
             }
         }
 
-        // Si no encontramos usuario o si la cuenta está inactiva
         if (! $user) {
             return back()->withErrors([
-                'correo' => 'No encontramos ninguna cuenta o tienda asociada a este correo electrónico.',
+                'correo' => 'No encontramos ninguna cuenta activa asociada a este correo electrónico.',
             ])->withInput();
         }
 
@@ -75,23 +83,30 @@ class PasswordResetController extends Controller
             ])->withInput();
         }
 
-        // Generar código numérico seguro de 6 dígitos
-        $codigo = (string) random_int(100000, 999999);
-        $correoDestino = $inputCorreo;
+        /*
+         * Generar un código numérico seguro de seis dígitos.
+         * Se comprueba que no exista otro código activo con el mismo valor.
+         */
+        do {
+            $codigo = (string) random_int(100000, 999999);
+            $cacheKey = 'password_reset_code_' . $codigo;
+        } while (Cache::has($cacheKey));
+
         $nombreDestinatario = $tienda ? $tienda->nombre : $user->nombre;
 
-        // Almacenar en caché durante 15 minutos vinculado al usuario y correo
-        Cache::put('password_reset_code_'.$codigo, [
+        /*
+         * Asociar el código al usuario correcto durante 15 minutos.
+         */
+        Cache::put($cacheKey, [
             'user_id' => $user->id,
             'correo' => $correoDestino,
         ], now()->addMinutes(15));
 
-        // Enviar el código mediante la plantilla de correo de recuperación.
         try {
             Mail::to($correoDestino, $nombreDestinatario)
                 ->send(new CodigoRecuperacionMail($nombreDestinatario, $codigo));
         } catch (\Throwable $e) {
-            Cache::forget('password_reset_code_'.$codigo);
+            Cache::forget($cacheKey);
             report($e);
 
             return back()->withErrors([
@@ -100,7 +115,7 @@ class PasswordResetController extends Controller
         }
 
         return redirect()->route('password.code')
-            ->with('status', 'Hemos enviado un código de verificación de 6 dígitos al correo: '.$correoDestino)
+            ->with('status', 'Hemos enviado un código de verificación de 6 dígitos al correo: ' . $correoDestino)
             ->with('correo_destino', $correoDestino);
     }
 
@@ -113,23 +128,25 @@ class PasswordResetController extends Controller
     }
 
     /**
-     * Valida el código y actualiza la contraseña del usuario.
+     * Valida el código y actualiza la contraseña de la cuenta vinculada.
      */
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'codigo' => ['required', 'string', 'size:6'],
+            'codigo' => ['required', 'string', 'size:6', 'regex:/^[0-9]{6}$/'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'codigo.required' => 'El código de verificación es obligatorio.',
             'codigo.size' => 'El código debe tener exactamente 6 dígitos.',
+            'codigo.regex' => 'El código debe contener únicamente seis números.',
             'password.required' => 'La nueva contraseña es obligatoria.',
             'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $codigo = trim($request->input('codigo'));
-        $cacheData = Cache::get('password_reset_code_'.$codigo);
+        $cacheKey = 'password_reset_code_' . $codigo;
+        $cacheData = Cache::get($cacheKey);
 
         if (! $cacheData) {
             return back()->withErrors([
@@ -140,16 +157,26 @@ class PasswordResetController extends Controller
         $user = User::find($cacheData['user_id']);
 
         if (! $user) {
+            Cache::forget($cacheKey);
+
             return back()->withErrors([
-                'codigo' => 'No se encontró el usuario para este código de recuperación.',
+                'codigo' => 'No se encontró el usuario asociado a este código de recuperación.',
+            ]);
+        }
+
+        if (! $user->estado) {
+            Cache::forget($cacheKey);
+
+            return back()->withErrors([
+                'codigo' => 'La cuenta está inactiva. Comunícate con el administrador.',
             ]);
         }
 
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        // Eliminar código de la caché tras ser usado
-        Cache::forget('password_reset_code_'.$codigo);
+        // Eliminar el código para impedir que vuelva a utilizarse.
+        Cache::forget($cacheKey);
 
         return redirect()->route('login')
             ->with('status', 'Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión.');
