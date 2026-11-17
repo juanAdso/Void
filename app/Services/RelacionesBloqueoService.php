@@ -96,7 +96,10 @@ class RelacionesBloqueoService
             $items = (clone $q)->limit(self::LIMITE_ITEMS)->get()->map(fn ($d) => [
                 'id' => $factura->id,
                 'titulo' => 'Detalle #'.$d->id.' · '.($d->producto?->nombre ?? 'Producto'),
-                'detalle' => 'Cantidad: '.$d->cantidad.' · Subtotal:         }
+                'detalle' => 'Cantidad: '.$d->cantidad.' · Subtotal: $'.number_format((float) $d->subtotal, 2, ',', '.'),
+            ])->all();
+            $grupos[] = $this->grupo('Productos asociados', 'Consulta la factura para revisar sus productos y la información completa.', $total, $items, null, null, 'ver facturas', 'facturas.show');
+        }
         if ($factura->estado !== 'pendiente') {
             $grupos[] = ['titulo' => 'Condición de eliminación', 'descripcion' => 'Solo se pueden eliminar facturas pendientes. Las facturas pagadas o anuladas deben conservarse.', 'total' => 1, 'items' => [['titulo' => 'Estado actual: '.ucfirst((string) $factura->estado), 'detalle' => 'No se permite eliminar una factura en este estado.', 'acciones' => []]]];
         }
@@ -151,74 +154,6 @@ class RelacionesBloqueoService
                     $item['acciones'][] = [
                         'url' => route($rutaVer, $rutaVer === 'facturas.show' ? $item['id'] : []),
                         'texto' => $rutaVer === 'facturas.show' ? 'Consultar factura' : 'Abrir módulo',
-                    ];
-                }
-            }
-
-            return $item;
-        }, $items);
-
-        return ['titulo' => $titulo, 'descripcion' => $descripcion, 'total' => $total, 'items' => $items];
-    }
-}
-.number_format((float) $d->subtotal, 2, ',', '.'),
-            ])->all();
-            $grupos[] = $this->grupo('Productos asociados', 'Consulta la factura para revisar sus productos y la información completa.', $total, $items, null, null, 'ver facturas', 'facturas.show');
-        }
-        if ($factura->estado !== 'pendiente') {
-            $grupos[] = ['titulo' => 'Condición de eliminación', 'descripcion' => 'Solo se pueden eliminar facturas pendientes. Las facturas pagadas o anuladas deben conservarse.', 'total' => 1, 'items' => [['titulo' => 'Estado actual: '.ucfirst((string) $factura->estado), 'detalle' => 'No se permite eliminar una factura en este estado.', 'acciones' => []]]];
-        }
-
-        return $grupos;
-    }
-
-    public function paraEmpleado(int $id, int $tiendaId): array
-    {
-        $q = Facturas::query()->where('id_usuario', $id)
-            ->whereHas('usuario', fn ($x) => $x->where('id_tienda', $tiendaId))->orderByDesc('fecha');
-        $total = (clone $q)->count();
-        if (! $total) {
-            return [];
-        }
-        $items = (clone $q)->limit(self::LIMITE_ITEMS)->get(['id', 'fecha', 'estado', 'total'])
-            ->map(fn ($f) => [
-                'id' => $f->id, 'titulo' => 'Factura #'.$f->id,
-                'detalle' => 'Fecha: '.($f->fecha?->format('d/m/Y') ?? 'Sin fecha').' · Estado: '.ucfirst((string) $f->estado).' · Total: $'.number_format((float) $f->total, 2, ',', '.'),
-            ])->all();
-
-        return [$this->grupo('Facturas emitidas por el empleado', 'El historial debe conservarse; por eso la cuenta se desactiva en lugar de eliminarse.', $total, $items, 'editar facturas', 'facturas.edit', 'ver facturas', 'facturas.index')];
-    }
-
-    public function flash(string $titulo, string $mensaje, array $grupos): void
-    {
-        session()->flash('relaciones_bloqueo', ['titulo' => $titulo, 'mensaje' => $mensaje, 'grupos' => $grupos]);
-    }
-
-    private function grupo(string $titulo, string $descripcion, int $total, array $items, ?string $permisoEditar, ?string $rutaEditar, ?string $permisoVer, ?string $rutaVer): array
-    {
-        $user = auth()->user();
-        $puedeEditar = $permisoEditar && $user?->can($permisoEditar);
-        $puedeVer = $permisoVer && $user?->can($permisoVer);
-
-        if (! $puedeEditar && ! $puedeVer) {
-            return ['titulo' => $titulo, 'descripcion' => $descripcion.' Tu rol no tiene permiso para consultar el detalle de estos registros.', 'total' => $total, 'items' => []];
-        }
-
-        $items = array_map(function ($item) use ($puedeEditar, $rutaEditar, $puedeVer, $rutaVer) {
-            if (! isset($item['acciones'])) {
-                $item['acciones'] = [];
-
-                if ($puedeEditar && $rutaEditar) {
-                    $item['acciones'][] = [
-                        'url' => route($rutaEditar, $item['id']),
-                        'texto' => 'Editar',
-                    ];
-                }
-
-                if ($puedeVer && $rutaVer) {
-                    $item['acciones'][] = [
-                        'url' => route($rutaVer),
-                        'texto' => 'Abrir módulo',
                     ];
                 }
             }
