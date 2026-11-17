@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CodigoRecuperacionMail;
 use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -77,6 +78,7 @@ class PasswordResetController extends Controller
         // Generar código numérico seguro de 6 dígitos
         $codigo = (string) random_int(100000, 999999);
         $correoDestino = $inputCorreo;
+        $nombreDestinatario = $tienda ? $tienda->nombre : $user->nombre;
 
         // Almacenar en caché durante 15 minutos vinculado al usuario y correo
         Cache::put('password_reset_code_'.$codigo, [
@@ -84,19 +86,10 @@ class PasswordResetController extends Controller
             'correo' => $correoDestino,
         ], now()->addMinutes(15));
 
-        // Enviar correo electrónico con el código
-        $nombreDestinatario = $tienda ? $tienda->nombre : $user->nombre;
-        $mensajeCorreo = "Hola {$nombreDestinatario},\n\n"
-            ."Has solicitado restablecer tu contraseña en el sistema VOID.\n"
-            ."Tu código de verificación de 6 dígitos es: {$codigo}\n\n"
-            ."Este código es válido por 15 minutos.\n"
-            .'Si no solicitaste este cambio, puedes ignorar este mensaje.';
-
+        // Enviar el código mediante la plantilla de correo de recuperación.
         try {
-            Mail::raw($mensajeCorreo, function ($message) use ($correoDestino, $nombreDestinatario) {
-                $message->to($correoDestino, $nombreDestinatario)
-                    ->subject('Código de recuperación de contraseña - VOID');
-            });
+            Mail::to($correoDestino, $nombreDestinatario)
+                ->send(new CodigoRecuperacionMail($nombreDestinatario, $codigo));
         } catch (\Throwable $e) {
             Cache::forget('password_reset_code_'.$codigo);
             report($e);

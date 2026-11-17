@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\CodigoRecuperacionMail;
 use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,16 +42,15 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertRedirect(route('password.code'));
         $response->assertSessionHas('status');
 
-        // Verificar que se haya guardado un código en caché
-        $cachedKeys = [];
-        for ($i = 100000; $i <= 999999; $i++) {
-            if ($data = Cache::get('password_reset_code_'.$i)) {
-                $cachedKeys[] = $i;
-                $this->assertEquals($user->id, $data['user_id']);
-                break;
-            }
-        }
-        $this->assertNotEmpty($cachedKeys, 'No se generó código en la caché');
+        Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($user) {
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
+
+            return $mail->hasTo('admin@void.test')
+                && $mail->nombreDestinatario === $user->nombre
+                && $data
+                && (int) $data['user_id'] === (int) $user->id
+                && $data['correo'] === 'admin@void.test';
+        });
     }
 
     public function test_solicitar_codigo_con_correo_de_tienda(): void
@@ -75,16 +75,15 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertRedirect(route('password.code'));
         $response->assertSessionHas('status');
 
-        $found = false;
-        for ($i = 100000; $i <= 999999; $i++) {
-            if ($data = Cache::get('password_reset_code_'.$i)) {
-                $this->assertEquals($admin->id, $data['user_id']);
-                $this->assertEquals('contacto@tiendacentral.com', $data['correo']);
-                $found = true;
-                break;
-            }
-        }
-        $this->assertTrue($found, 'No se generó el código vinculado al administrador de la tienda');
+        Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($admin) {
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
+
+            return $mail->hasTo('contacto@tiendacentral.com')
+                && $mail->nombreDestinatario === 'Tienda Central'
+                && $data
+                && (int) $data['user_id'] === (int) $admin->id
+                && $data['correo'] === 'contacto@tiendacentral.com';
+        });
     }
 
     public function test_intento_de_recuperar_contrasena_de_otra_tienda_no_afecta_administradores_ajenos(): void
@@ -122,16 +121,14 @@ class RecuperarContrasenaTest extends TestCase
 
         $response->assertRedirect(route('password.code'));
 
-        $found = false;
-        for ($i = 100000; $i <= 999999; $i++) {
-            if ($data = Cache::get('password_reset_code_'.$i)) {
-                $this->assertEquals($admin2->id, $data['user_id']);
-                $this->assertNotEquals($admin1->id, $data['user_id']);
-                $found = true;
-                break;
-            }
-        }
-        $this->assertTrue($found);
+        Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($admin1, $admin2) {
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
+
+            return $mail->hasTo('contacto@tiendados.com')
+                && $data
+                && (int) $data['user_id'] === (int) $admin2->id
+                && (int) $data['user_id'] !== (int) $admin1->id;
+        });
     }
 
     public function test_tienda_sin_administrador_asociado_no_devuelve_administrador_global(): void
@@ -177,8 +174,9 @@ class RecuperarContrasenaTest extends TestCase
             'estado' => true,
         ]);
 
-        Mail::shouldReceive('raw')
+        Mail::shouldReceive('to')
             ->once()
+            ->with('admin.fallo@void.test', $user->nombre)
             ->andThrow(new \Exception('SMTP connection timeout'));
 
         $response = $this->post(route('password.email'), [
@@ -186,6 +184,18 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['correo']);
+    }
+
+
+    public function test_correo_de_recuperacion_renderiza_el_codigo_y_la_vista_de_void(): void
+    {
+        $correo = new CodigoRecuperacionMail('Laura', '123456');
+        $contenido = $correo->render();
+
+        $this->assertStringContainsString('123456', $contenido);
+        $this->assertStringContainsString('Laura', $contenido);
+        $this->assertStringContainsString('VOID', $contenido);
+        $this->assertStringContainsString('15 minutos', $contenido);
     }
 
     public function test_codigo_vencido_es_rechazado(): void
