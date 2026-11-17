@@ -56,9 +56,9 @@ class FacturasController extends Controller
 
         $usuario = auth()->user();
         $esPendiente = $factura->estado === 'pendiente';
-        $puedeEditarDetalle = $esPendiente && $usuario->can('editar detallefacturas');
-        $puedeEliminarDetalle = $esPendiente && $usuario->can('eliminar detallefacturas');
-        $puedeAgregarDetalle = $esPendiente && $usuario->can('crear detallefacturas');
+        $puedeEditarDetalle = $esPendiente && $usuario->tienePermisoActivo('editar detallefacturas');
+        $puedeEliminarDetalle = $esPendiente && $usuario->tienePermisoActivo('eliminar detallefacturas');
+        $puedeAgregarDetalle = $esPendiente && $usuario->tienePermisoActivo('crear detallefacturas');
         $mostrarAccionesDetalle = $puedeEditarDetalle || $puedeEliminarDetalle;
         $productos = collect();
 

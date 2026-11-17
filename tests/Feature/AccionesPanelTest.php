@@ -222,7 +222,7 @@ test('la consulta de factura integra los detalles y las acciones del administrad
     $this->admin->refresh();
     $this->actingAs($this->admin);
 
-    expect($this->admin->can('eliminar detallefacturas'))->toBeTrue();
+    expect($this->admin->tienePermisoActivo('eliminar detallefacturas'))->toBeTrue();
 
     $this->get(route('facturas.show', $factura->id))
         ->assertOk()
