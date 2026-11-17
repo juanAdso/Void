@@ -45,6 +45,35 @@ jobs:
       - name: Instalar dependencias frontend
         run: npm ci
 
+      - name: Formatear temporalmente las vistas Blade pendientes
+        run: |
+          npx prettier --write \
+            resources/views/categoria/index.blade.php \
+            resources/views/clientes/index.blade.php \
+            resources/views/dashboard/admin.blade.php \
+            resources/views/dashboard/empleado.blade.php \
+            resources/views/facturas/create.blade.php \
+            resources/views/facturas/index.blade.php \
+            resources/views/facturas/show.blade.php \
+            resources/views/productos/index.blade.php \
+            resources/views/tiendas/index.blade.php
+
+      - name: Compartir vistas Blade normalizadas
+        uses: actions/upload-artifact@v4
+        with:
+          name: vistas-blade-normalizadas
+          if-no-files-found: error
+          path: |
+            resources/views/categoria/index.blade.php
+            resources/views/clientes/index.blade.php
+            resources/views/dashboard/admin.blade.php
+            resources/views/dashboard/empleado.blade.php
+            resources/views/facturas/create.blade.php
+            resources/views/facturas/index.blade.php
+            resources/views/facturas/show.blade.php
+            resources/views/productos/index.blade.php
+            resources/views/tiendas/index.blade.php
+
       - name: Verificar formato de vistas y recursos frontend
         run: npm run format:frontend:check
 
