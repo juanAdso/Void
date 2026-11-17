@@ -114,7 +114,7 @@ class CuentasDemostracionSeeder extends Seeder
         }
 
         if (! $tienda->logo) {
-            $rutaLogo = "tiendas/{$tienda->id}/logo/demo-".Str::slug($prefijo).".svg";
+            $rutaLogo = "tiendas/{$tienda->id}/logo/demo-".Str::slug($prefijo).'.svg';
             Storage::disk('public')->put($rutaLogo, $this->crearSvgLogo($tienda->nombre, $prefijo));
             $tienda->update(['logo' => $rutaLogo]);
         }
@@ -139,7 +139,7 @@ class CuentasDemostracionSeeder extends Seeder
             );
 
             if (! $producto->imagen) {
-                $rutaImagen = "tiendas/{$tienda->id}/productos/demo-".Str::slug($producto->nombre).".svg";
+                $rutaImagen = "tiendas/{$tienda->id}/productos/demo-".Str::slug($producto->nombre).'.svg';
                 Storage::disk('public')->put(
                     $rutaImagen,
                     $this->crearSvgProducto($producto->nombre, $tienda->nombre, count($productos))

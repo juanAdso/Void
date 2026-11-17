@@ -1,6 +1,4 @@
-{{--
-    Modal con transiciones y tema oscuro de VOID.
---}}
+
 @props(['name', 'title' => null, 'maxWidth' => 'md'])
 @php
     $widths = ['sm' => 'max-w-sm', 'md' => 'max-w-md', 'lg' => 'max-w-lg', 'xl' => 'max-w-xl'];

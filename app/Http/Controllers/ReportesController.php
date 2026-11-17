@@ -16,7 +16,7 @@ class ReportesController extends Controller
         $usuario = auth()->user();
         $tiendaId = $usuario?->id_tienda;
 
-        if (!$tiendaId) {
+        if (! $tiendaId) {
             abort(403, 'No tienes una tienda asignada para consultar reportes.');
         }
 

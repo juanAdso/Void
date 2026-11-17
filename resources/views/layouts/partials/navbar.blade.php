@@ -2,7 +2,7 @@
     <div class="h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
 
         <div class="flex items-center gap-4 min-w-0">
-            {{-- Botón menú móvil --}}
+
             <button
                 @click="sidebarOpen = !sidebarOpen"
                 type="button"
@@ -19,7 +19,7 @@
 
         <div class="flex items-center gap-2 sm:gap-4">
 
-            {{-- Buscador disponible para cuentas de empresa; el superadministrador tiene navegación global propia. --}}
+
             @if (!auth()->user()->hasRole('superadministrador'))
             <form method="GET" action="{{ route('busqueda.global') }}" class="relative hidden md:block" role="search">
                 <label for="global-search" class="sr-only">Buscar</label>
@@ -37,7 +37,7 @@
             </form>
             @endif
 
-            {{-- Menú de usuario --}}
+
             <div x-data="{ open: false }" class="relative">
                 <button
                     @click="open = !open"

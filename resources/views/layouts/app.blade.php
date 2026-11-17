@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - {{ config('app.name', 'Admin') }}</title>
 
-    {{-- Tailwind CSS. Reemplazar por tu build de Vite/PostCSS en producción (ver README). --}}
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    {{-- Chart.js (solo se usa donde se necesita) --}}
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 
     <style>
@@ -63,7 +63,7 @@ body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;background:var(--voi
 
     <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
 
-        {{-- Overlay móvil --}}
+
         <div
             x-show="sidebarOpen"
             x-cloak

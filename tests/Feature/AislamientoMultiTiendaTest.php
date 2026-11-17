@@ -52,12 +52,10 @@ test('una tienda no puede consultar productos de otra tienda en el listado ni en
         'nombre' => 'Producto Secreto Tienda B',
     ]);
 
-    // En el index de A no debe verse el producto de B
     $responseIndex = $this->actingAs($adminA)->get(route('productos.index'));
     $responseIndex->assertOk();
     $responseIndex->assertDontSee('Producto Secreto Tienda B');
 
-    // Intentar acceder a la vista de edición del producto de B por ID en la URL debe fallar (404)
     $responseEdit = $this->actingAs($adminA)->get(route('productos.edit', $productoB->id));
     $responseEdit->assertNotFound();
 });
@@ -90,7 +88,7 @@ test('una tienda no puede editar productos ajenos manipulando el ID en la URL', 
         'id_categoria' => $categoria->id,
     ]);
 
-    $response->assertNotFound();
+    $response->assertForbidden();
     expect($productoB->fresh()->nombre)->toBe('Original B');
 });
 
@@ -137,7 +135,7 @@ test('crear producto asigna siempre la tienda del usuario autenticado e ignora i
         'stock' => 10,
         'estado' => 1,
         'id_categoria' => $categoria->id,
-        'id_tienda' => $tiendaB->id, // Intento de inyectar Tienda B
+        'id_tienda' => $tiendaB->id,
     ])->assertRedirect(route('productos.index'));
 
     $productoCreado = Productos::where('nombre', 'Nuevo Producto Seguro')->first();
@@ -175,23 +173,19 @@ test('una tienda no puede consultar ni editar facturas ajenas', function () {
         'estado' => 'pendiente',
     ]);
 
-    // Admin A no debe ver la factura B en index
     $responseIndex = $this->actingAs($adminA)->get(route('facturas.index'));
     $responseIndex->assertOk();
     $responseIndex->assertDontSee('Factura #'.$facturaB->id);
     $responseIndex->assertDontSee(route('facturas.edit', $facturaB->id));
 
-    // Admin A no debe poder editar factura B
     $this->actingAs($adminA)->get(route('facturas.edit', $facturaB->id))->assertNotFound();
 
-    // Admin A no debe poder hacer update a factura B
     $this->actingAs($adminA)->put(route('facturas.update', $facturaB->id), [
         'id_cliente' => $cliente->id,
         'fecha' => '2026-03-02',
         'estado' => 'pagada',
     ])->assertForbidden();
 
-    // Admin A no debe poder eliminar factura B
     $this->actingAs($adminA)->delete(route('facturas.destroy', $facturaB->id))->assertNotFound();
 
     expect($facturaB->fresh()->estado)->toBe('pendiente');
@@ -334,7 +328,6 @@ test('una tienda no puede consultar ni modificar detalles de factura ajenos', fu
         'subtotal' => 100,
     ]);
 
-    // Admin A intentando consultar o editar detalle de B
     $this->actingAs($adminA)->get(route('detalle_facturas.edit', $detalleB->id))->assertNotFound();
 
     $responseUpdate = $this->actingAs($adminA)->put(route('detalle_facturas.update', $detalleB->id), [
@@ -365,7 +358,6 @@ test('un empleado no puede superar los permisos asignados de su tienda', functio
         'id_categoria' => $categoria->id,
     ]);
 
-    // El empleado no tiene permiso para crear o eliminar productos
     $this->actingAs($empleado)->post(route('productos.store'), [
         'nombre' => 'Test',
         'precio' => 10,
@@ -376,7 +368,6 @@ test('un empleado no puede superar los permisos asignados de su tienda', functio
 
     $this->actingAs($empleado)->delete(route('productos.destroy', $producto->id))->assertForbidden();
 
-    // El empleado no tiene permiso para administrar tiendas
     $this->actingAs($empleado)->get(route('tiendas.index'))->assertForbidden();
 });
 
@@ -391,13 +382,10 @@ test('un usuario con tienda asignada no puede acceder ni modificar tiendas ajena
     ]);
     $adminA->assignRole('administrador');
 
-    // Intentar ver show de Tienda B
     $this->actingAs($adminA)->get(route('tiendas.show', $tiendaB->id))->assertNotFound();
 
-    // Intentar ver edit de Tienda B
     $this->actingAs($adminA)->get(route('tiendas.edit', $tiendaB->id))->assertNotFound();
 
-    // Intentar actualizar Tienda B
     $this->actingAs($adminA)->put(route('tiendas.update', $tiendaB->id), [
         'nombre' => 'Tienda B Hackeada',
         'estado' => 1,
@@ -405,7 +393,6 @@ test('un usuario con tienda asignada no puede acceder ni modificar tiendas ajena
 
     expect($tiendaB->fresh()->nombre)->toBe('Tienda B Original');
 });
-
 
 test('una tienda no puede consultar, modificar ni eliminar clientes de otra tienda', function () {
     $tiendaA = Tienda::factory()->create();
@@ -487,7 +474,6 @@ test('crear cliente siempre asigna la tienda autenticada aunque se manipule id_t
     expect((int) $cliente->id_tienda)->toBe((int) $tiendaA->id);
 });
 
-
 test('los usuarios de una tienda inactiva no pueden acceder a modulos administrativos', function () {
     $tienda = Tienda::factory()->create(['estado' => false]);
     $admin = User::factory()->create([
@@ -500,7 +486,6 @@ test('los usuarios de una tienda inactiva no pueden acceder a modulos administra
     $this->actingAs($admin)->get(route('dashboard.index'))->assertForbidden();
     $this->actingAs($admin)->get(route('productos.index'))->assertForbidden();
 });
-
 
 test('un administrador solo puede actualizar el perfil de su propia tienda', function () {
     $tiendaA = Tienda::factory()->create(['nombre' => 'Tienda A']);
@@ -526,7 +511,6 @@ test('un administrador solo puede actualizar el perfil de su propia tienda', fun
 
     expect($tiendaB->fresh()->nombre)->toBe('Tienda B');
 });
-
 
 test('una tienda no puede crear productos con categorias de otra tienda', function () {
     $tiendaA = Tienda::factory()->create();

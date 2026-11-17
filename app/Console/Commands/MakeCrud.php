@@ -23,12 +23,6 @@ class MakeCrud extends Command
 
         $this->info("Creando CRUD para {$model}...");
 
-        /*
-        |--------------------------------------------------------------------------
-        | Model + Migration + Factory
-        |--------------------------------------------------------------------------
-        */
-
         Artisan::call('make:model', [
             'name' => $model,
             '-m' => true,
@@ -37,24 +31,12 @@ class MakeCrud extends Command
 
         $this->output->write(Artisan::output());
 
-        /*
-        |--------------------------------------------------------------------------
-        | Controller
-        |--------------------------------------------------------------------------
-        */
-
         Artisan::call('make:controller', [
             'name' => "{$model}Controller",
             '--resource' => true,
         ]);
 
         $this->output->write(Artisan::output());
-
-        /*
-        |--------------------------------------------------------------------------
-        | Requests
-        |--------------------------------------------------------------------------
-        */
 
         Artisan::call('make:request', [
             'name' => "Store{$model}Request",
@@ -63,12 +45,6 @@ class MakeCrud extends Command
         Artisan::call('make:request', [
             'name' => "Update{$model}Request",
         ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Repository
-        |--------------------------------------------------------------------------
-        */
 
         $repositoryPath = app_path("Repositories/{$model}Repository.php");
         $interfacePath = app_path("Repositories/Interfaces/{$model}RepositoryInterface.php");
@@ -80,23 +56,11 @@ class MakeCrud extends Command
 
         File::put($repositoryPath, $this->repository($model));
 
-        /*
-        |--------------------------------------------------------------------------
-        | Service
-        |--------------------------------------------------------------------------
-        */
-
         $servicePath = app_path("Services/{$model}Service.php");
 
         File::ensureDirectoryExists(dirname($servicePath));
 
         File::put($servicePath, $this->service($model));
-
-        /*
-        |--------------------------------------------------------------------------
-        | Views
-        |--------------------------------------------------------------------------
-        */
 
         $viewsPath = resource_path("views/{$plural}");
 
@@ -122,38 +86,32 @@ class MakeCrud extends Command
             $this->showView($model)
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | Resultado
-        |--------------------------------------------------------------------------
-        */
-
         $this->newLine();
 
         $this->info("CRUD de {$model} creado correctamente.");
 
         $this->newLine();
 
-        $this->line("Modelo:");
+        $this->line('Modelo:');
         $this->line("app/Models/{$model}.php");
 
-        $this->line("Controller:");
+        $this->line('Controller:');
         $this->line("app/Http/Controllers/{$model}Controller.php");
 
-        $this->line("Requests:");
+        $this->line('Requests:');
         $this->line("app/Http/Requests/Store{$model}Request.php");
         $this->line("app/Http/Requests/Update{$model}Request.php");
 
-        $this->line("Repository:");
+        $this->line('Repository:');
         $this->line("app/Repositories/{$model}Repository.php");
 
-        $this->line("Interface:");
+        $this->line('Interface:');
         $this->line("app/Repositories/Interfaces/{$model}RepositoryInterface.php");
 
-        $this->line("Service:");
+        $this->line('Service:');
         $this->line("app/Services/{$model}Service.php");
 
-        $this->line("Views:");
+        $this->line('Views:');
         $this->line("resources/views/{$plural}");
 
         return Command::SUCCESS;

@@ -71,13 +71,11 @@ test('el catalogo por tienda muestra exclusivamente los productos de la tienda e
         'estado' => true,
     ]);
 
-    // Visitar catalogo de Tienda A
     $responseA = $this->get(route('catalogo', ['tienda' => $tiendaA->id]));
     $responseA->assertOk();
     $responseA->assertSee('Laptop Gamer Pro');
     $responseA->assertDontSee('Camisa Elegante');
 
-    // Visitar catalogo de Tienda B
     $responseB = $this->get(route('catalogo', ['tienda' => $tiendaB->id]));
     $responseB->assertOk();
     $responseB->assertSee('Camisa Elegante');
@@ -85,10 +83,9 @@ test('el catalogo por tienda muestra exclusivamente los productos de la tienda e
 });
 
 test('parametro de tienda invalido o vacio en catalogo no muestra catalogo global', function () {
-    // Si se pasa tienda inexistente
+
     $this->get(route('catalogo', ['tienda' => 999999]))->assertNotFound();
 
-    // Si se pasa tienda inactiva
     $tiendaInactiva = Tienda::factory()->create(['estado' => false]);
     $this->get(route('catalogo', ['tienda' => $tiendaInactiva->id]))->assertNotFound();
 });
@@ -112,7 +109,7 @@ test('filtrado por busqueda, categoria, disponibilidad y precio en catalogo', fu
         'id_categoria' => $cat1->id,
         'nombre' => 'Teclado Mecánico',
         'precio' => 150,
-        'stock' => 0, // Agotado
+        'stock' => 0,
         'estado' => true,
     ]);
 
@@ -125,22 +122,18 @@ test('filtrado por busqueda, categoria, disponibilidad y precio en catalogo', fu
         'estado' => true,
     ]);
 
-    // 1. Búsqueda por texto
     $resBuscar = $this->get(route('catalogo', ['tienda' => $tienda->id, 'buscar' => 'Mouse']));
     $resBuscar->assertSee('Mouse Ergonómico');
     $resBuscar->assertDontSee('Chaqueta Cuero');
 
-    // 2. Filtro por categoría
     $resCat = $this->get(route('catalogo', ['tienda' => $tienda->id, 'categoria' => $cat2->id]));
     $resCat->assertSee('Chaqueta Cuero');
     $resCat->assertDontSee('Mouse Ergonómico');
 
-    // 3. Filtro por disponibilidad agotados
     $resAgotados = $this->get(route('catalogo', ['tienda' => $tienda->id, 'disponibilidad' => 'agotados']));
     $resAgotados->assertSee('Teclado Mecánico');
     $resAgotados->assertDontSee('Mouse Ergonómico');
 
-    // 4. Filtro por rango de precio
     $resPrecio = $this->get(route('catalogo', ['tienda' => $tienda->id, 'precio_min' => 200]));
     $resPrecio->assertSee('Chaqueta Cuero');
     $resPrecio->assertDontSee('Mouse Ergonómico');

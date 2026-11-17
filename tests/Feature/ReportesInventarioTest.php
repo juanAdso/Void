@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Categoria;
-use App\Models\Facturas;
 use App\Models\MovimientoInventario;
 use App\Models\Productos;
 use App\Models\Tienda;

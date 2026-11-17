@@ -11,7 +11,7 @@ class ProductosSeeder extends Seeder
 {
     public function run(): void
     {
-        if (!Categoria::exists()) {
+        if (! Categoria::exists()) {
             throw new RuntimeException('Ejecuta CategoriaSeeder antes de ProductosSeeder.');
         }
 

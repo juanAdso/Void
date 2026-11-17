@@ -13,20 +13,14 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class PasswordResetController extends Controller
 {
-    /**
-     * Muestra la vista para solicitar el código de recuperación.
-     */
     public function showLinkRequestForm()
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Genera y envía un código de recuperación a cualquier usuario activo.
-     */
     public function sendResetCode(Request $request)
     {
-        $throttleKey = 'password-reset:' . $request->ip();
+        $throttleKey = 'password-reset:'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -47,19 +41,9 @@ class PasswordResetController extends Controller
 
         $correoDestino = trim($request->input('correo'));
 
-        /*
-         * Buscar primero por el correo personal del usuario.
-         * Esta consulta no filtra por rol: permite recuperar cuentas de
-         * administradores, empleados y superadministradores.
-         */
         $user = User::where('correo', $correoDestino)->first();
         $tienda = null;
 
-        /*
-         * Si el correo no pertenece directamente a un usuario, permitir
-         * la recuperación mediante el correo general de una tienda.
-         * En ese caso, el código queda vinculado a su administrador activo.
-         */
         if (! $user) {
             $tienda = Tienda::where('correo', $correoDestino)->first();
 
@@ -83,20 +67,13 @@ class PasswordResetController extends Controller
             ])->withInput();
         }
 
-        /*
-         * Generar un código numérico seguro de seis dígitos.
-         * Se comprueba que no exista otro código activo con el mismo valor.
-         */
         do {
             $codigo = (string) random_int(100000, 999999);
-            $cacheKey = 'password_reset_code_' . $codigo;
+            $cacheKey = 'password_reset_code_'.$codigo;
         } while (Cache::has($cacheKey));
 
         $nombreDestinatario = $tienda ? $tienda->nombre : $user->nombre;
 
-        /*
-         * Asociar el código al usuario correcto durante 15 minutos.
-         */
         Cache::put($cacheKey, [
             'user_id' => $user->id,
             'correo' => $correoDestino,
@@ -115,21 +92,15 @@ class PasswordResetController extends Controller
         }
 
         return redirect()->route('password.code')
-            ->with('status', 'Hemos enviado un código de verificación de 6 dígitos al correo: ' . $correoDestino)
+            ->with('status', 'Hemos enviado un código de verificación de 6 dígitos al correo: '.$correoDestino)
             ->with('correo_destino', $correoDestino);
     }
 
-    /**
-     * Muestra la vista para ingresar el código y la nueva contraseña.
-     */
     public function showResetForm()
     {
         return view('auth.verify-code');
     }
 
-    /**
-     * Valida el código y actualiza la contraseña de la cuenta vinculada.
-     */
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -157,7 +128,7 @@ class PasswordResetController extends Controller
         RateLimiter::hit($verifyThrottleKey, 300);
 
         $codigo = trim($request->input('codigo'));
-        $cacheKey = 'password_reset_code_' . $codigo;
+        $cacheKey = 'password_reset_code_'.$codigo;
         $cacheData = Cache::get($cacheKey);
 
         if (! $cacheData) {

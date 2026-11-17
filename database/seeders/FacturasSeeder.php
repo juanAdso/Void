@@ -11,7 +11,7 @@ class FacturasSeeder extends Seeder
 {
     public function run(): void
     {
-        if (!Cliente::exists()) {
+        if (! Cliente::exists()) {
             throw new RuntimeException('Ejecuta ClienteSeeder antes de FacturasSeeder.');
         }
 

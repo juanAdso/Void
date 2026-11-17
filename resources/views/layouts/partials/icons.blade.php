@@ -1,4 +1,4 @@
-{{-- Set de iconos SVG (Heroicons outline, inline para no depender de paquetes extra) --}}
+
 @switch($icon)
     @case('home')
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h4a1 1 0 001-1V10" /></svg>

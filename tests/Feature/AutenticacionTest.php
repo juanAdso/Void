@@ -12,11 +12,11 @@ beforeEach(function () {
 test('un usuario con credenciales correctas puede iniciar sesion', function () {
     $tienda = Tienda::factory()->create(['estado' => true]);
     $user = User::factory()->create([
+        'id_tienda' => $tienda->id,
         'correo' => 'activo@example.com',
         'password' => bcrypt('password123'),
         'estado' => true,
         'rol' => 'administrador',
-        'id_tienda' => $tienda->id,
     ]);
     $user->assignRole('administrador');
 
@@ -67,13 +67,12 @@ test('un usuario inactivo no puede iniciar sesion aunque sus credenciales sean c
 test('recordar sesion funciona correctamente', function () {
     $tienda = Tienda::factory()->create(['estado' => true]);
     $user = User::factory()->create([
+        'id_tienda' => $tienda->id,
         'correo' => 'recuerdame@example.com',
         'password' => bcrypt('password123'),
         'estado' => true,
         'rol' => 'administrador',
-        'id_tienda' => $tienda->id,
     ]);
-    $user->assignRole('administrador');
 
     $response = $this->post(route('login.store'), [
         'correo' => 'recuerdame@example.com',

@@ -59,7 +59,7 @@
                 <div class="mb-5">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2">Guardar</button>
                 </div>
-            
+
             </form>
 
         </div>

@@ -50,7 +50,6 @@ class RegistroTiendaTest extends TestCase
         $response->assertRedirect(route('dashboard.index'));
         $response->assertSessionHas('success');
 
-        // Verificar que la tienda fue creada
         $this->assertDatabaseHas('tiendas', [
             'nombre' => 'Zapatería El Paso',
             'correo' => 'contacto@elpaso.com',
@@ -61,7 +60,6 @@ class RegistroTiendaTest extends TestCase
         $tienda = Tienda::where('nombre', 'Zapatería El Paso')->first();
         $this->assertNotNull($tienda);
 
-        // Verificar que el usuario administrador fue creado y asociado a la tienda
         $this->assertDatabaseHas('usuarios', [
             'documento' => '1020304050',
             'correo' => 'carlos.admin@elpaso.com',
@@ -75,7 +73,6 @@ class RegistroTiendaTest extends TestCase
         $this->assertTrue(Hash::check('Secreto123*', $user->password));
         $this->assertTrue($user->hasRole('administrador'));
 
-        // Verificar que el usuario quedó autenticado
         $this->assertAuthenticatedAs($user);
     }
 
@@ -91,7 +88,7 @@ class RegistroTiendaTest extends TestCase
             'nombre' => 'Juan',
             'apellido' => 'Pérez',
             'documento' => '1122334455',
-            'correo' => 'admin_existente@tienda.com', // duplicado
+            'correo' => 'admin_existente@tienda.com',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
         ];
@@ -115,7 +112,7 @@ class RegistroTiendaTest extends TestCase
             'nombre_tienda' => 'Tienda Doc Duplicado',
             'nombre' => 'Ana',
             'apellido' => 'López',
-            'documento' => '1234567890', // duplicado
+            'documento' => '1234567890',
             'correo' => 'ana.nueva@tienda.com',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
@@ -131,7 +128,7 @@ class RegistroTiendaTest extends TestCase
 
     public function test_fallo_durante_creacion_revierte_transaccion_completamente(): void
     {
-        // Simular un fallo forzado dentro de la transacción, por ejemplo en User::creating
+
         User::creating(function ($user) {
             if ($user->correo === 'error_forzado@tienda.com') {
                 throw new \Exception('Error simulado en la creación del usuario');
@@ -154,7 +151,6 @@ class RegistroTiendaTest extends TestCase
             $this->assertSame('Error simulado en la creación del usuario', $e->getMessage());
         }
 
-        // Verificar que la tienda NO quedó en la base de datos (rollback exitoso)
         $this->assertDatabaseMissing('tiendas', ['nombre' => 'Tienda Que Debe Revertir']);
         $this->assertDatabaseMissing('usuarios', ['documento' => '5544332211']);
         $this->assertGuest();

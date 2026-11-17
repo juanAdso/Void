@@ -13,10 +13,7 @@ use Illuminate\Support\ServiceProvider;
 
 class SeguridadServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
     public function boot(): void
     {
@@ -24,8 +21,6 @@ class SeguridadServiceProvider extends ServiceProvider
         Gate::policy(Cliente::class, ClientePolicy::class);
         Gate::policy(Categoria::class, CategoriaPolicy::class);
 
-        // El estado inactivo bloquea cualquier habilidad; no existe bypass automático
-        // de permisos para administradores.
         Gate::before(function ($user) {
             if (method_exists($user, 'estaActivo') && ! $user->estaActivo()) {
                 return false;

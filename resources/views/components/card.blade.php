@@ -1,9 +1,4 @@
-{{--
-    Uso:
-    <x-card title="Título" subtitle="Opcional">
-        Contenido...
-    </x-card>
---}}
+
 @props(['title' => null, 'subtitle' => null, 'padding' => true])
 
 <div {{ $attributes->merge(['class' => 'void-card bg-neutral-900 rounded-2xl border border-neutral-800 shadow-lg shadow-black/10']) }}>

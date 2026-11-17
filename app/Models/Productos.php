@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Categoria;
-use App\Models\Tienda;
+use Illuminate\Support\Facades\Storage;
 
 class Productos extends Model
 {
@@ -42,7 +41,7 @@ class Productos extends Model
             return $this->imagen;
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->imagen);
+        return Storage::disk('public')->url($this->imagen);
     }
 
     public function categoria()

@@ -5,7 +5,7 @@
 @section('content')
 
     @if(isset($tiendaSeleccionada) && $tiendaSeleccionada)
-        {{-- Banner de la tienda seleccionada --}}
+
         <section class="bg-neutral-950 text-amber-50">
             <div class="mx-auto max-w-7xl px-5 py-12 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -41,7 +41,7 @@
                         </p>
                     </div>
 
-                    {{-- Selector rápido de otra tienda --}}
+
                     @if(isset($tiendas) && $tiendas->count() > 1)
                         <div class="rounded-xl border border-neutral-800 bg-neutral-900 p-4 shrink-0">
                             <label for="cambiar-tienda" class="block text-xs font-semibold uppercase text-slate-400 mb-2">
@@ -62,16 +62,16 @@
             </div>
         </section>
 
-        {{-- Buscador y filtros de la tienda --}}
+
         <section id="productos" class="py-10 bg-slate-50 min-h-[60vh]">
             <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
-                {{-- Barra de filtros horizontal --}}
+
                 <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm mb-8">
                     <form action="{{ route('catalogo') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <input type="hidden" name="tienda" value="{{ $tiendaSeleccionada->id }}">
 
-                        {{-- Búsqueda por texto --}}
+
                         <div class="lg:col-span-2">
                             <label for="buscar" class="block text-xs font-semibold text-slate-700 uppercase mb-1">
                                 Buscar producto
@@ -86,7 +86,7 @@
                             >
                         </div>
 
-                        {{-- Categoría --}}
+
                         <div>
                             <label for="categoria" class="block text-xs font-semibold text-slate-700 uppercase mb-1">
                                 Categoría
@@ -103,7 +103,7 @@
                             </select>
                         </div>
 
-                        {{-- Disponibilidad --}}
+
                         <div>
                             <label for="disponibilidad" class="block text-xs font-semibold text-slate-700 uppercase mb-1">
                                 Disponibilidad
@@ -117,7 +117,7 @@
                             </select>
                         </div>
 
-                        {{-- Botones de acción --}}
+
                         <div class="flex gap-2">
                             <button type="submit"
                                     class="flex-1 rounded-lg bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600">
@@ -131,7 +131,7 @@
                             @endif
                         </div>
 
-                        {{-- Rango de precio secundario --}}
+
                         <div class="sm:col-span-2 lg:col-span-5 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-3 text-xs text-slate-600">
                             <span class="font-semibold uppercase text-slate-700">Rango de precio ($):</span>
                             <input type="number" name="precio_min" value="{{ request('precio_min') }}" placeholder="Min" min="0" step="any"
@@ -144,14 +144,14 @@
                     </form>
                 </div>
 
-                {{-- Resumen de resultados --}}
+
                 <div class="flex items-center justify-between mb-6">
                     <p class="text-sm text-slate-600 font-medium">
                         Mostrando {{ $productos->count() }} de {{ $productos->total() }} producto(s) en <strong>{{ $tiendaSeleccionada->nombre }}</strong>
                     </p>
                 </div>
 
-                {{-- Cuadrícula de productos --}}
+
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @forelse($productos as $producto)
                         <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-400 hover:shadow-lg">
@@ -225,7 +225,7 @@
                     @endforelse
                 </div>
 
-                {{-- Paginación --}}
+
                 <div class="mt-10">
                     {{ $productos->links() }}
                 </div>
@@ -233,7 +233,7 @@
             </div>
         </section>
     @else
-        {{-- Si no seleccionó tienda, invitar a seleccionar una --}}
+
         <section class="bg-neutral-950 text-amber-50 py-16 text-center">
             <div class="mx-auto max-w-3xl px-5">
                 <span class="rounded-full bg-blue-600/30 border border-blue-500/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-400">

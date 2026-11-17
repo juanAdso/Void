@@ -1,0 +1,62 @@
+name: Calidad y limpieza
+
+on:
+  push:
+    branches:
+      - fix/auditoria-final-void
+
+permissions:
+  contents: write
+
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, bcmath, ctype, fileinfo, json, openssl, pdo, pdo_sqlite, sqlite3, tokenizer, xml, curl, zip
+          coverage: none
+
+      - name: Instalar dependencias PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Eliminar comentarios de código
+        run: php scripts/limpiar-comentarios.php
+
+      - name: Aplicar formato PHP
+        run: composer format
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias frontend
+        run: npm ci
+
+      - name: Compilar frontend
+        run: npm run build
+
+      - name: Ejecutar pruebas automatizadas
+        run: php artisan test
+
+      - name: Comprobar diff
+        run: git diff --check
+
+      - name: Guardar formato y limpieza
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Aplicar formato global y eliminar comentarios"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

@@ -2,14 +2,14 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Aplicación multiempresa para catálogo, inventario y facturación de VOID.",
     "keywords": [
         "laravel",
         "framework"
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4.1",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "spatie/laravel-permission": "^8.4"
@@ -72,7 +72,9 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
+        ],
+        "format": "pint",
+        "format:check": "pint --test"
     },
     "extra": {
         "laravel": {

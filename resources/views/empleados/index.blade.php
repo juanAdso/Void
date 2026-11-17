@@ -46,7 +46,7 @@
                             <a href="{{ route('empleados.edit', $empleado->id) }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">
                                 Editar
                             </a>
-                            
+
                             <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que deseas eliminar o desactivar a este empleado?')">
                                 @csrf
                                 @method('DELETE')

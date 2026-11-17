@@ -1,6 +1,4 @@
-{{--
-    Tarjeta reutilizable de indicadores. trend: up | down.
---}}
+
 @props(['label', 'value', 'change' => null, 'trend' => 'up', 'icon' => 'chart'])
 <div class="void-stat-card rounded-2xl border border-neutral-800 bg-neutral-900 p-5 sm:p-6 shadow-lg shadow-black/10">
     <div class="flex items-start justify-between gap-4">

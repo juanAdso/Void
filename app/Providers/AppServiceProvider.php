@@ -2,40 +2,54 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Repositories\BusquedaRepository;
+use App\Repositories\CategoriaRepository;
+use App\Repositories\ClienteRepository;
+use App\Repositories\DetalleFacturaRepository;
+use App\Repositories\FacturasRepository;
+use App\Repositories\Interfaces\BusquedaRepositoryInterface;
+use App\Repositories\Interfaces\CategoriaRepositoryInterface;
+use App\Repositories\Interfaces\ClienteRepositoryInterface;
+use App\Repositories\Interfaces\DetalleFacturaRepositoryInterface;
+use App\Repositories\Interfaces\FacturasRepositoryInterface;
+use App\Repositories\Interfaces\ProductoRepositoryInterface;
+use App\Repositories\Interfaces\TiendaRepositoryInterface;
+use App\Repositories\ProductosRepository;
+use App\Repositories\TiendaRepository;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->bind(
-            \App\Repositories\Interfaces\FacturasRepositoryInterface::class,
-            \App\Repositories\FacturasRepository::class
+            FacturasRepositoryInterface::class,
+            FacturasRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\ClienteRepositoryInterface::class,
-            \App\Repositories\ClienteRepository::class
+            ClienteRepositoryInterface::class,
+            ClienteRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\CategoriaRepositoryInterface::class,
-            \App\Repositories\CategoriaRepository::class
+            CategoriaRepositoryInterface::class,
+            CategoriaRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\ProductoRepositoryInterface::class,
-            \App\Repositories\ProductosRepository::class
+            ProductoRepositoryInterface::class,
+            ProductosRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\DetalleFacturaRepositoryInterface::class,
-            \App\Repositories\DetalleFacturaRepository::class
+            DetalleFacturaRepositoryInterface::class,
+            DetalleFacturaRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\TiendaRepositoryInterface::class,
-            \App\Repositories\TiendaRepository::class
+            TiendaRepositoryInterface::class,
+            TiendaRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Interfaces\BusquedaRepositoryInterface::class,
-            \App\Repositories\BusquedaRepository::class
+            BusquedaRepositoryInterface::class,
+            BusquedaRepository::class
         );
     }
 

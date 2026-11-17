@@ -62,7 +62,7 @@ test('crear factura en estado pendiente con totales iniciales en cero', function
         'id_cliente' => $this->cliente->id,
         'fecha' => '2026-11-11',
         'estado' => 'pendiente',
-        'subtotal' => 9999, // intento de manipular
+        'subtotal' => 9999,
         'iva' => 9999,
         'total' => 9999,
     ]);
@@ -112,10 +112,9 @@ test('agregar detalle descuenta inventario, registra movimiento y recalcula tota
 
     $facturaActualizada = $factura->fresh();
     expect((float) $facturaActualizada->subtotal)->toBe(300.00);
-    expect((float) $facturaActualizada->iva)->toBe(57.00); // 300 * 0.19 = 57
+    expect((float) $facturaActualizada->iva)->toBe(57.00);
     expect((float) $facturaActualizada->total)->toBe(357.00);
 
-    // Auditoría
     $movimiento = MovimientoInventario::where('id_producto', $producto->id)->latest()->first();
     expect($movimiento)->not->toBeNull();
     expect($movimiento->tipo_movimiento)->toBe('venta_detalle');
@@ -188,7 +187,6 @@ test('modificar cantidad de detalle actualiza correctamente el stock y los total
 
     $detalle = DetalleFactura::first();
 
-    // Aumentar cantidad de 2 a 5 (requiere 3 más del stock)
     $this->actingAs($this->usuario)->put(route('detalle_facturas.update', $detalle->id), [
         'id_factura' => $factura->id,
         'id_producto' => $producto->id,
@@ -201,7 +199,6 @@ test('modificar cantidad de detalle actualiza correctamente el stock y los total
     expect((float) $factura->fresh()->iva)->toBe(95.00);
     expect((float) $factura->fresh()->total)->toBe(595.00);
 
-    // Disminuir cantidad de 5 a 1 (restituye 4 al stock)
     $this->actingAs($this->usuario)->put(route('detalle_facturas.update', $detalle->id), [
         'id_factura' => $factura->id,
         'id_producto' => $producto->id,
@@ -258,7 +255,6 @@ test('cambiar producto restituye inventario del anterior y descuenta del nuevo',
 
     $detalle = DetalleFactura::first();
 
-    // Cambiar a producto B con cantidad 3
     $this->actingAs($this->usuario)->put(route('detalle_facturas.update', $detalle->id), [
         'id_factura' => $factura->id,
         'id_producto' => $productoB->id,
@@ -266,13 +262,12 @@ test('cambiar producto restituye inventario del anterior y descuenta del nuevo',
         'precio_unitario' => 80.00,
     ]);
 
-    expect($productoA->fresh()->stock)->toBe(10); // restituido
-    expect($productoB->fresh()->stock)->toBe(7);  // descontado
+    expect($productoA->fresh()->stock)->toBe(10);
+    expect($productoB->fresh()->stock)->toBe(7);
     expect((float) $factura->fresh()->subtotal)->toBe(240.00);
     expect((float) $factura->fresh()->iva)->toBe(45.60);
     expect((float) $factura->fresh()->total)->toBe(285.60);
 
-    // Verificar movimientos registrados
     expect(MovimientoInventario::where('id_producto', $productoA->id)->where('tipo_movimiento', 'cambio_producto_restitucion')->count())->toBe(1);
     expect(MovimientoInventario::where('id_producto', $productoB->id)->where('tipo_movimiento', 'cambio_producto_salida')->count())->toBe(1);
 });
@@ -369,7 +364,6 @@ test('anular factura restituye inventario de todos sus detalles', function () {
     expect($prod1->fresh()->stock)->toBe(16);
     expect($prod2->fresh()->stock)->toBe(14);
 
-    // Anular factura
     $this->actingAs($this->usuario)->put(route('facturas.update', $factura->id), [
         'id_cliente' => $this->cliente->id,
         'fecha' => '2026-11-11',
@@ -412,7 +406,6 @@ test('no se permite modificar ni agregar detalles a una factura pagada', functio
         'precio_unitario' => 50.00,
     ]);
 
-    // Pasar a pagada
     $this->actingAs($this->usuario)->put(route('facturas.update', $factura->id), [
         'id_cliente' => $this->cliente->id,
         'fecha' => '2026-11-11',
@@ -423,7 +416,6 @@ test('no se permite modificar ni agregar detalles a una factura pagada', functio
 
     $detalle = DetalleFactura::first();
 
-    // Intentar agregar nuevo detalle a factura pagada
     $responseAdd = $this->actingAs($this->usuario)->post(route('detalle_facturas.store'), [
         'id_factura' => $factura->id,
         'id_producto' => $producto->id,
@@ -432,7 +424,6 @@ test('no se permite modificar ni agregar detalles a una factura pagada', functio
     ]);
     $responseAdd->assertSessionHasErrors(['id_factura']);
 
-    // Intentar modificar detalle existente de factura pagada
     $responseEdit = $this->actingAs($this->usuario)->put(route('detalle_facturas.update', $detalle->id), [
         'id_factura' => $factura->id,
         'id_producto' => $producto->id,
@@ -441,7 +432,6 @@ test('no se permite modificar ni agregar detalles a una factura pagada', functio
     ]);
     $responseEdit->assertSessionHasErrors(['id_factura']);
 
-    // Intentar eliminar detalle directamente de factura pagada
     try {
         app(DetalleFacturaService::class)->eliminar($detalle->id, $this->tienda->id);
         $this->fail('Debería arrojar excepción al eliminar detalle de factura pagada.');
@@ -495,20 +485,18 @@ test('las transacciones revierten todas las operaciones en caso de fallo', funct
         'estado' => 'pendiente',
     ]);
 
-    // Si ocurre un error al intentar agregar por stock insuficiente
     try {
         app(DetalleFacturaRepository::class)->guardar([
             'id_factura' => $factura->id,
             'id_producto' => $producto->id,
-            'cantidad' => 10, // mayor que 5
+            'cantidad' => 10,
             'precio_unitario' => 200.00,
         ], $this->tienda->id);
         $this->fail('Debería fallar por stock insuficiente');
     } catch (ValidationException $e) {
-        // Excepción esperada
+
     }
 
-    // Comprobar que no se creó ningún detalle ni se alteró el stock ni los totales
     expect($producto->fresh()->stock)->toBe(5);
     expect(DetalleFactura::count())->toBe(0);
     expect((float) $factura->fresh()->subtotal)->toBe(0.00);
@@ -558,7 +546,6 @@ test('mover detalle entre dos facturas pendientes recalcula ambas facturas corre
 
     $detalle = DetalleFactura::first();
 
-    // Mover detalle a factura 2
     $this->actingAs($this->usuario)->put(route('detalle_facturas.update', $detalle->id), [
         'id_factura' => $factura2->id,
         'id_producto' => $producto->id,
@@ -572,4 +559,117 @@ test('mover detalle entre dos facturas pendientes recalcula ambas facturas corre
     expect((float) $factura2->fresh()->subtotal)->toBe(100.00);
     expect((float) $factura2->fresh()->iva)->toBe(19.00);
     expect((float) $factura2->fresh()->total)->toBe(119.00);
+});
+
+test('ajustar el stock desde la edicion del producto registra el movimiento de inventario', function () {
+    $producto = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto Ajustable',
+        'descripcion' => 'Producto de prueba',
+        'precio' => 100.00,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+
+    $response = $this->actingAs($this->usuario)->put(route('productos.update', $producto->id), [
+        'nombre' => $producto->nombre,
+        'descripcion' => $producto->descripcion,
+        'precio' => $producto->precio,
+        'stock' => 8,
+        'estado' => 1,
+        'id_categoria' => $this->categoria->id,
+    ]);
+
+    $response->assertRedirect(route('productos.index'));
+    expect($producto->fresh()->stock)->toBe(8);
+
+    $movimiento = MovimientoInventario::query()
+        ->where('id_producto', $producto->id)
+        ->where('tipo_movimiento', 'ajuste_manual')
+        ->first();
+
+    expect($movimiento)->not->toBeNull();
+    expect($movimiento->cantidad)->toBe(-2);
+    expect($movimiento->id_tienda)->toBe($this->tienda->id);
+    expect($movimiento->id_usuario)->toBe($this->usuario->id);
+});
+
+test('no se puede agregar un producto inactivo a una factura', function () {
+    $producto = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto Inactivo',
+        'descripcion' => 'No disponible para venta',
+        'precio' => 100.00,
+        'stock' => 10,
+        'estado' => false,
+    ]);
+
+    $factura = Facturas::create([
+        'id_cliente' => $this->cliente->id,
+        'id_usuario' => $this->usuario->id,
+        'fecha' => '2026-11-16',
+        'subtotal' => 0,
+        'iva' => 0,
+        'total' => 0,
+        'estado' => 'pendiente',
+    ]);
+
+    $response = $this->actingAs($this->usuario)->post(route('detalle_facturas.store'), [
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 2,
+        'precio_unitario' => 100.00,
+    ]);
+
+    $response->assertSessionHasErrors(['id_producto']);
+    expect($producto->fresh()->stock)->toBe(10);
+    expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(0);
+});
+
+test('el repositorio tambien rechaza un producto desactivado al editar un detalle', function () {
+    $producto = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto Desactivado',
+        'descripcion' => 'Producto para prueba de seguridad',
+        'precio' => 100.00,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+
+    $factura = Facturas::create([
+        'id_cliente' => $this->cliente->id,
+        'id_usuario' => $this->usuario->id,
+        'fecha' => '2026-11-16',
+        'subtotal' => 0,
+        'iva' => 0,
+        'total' => 0,
+        'estado' => 'pendiente',
+    ]);
+
+    $detalle = app(DetalleFacturaRepository::class)->guardar([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 100.00,
+    ], $this->tienda->id);
+
+    $producto->update(['estado' => false]);
+
+    try {
+        app(DetalleFacturaRepository::class)->actualizar($detalle->id, [
+            'id_factura' => $factura->id,
+            'id_producto' => $producto->id,
+            'cantidad' => 1,
+            'precio_unitario' => 100.00,
+        ], $this->tienda->id);
+
+        $this->fail('El repositorio debe rechazar productos inactivos.');
+    } catch (ValidationException $exception) {
+        expect($exception->errors())->toHaveKey('id_producto');
+    }
+
+    expect($producto->fresh()->stock)->toBe(9);
 });

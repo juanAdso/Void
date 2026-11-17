@@ -1,6 +1,4 @@
-{{--
-    Estados para listados y tablas.
---}}
+
 @props(['status'])
 @php
     $map = [

@@ -68,19 +68,16 @@ test('un administrador no puede editar ni manipular empleados de otra tienda', f
     $empB = User::factory()->create(['id_tienda' => $tiendaB->id, 'rol' => 'empleado', 'estado' => true]);
     $empB->assignRole('empleado');
 
-    // Intentar ver formulario de edición de empleado ajeno
     $this->actingAs($adminA)->get(route('empleados.edit', $empB->id))->assertNotFound();
 
-    // Intentar actualizar empleado ajeno
     $this->actingAs($adminA)->put(route('empleados.update', $empB->id), [
         'nombre' => 'Hackeado',
         'apellido' => 'Modificado',
         'documento' => $empB->documento,
         'correo' => $empB->correo,
         'estado' => 1,
-    ])->assertNotFound();
+    ])->assertForbidden();
 
-    // Intentar eliminar empleado ajeno
     $this->actingAs($adminA)->delete(route('empleados.destroy', $empB->id))->assertNotFound();
 });
 

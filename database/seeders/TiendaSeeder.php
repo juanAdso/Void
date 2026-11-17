@@ -9,8 +9,7 @@ class TiendaSeeder extends Seeder
 {
     public function run(): void
     {
-        // Los datos de exposición se crean en desarrollo y nunca se insertan en producción
-        // salvo que el responsable habilite VOID_DEMO_DATA explícitamente.
+
         if (app()->environment('production') && ! (bool) env('VOID_DEMO_DATA', false)) {
             return;
         }

@@ -13,17 +13,15 @@ use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\PublicPortalController;
 use App\Http\Controllers\RegistroTiendaController;
 use App\Http\Controllers\ReportesController;
-use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\SuperadministradorController;
+use App\Http\Controllers\TiendaController;
 use Illuminate\Support\Facades\Route;
 
-// Portal público: Directorio de tiendas, catálogo independiente por tienda, ficha de tienda y de producto
 Route::get('/', [PublicPortalController::class, 'index'])->name('inicio');
 Route::get('/catalogo', [PublicPortalController::class, 'catalogo'])->name('catalogo');
 Route::get('/tienda/{id}', [PublicPortalController::class, 'tienda'])->name('portal.tienda');
 Route::get('/producto/{id}', [PublicPortalController::class, 'producto'])->name('portal.producto');
 
-// Registro público de tiendas
 Route::get('/registro-tienda', [RegistroTiendaController::class, 'create'])->name('registro.tienda');
 Route::post('/registro-tienda', [RegistroTiendaController::class, 'store'])->name('registro.tienda.store');
 
@@ -31,7 +29,6 @@ Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
-// Centro de administración global de VOID: exclusivo del superadministrador.
 Route::prefix('superadministrador')->name('superadmin.')->middleware(['auth', 'superadministrador'])->group(function () {
     Route::get('/', [SuperadministradorController::class, 'dashboard'])->name('dashboard');
     Route::get('/empresas', [SuperadministradorController::class, 'empresas'])->name('empresas.index');
@@ -41,24 +38,21 @@ Route::prefix('superadministrador')->name('superadmin.')->middleware(['auth', 's
     Route::patch('/empresas/{tienda}/usuarios/{usuario}/estado', [SuperadministradorController::class, 'cambiarEstadoUsuario'])->name('empresas.usuarios.estado');
 });
 
-// Rutas de recuperación de contraseña
 Route::get('/password/reset', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email', [PasswordResetController::class, 'sendResetCode'])->name('password.email');
 Route::get('/password/code', [PasswordResetController::class, 'showResetForm'])->name('password.code');
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 
 Route::middleware('auth')->group(function () {
-    // Búsqueda global: cada resultado respeta los permisos y la tienda del usuario
+
     Route::get('/buscar', [BusquedaController::class, 'index'])
         ->middleware('modulo')
         ->name('busqueda.global');
 
-    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('modulo:ver dashboard')
         ->name('dashboard.index');
 
-    // Categorías
     Route::get('/categoria', [CategoriaController::class, 'index'])
         ->middleware('modulo:ver categorias')
         ->name('categoria.index');
@@ -78,7 +72,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar categorias')
         ->name('categoria.destroy');
 
-    // Clientes
     Route::get('/cliente', [ClienteController::class, 'index'])
         ->middleware('modulo:ver clientes')
         ->name('cliente.index');
@@ -98,7 +91,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar clientes')
         ->name('cliente.destroy');
 
-    // Facturas
     Route::get('/facturas', [FacturasController::class, 'index'])
         ->middleware('modulo:ver facturas')
         ->name('facturas.index');
@@ -118,7 +110,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar facturas')
         ->name('facturas.destroy');
 
-    // Productos
     Route::get('/productos', [ProductosController::class, 'index'])
         ->middleware('modulo:ver productos')
         ->name('productos.index');
@@ -138,7 +129,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar productos')
         ->name('productos.destroy');
 
-    // Detalle de Facturas
     Route::get('/detalle_facturas', [DetalleFacturaController::class, 'index'])
         ->middleware('modulo:ver detallefacturas')
         ->name('detalle_facturas.index');
@@ -158,12 +148,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar detallefacturas')
         ->name('detalle_facturas.destroy');
 
-    // Inventario y Reportes
     Route::get('/reportes', [ReportesController::class, 'index'])
         ->middleware('modulo:gestionar seguridad')
         ->name('reportes.index');
 
-    // Tiendas
     Route::get('/tiendas', [TiendaController::class, 'index'])
         ->middleware('modulo:ver tiendas')
         ->name('tiendas.index');
@@ -186,7 +174,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar tiendas')
         ->name('tiendas.destroy');
 
-    // Gestión de Empleados (exclusivo administradores)
     Route::get('/empleados', [EmpleadoController::class, 'index'])
         ->middleware('modulo:gestionar seguridad')
         ->name('empleados.index');

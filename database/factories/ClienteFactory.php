@@ -6,9 +6,6 @@ use App\Models\Cliente;
 use App\Models\Tienda;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Cliente>
- */
 class ClienteFactory extends Factory
 {
     protected $model = Cliente::class;

@@ -1,88 +1,143 @@
-# VOID — Catálogo e inventario de tiendas
+# VOID
 
-## Preparar el proyecto local
+VOID (Virtual Organization Inventory and Design) es una aplicación web multiempresa para publicar catálogos y administrar productos, inventario, clientes, empleados, facturas y reportes.
 
-Requisitos: PHP 8.3 o superior, Composer, Node.js y una base de datos configurada en `.env`.
+## Requisitos
 
-1. Instala las dependencias de PHP: `composer install`.
-2. Crea el archivo de entorno: en PowerShell ejecuta `Copy-Item .env.example .env` si aún no existe.
-3. Genera la clave: `php artisan key:generate`.
-4. Configura la conexión de base de datos en `.env` y crea la base de datos si utilizas MySQL.
-5. Ejecuta las migraciones: `php artisan migrate`.
-6. Crea los datos de demostración y el usuario inicial: `php artisan db:seed`.
-7. Instala y compila los recursos: `npm install` y luego `npm run build`.
-8. Inicia Laravel: `php artisan serve`.
+- PHP 8.4.1 o superior y extensiones requeridas por Laravel.
+- Composer.
+- Node.js 22 o superior y npm.
+- MySQL/MariaDB o SQLite.
+- Una cuenta de correo SMTP para enviar códigos de recuperación.
 
-No ejecutes `php artisan migrate:fresh --seed` sobre una base de datos con información que necesites conservar: ese comando elimina las tablas y vuelve a crearlas.
+## Instalación local
 
-## Acceso de demostración
+1. Clona el repositorio e instala las dependencias:
 
-Después de ejecutar los seeders, puedes entrar al área administrativa con:
+   ```bash
+   composer install
+   npm ci
+   ```
 
-- Correo: `test@example.com`
-- Contraseña: `password`
+2. Crea el archivo de entorno. En PowerShell:
 
-Esta cuenta es solo para desarrollo local; cambia la contraseña y crea cuentas propias antes de desplegar el sistema.
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-La página pública está en `/`; el área administrativa solicita autenticación.
+3. Genera la clave de la aplicación:
 
----
+   ```bash
+   php artisan key:generate
+   ```
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+4. Configura la base de datos en `.env`. El ejemplo utiliza MySQL con una base de datos llamada `void`; créala antes de migrar. También puedes configurar SQLite cambiando `DB_CONNECTION` y `DB_DATABASE`.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+5. Ejecuta las migraciones y los seeders:
 
-## About Laravel
+   ```bash
+   php artisan migrate --seed
+   ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+6. Configura el correo SMTP como se explica en la sección correspondiente y compila los recursos:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+   ```bash
+   npm run build
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+7. Inicia el servidor local:
 
-## Learning Laravel
+   ```bash
+   php artisan serve
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+No ejecutes `php artisan migrate:fresh --seed` en una base de datos que contenga información que necesites conservar: elimina todas las tablas antes de recrearlas.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Funciones principales
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Portal público con directorio de tiendas, catálogos independientes, perfiles de tienda y fichas de producto.
+- Registro público de tiendas con creación de su cuenta administradora.
+- Paneles diferenciados para administrador y empleado, y panel global de superadministración.
+- Aislamiento de datos por tienda mediante `id_tienda`, validaciones, políticas y middleware.
+- Gestión de categorías, productos, clientes y empleados.
+- Carga y administración de imágenes y logos.
+- Inventario con movimientos auditables, ajustes manuales, entradas, ventas, devoluciones y anulaciones.
+- Facturación con detalles, control de existencias y cálculo del IVA.
+- Reportes comerciales e inventario; el acceso a los reportes completos corresponde al administrador.
+- Búsqueda global con resultados limitados por permisos y tienda.
+- Recuperación de contraseña mediante código de seis dígitos con caducidad y límites de intentos.
 
-## Agentic Development
+## Roles
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Superadministrador:** administra globalmente las empresas y las cuentas desde VOID.
+- **Administrador:** gestiona la información, los empleados, inventario, facturación y reportes de su tienda.
+- **Empleado:** consulta los módulos permitidos y registra operaciones de venta, sin acceso a la administración de seguridad ni a los reportes generales.
+
+Los clientes son registros comerciales asociados a una tienda, no roles de acceso.
+
+## Cuentas de demostración
+
+En entornos distintos de producción, los seeders crean dos tiendas de ejemplo y estas cuentas:
+
+| Rol | Correo |
+|---|---|
+| Administrador de Horizonte | `admin.horizonte@void.test` |
+| Empleado de Horizonte | `empleado.horizonte@void.test` |
+| Administrador de Nova | `admin.nova@void.test` |
+| Empleado de Nova | `empleado.nova@void.test` |
+
+La contraseña predeterminada de demostración es `VoidDemo2026!`. Puede modificarse mediante `VOID_DEMO_PASSWORD`. Estas credenciales son exclusivamente para desarrollo local; no habilites datos de demostración ni conserves estas contraseñas en producción.
+
+Para crear la cuenta global, configura `VOID_SUPERADMIN_NOMBRE`, `VOID_SUPERADMIN_APELLIDO`, `VOID_SUPERADMIN_DOCUMENTO`, `VOID_SUPERADMIN_CORREO` y `VOID_SUPERADMIN_PASSWORD` en `.env`. La contraseña debe tener al menos 12 caracteres. Después ejecuta:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php artisan db:seed --class=SuperadministradorSeeder
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Correo de recuperación
 
-## Contributing
+La aplicación usa SMTP para enviar códigos. El archivo `.env.example` incluye valores de referencia para Gmail; configura credenciales propias en el archivo local `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `MAIL_MAILER=smtp`
+- `MAIL_HOST=smtp.gmail.com`
+- `MAIL_PORT=587`
+- `MAIL_USERNAME`: dirección remitente.
+- `MAIL_PASSWORD`: contraseña de aplicación SMTP.
+- `MAIL_FROM_ADDRESS`: dirección remitente autorizada.
+- `MAIL_FROM_NAME=VOID`
 
-## Code of Conduct
+Para Gmail debes utilizar una contraseña de aplicación, no la contraseña normal de la cuenta. El puerto 587 utiliza STARTTLS. Como alternativa, puedes configurar `MAIL_SCHEME=smtps` y `MAIL_PORT=465`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Después de cambiar el entorno ejecuta:
 
-## Security Vulnerabilities
+```bash
+php artisan optimize:clear
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+No compartas ni subas el archivo `.env`, contraseñas de aplicación, claves ni credenciales SMTP. El transporte `log` sirve para desarrollo y no entrega correos a las bandejas de entrada.
 
-## License
+## Pruebas y calidad
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Ejecuta la suite completa:
+
+```bash
+php artisan test
+```
+
+Formatea los archivos PHP con Laravel Pint:
+
+```bash
+composer format
+```
+
+Comprueba el formato sin modificar archivos:
+
+```bash
+composer format:check
+```
+
+Compila los recursos del frontend:
+
+```bash
+npm run build
+```

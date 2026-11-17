@@ -78,8 +78,7 @@ return new class extends Migration
                     ->exists();
 
                 foreach ($tiendaIds as $index => $tiendaId) {
-                    // Si existen facturas sin tienda, la fila original se conserva sin asignar
-                    // y se crea una copia para cada comercio identificable.
+
                     if ($index === 0 && ! $tieneFacturasSinTienda) {
                         DB::table('clientes')
                             ->where('id', $cliente->id)

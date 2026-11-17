@@ -1,6 +1,4 @@
-{{--
-    Alertas de estado de VOID.
---}}
+
 @props(['type' => 'info'])
 @php
     $map = [

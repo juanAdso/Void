@@ -4,7 +4,7 @@
 
 @section('content')
 
-    {{-- Presentación principal --}}
+
     <section class="bg-neutral-950 text-amber-50">
         <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 md:grid-cols-2 md:py-24 lg:px-8">
 
@@ -69,7 +69,7 @@
         </div>
     </section>
 
-    {{-- Directorio de tiendas disponibles --}}
+
     <section id="tiendas" class="mx-auto max-w-7xl scroll-mt-24 px-5 py-14 lg:px-8">
 
         <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">

@@ -5,11 +5,7 @@ namespace Database\Factories;
 use App\Models\Categoria;
 use App\Models\Tienda;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RuntimeException;
 
-/**
- * @extends Factory<Categoria>
- */
 class CategoriaFactory extends Factory
 {
     protected $model = Categoria::class;

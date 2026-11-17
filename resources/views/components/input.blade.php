@@ -1,6 +1,4 @@
-{{--
-    Campo reutilizable de formulario.
---}}
+
 @props(['name', 'label' => null, 'type' => 'text', 'value' => null, 'hint' => null])
 <div>
     @if ($label)

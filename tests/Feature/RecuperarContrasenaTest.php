@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Tests\TestCase;
 
 class RecuperarContrasenaTest extends TestCase
@@ -44,7 +45,7 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertSessionHas('status');
 
         Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($user) {
-            $data = Cache::get('password_reset_code_' . $mail->codigo);
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
 
             return $mail->hasTo('admin@void.test')
                 && $mail->nombreDestinatario === $user->nombre
@@ -77,7 +78,7 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertSessionHas('status');
 
         Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($empleado) {
-            $data = Cache::get('password_reset_code_' . $mail->codigo);
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
 
             return $mail->hasTo('empleado@void.test')
                 && $mail->nombreDestinatario === $empleado->nombre
@@ -104,7 +105,7 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertSessionHas('status');
 
         Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($superadministrador) {
-            $data = Cache::get('password_reset_code_' . $mail->codigo);
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
 
             return $mail->hasTo('superadmin@void.test')
                 && $mail->nombreDestinatario === $superadministrador->nombre
@@ -137,7 +138,7 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertSessionHas('status');
 
         Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($admin) {
-            $data = Cache::get('password_reset_code_' . $mail->codigo);
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
 
             return $mail->hasTo('contacto@tiendacentral.com')
                 && $mail->nombreDestinatario === 'Tienda Central'
@@ -182,7 +183,7 @@ class RecuperarContrasenaTest extends TestCase
         $response->assertRedirect(route('password.code'));
 
         Mail::assertSent(CodigoRecuperacionMail::class, function (CodigoRecuperacionMail $mail) use ($admin1, $admin2) {
-            $data = Cache::get('password_reset_code_' . $mail->codigo);
+            $data = Cache::get('password_reset_code_'.$mail->codigo);
 
             return $mail->hasTo('contacto@tiendados.com')
                 && $data
@@ -265,7 +266,7 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $codigo = '654321';
-        Cache::put('password_reset_code_' . $codigo, [
+        Cache::put('password_reset_code_'.$codigo, [
             'user_id' => $user->id,
             'correo' => $user->correo,
         ], now()->subMinutes(1));
@@ -287,7 +288,7 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $codigo = '112233';
-        Cache::put('password_reset_code_' . $codigo, [
+        Cache::put('password_reset_code_'.$codigo, [
             'user_id' => $user->id,
             'correo' => $user->correo,
         ], now()->addMinutes(15));
@@ -326,7 +327,7 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $codigo = '123456';
-        Cache::put('password_reset_code_' . $codigo, [
+        Cache::put('password_reset_code_'.$codigo, [
             'user_id' => $user->id,
             'correo' => $user->correo,
         ], now()->addMinutes(15));
@@ -342,7 +343,7 @@ class RecuperarContrasenaTest extends TestCase
 
         $user->refresh();
         $this->assertTrue(Hash::check('nuevaPassword123', $user->password));
-        $this->assertNull(Cache::get('password_reset_code_' . $codigo));
+        $this->assertNull(Cache::get('password_reset_code_'.$codigo));
     }
 
     public function test_usuario_inactivo_no_puede_restablecer_contrasena_con_un_codigo_emitido_previamente(): void
@@ -352,7 +353,7 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $codigo = '987654';
-        Cache::put('password_reset_code_' . $codigo, [
+        Cache::put('password_reset_code_'.$codigo, [
             'user_id' => $user->id,
             'correo' => $user->correo,
         ], now()->addMinutes(15));
@@ -364,6 +365,31 @@ class RecuperarContrasenaTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['codigo']);
-        $this->assertNull(Cache::get('password_reset_code_' . $codigo));
+        $this->assertNull(Cache::get('password_reset_code_'.$codigo));
+    }
+
+    public function test_limita_los_intentos_de_verificacion_de_codigos(): void
+    {
+        $throttleKey = 'password-reset-verify:127.0.0.1';
+        RateLimiter::clear($throttleKey);
+
+        for ($intento = 0; $intento < 10; $intento++) {
+            $this->post(route('password.update'), [
+                'codigo' => str_pad((string) (700000 + $intento), 6, '0', STR_PAD_LEFT),
+                'password' => 'nuevaPassword123',
+                'password_confirmation' => 'nuevaPassword123',
+            ])->assertSessionHasErrors(['codigo']);
+        }
+
+        $response = $this->post(route('password.update'), [
+            'codigo' => '800000',
+            'password' => 'nuevaPassword123',
+            'password_confirmation' => 'nuevaPassword123',
+        ]);
+
+        $response->assertSessionHasErrors(['codigo']);
+        $this->assertStringContainsString('Demasiados intentos', session('errors')->first('codigo'));
+
+        RateLimiter::clear($throttleKey);
     }
 }

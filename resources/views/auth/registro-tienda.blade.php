@@ -9,7 +9,7 @@
 <body class="min-h-screen bg-neutral-950 px-4 py-10 text-slate-100 flex items-center justify-center">
 
     <main class="w-full max-w-2xl rounded-2xl bg-white p-8 text-slate-900 shadow-2xl">
-        {{-- Logotipo y Encabezado --}}
+
         <div class="text-center">
             <a href="{{ route('inicio') }}" class="text-3xl font-extrabold tracking-widest text-slate-900">
                 V<span class="text-blue-600">Ø</span>ID
@@ -18,7 +18,7 @@
             <p class="mt-1 text-sm text-slate-500">Comienza a administrar tus productos y publica tu catálogo gratis.</p>
         </div>
 
-        {{-- Mostrar errores si algo falla (ej. correo ya registrado) --}}
+
         @if ($errors->any())
             <div class="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
                 <ul class="list-disc pl-5 space-y-1">
@@ -29,11 +29,11 @@
             </div>
         @endif
 
-        {{-- Formulario que envía los datos al RegistroTiendaController --}}
+
         <form method="POST" action="{{ route('registro.tienda.store') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
             @csrf
 
-            {{-- SECCIÓN 1: DATOS DE LA TIENDA --}}
+
             <div class="border-b border-slate-200 pb-5">
                 <h2 class="text-lg font-semibold text-blue-600">1. Información de la Tienda</h2>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            {{-- SECCIÓN 2: DATOS DEL PROPIETARIO (ADMINISTRADOR) --}}
+
             <div>
                 <h2 class="text-lg font-semibold text-blue-600">2. Cuenta del Administrador</h2>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
