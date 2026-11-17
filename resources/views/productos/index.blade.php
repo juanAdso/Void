@@ -2,7 +2,9 @@
 @section('page-title', 'Gestión de productos')
 @section('title', 'Productos')
 @section('content')
-    @php($mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']))
+    @php(
+    $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos'])
+)
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -70,11 +72,12 @@
                                         <td class="border px-4 py-2">
                                             <div class="flex justify-center gap-2">
                                                 @can('editar productos')
-                                                <a href="{{ route('productos.edit', $producto->id) }}"
-                                                    class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
-                                            @endcan
+                                                    <a href="{{ route('productos.edit', $producto->id) }}"
+                                                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                                @endcan
                                                 @can('eliminar productos')
-                                                    <form action="{{ route('productos.destroy', $producto->id) }}" method="POST"
+                                                    <form action="{{ route('productos.destroy', $producto->id) }}"
+                                                        method="POST"
                                                         onsubmit="return confirm('¿Eliminar el producto {{ addslashes($producto->nombre) }}? Si tiene facturas o movimientos asociados, no se eliminará y VOID te mostrará los registros relacionados.');">
                                                         @csrf
                                                         @method('DELETE')
