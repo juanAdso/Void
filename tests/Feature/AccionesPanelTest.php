@@ -224,8 +224,11 @@ test('la consulta de factura integra los detalles y las acciones del administrad
 
     expect($this->admin->tienePermisoActivo('eliminar detallefacturas'))->toBeTrue();
 
-    $this->get(route('facturas.show', $factura->id))
-        ->assertOk()
+    $response = $this->get(route('facturas.show', $factura->id))->assertOk();
+
+    expect($response->original->getData()['puedeEliminarDetalle'])->toBeTrue();
+
+    $response
         ->assertSee('Productos de la factura')
         ->assertSee('Producto visible en factura')
         ->assertSee('Editar producto')
