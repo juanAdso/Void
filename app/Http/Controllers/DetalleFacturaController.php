@@ -27,8 +27,8 @@ class DetalleFacturaController extends Controller
     public function create()
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-        $productos = $this->productoService->listarTodo($tiendaId);
-        $facturas = $this->facturaservice->listarTodo($tiendaId);
+        $productos = $this->productoService->listarTodo($tiendaId)->where('estado', true)->values();
+        $facturas = $this->facturaservice->listarTodo($tiendaId)->where('estado', 'pendiente')->values();
 
         return view('detalle_facturas.create', compact('productos', 'facturas'));
     }
@@ -45,8 +45,11 @@ class DetalleFacturaController extends Controller
     {
         $tiendaId = (int) auth()->user()->id_tienda;
         $detalle_factura = $this->detallefacturaservice->buscarPorId($id, $tiendaId);
-        $productos = $this->productoService->listarTodo($tiendaId);
-        $facturas = $this->facturaservice->listarTodo($tiendaId);
+
+        abort_unless($detalle_factura->factura?->estado === 'pendiente', 404);
+
+        $productos = $this->productoService->listarTodo($tiendaId)->where('estado', true)->values();
+        $facturas = $this->facturaservice->listarTodo($tiendaId)->where('estado', 'pendiente')->values();
 
         return view('detalle_facturas.edit', compact('detalle_factura', 'productos', 'facturas'));
     }

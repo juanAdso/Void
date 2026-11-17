@@ -43,18 +43,24 @@
                                 <td class="border px-4 py-2">{{ $detalle_factura->subtotal }}</td>
                                 <td class="border px-4 py-2">
                                     <div class="flex min-w-[180px] flex-wrap items-center justify-center gap-2">
-                                        @can('editar detallefacturas')
-                                            <a href="{{ route('detalle_facturas.edit', $detalle_factura->id) }}"
-                                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
-                                        @endcan
-                                        @can('eliminar detallefacturas')
-                                            <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id) }}"
-                                                method="post" class="inline-block"
-                                                onsubmit="return confirm('¿Eliminar este detalle de factura?')">@csrf
-                                                @method('DELETE')<button type="submit"
-                                                    class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
-                                            </form>
-                                        @endcan
+                                        @if ($detalle_factura->factura?->estado === 'pendiente')
+                                            @can('editar detallefacturas')
+                                                <a href="{{ route('detalle_facturas.edit', $detalle_factura->id) }}"
+                                                    class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                            @endcan
+                                            @can('eliminar detallefacturas')
+                                                <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id) }}"
+                                                    method="post" class="inline-block"
+                                                    onsubmit="return confirm('¿Eliminar este detalle de factura?')">@csrf
+                                                    @method('DELETE')<button type="submit"
+                                                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
+                                                </form>
+                                            @endcan
+                                        @else
+                                            <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">
+                                                Factura {{ $detalle_factura->factura?->estado ?? 'no disponible' }}
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

@@ -45,6 +45,9 @@ class FacturasController extends Controller
     {
         $tiendaId = (int) auth()->user()->id_tienda;
         $facturas = $this->facturasService->buscarPorId($id, $tiendaId);
+
+        abort_if($facturas->estado === 'anulada', 404);
+
         $clientes = $this->clientesService->listarTodo($tiendaId);
 
         return view('facturas.edit', compact('facturas', 'clientes'));

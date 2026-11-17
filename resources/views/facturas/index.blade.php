@@ -64,16 +64,25 @@
                                     <td class="border px-4 py-2">
                                         <div class="flex min-w-[180px] flex-wrap items-center justify-center gap-2">
                                             @can('editar facturas')
-                                                <a href="{{ route('facturas.edit', $factura->id) }}"
-                                                    class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                                @if ($factura->estado !== 'anulada')
+                                                    <a href="{{ route('facturas.edit', $factura->id) }}"
+                                                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                                @endif
                                             @endcan
                                             @can('eliminar facturas')
-                                                <form action="{{ route('facturas.destroy', $factura->id) }}" method="post"
-                                                    onsubmit="return confirm('¿Eliminar esta factura?')">@csrf
-                                                    @method('DELETE')<button type="submit"
-                                                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
-                                                </form>
+                                                @if ($factura->estado === 'pendiente' && $factura->detalle_factura->isEmpty())
+                                                    <form action="{{ route('facturas.destroy', $factura->id) }}" method="post"
+                                                        onsubmit="return confirm('¿Eliminar esta factura?')">@csrf
+                                                        @method('DELETE')<button type="submit"
+                                                            class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
+                                                    </form>
+                                                @endif
                                             @endcan
+                                            @if ($factura->estado === 'anulada')
+                                                <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">Factura anulada</span>
+                                            @elseif ($factura->estado === 'pagada' || $factura->detalle_factura->isNotEmpty())
+                                                <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">No eliminable</span>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

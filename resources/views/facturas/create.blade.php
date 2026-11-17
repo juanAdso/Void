@@ -37,9 +37,7 @@
                 <div class="mb-5">
                     <label for="estado" class="mb-2 block font-semibold">Estado</label>
                     <select id="estado" name="estado" required class="w-full rounded border px-3 py-2">
-                        <option value="pendiente" @selected(old('estado', 'pendiente') === 'pendiente')>Pendiente</option>
-                        <option value="pagada" @selected(old('estado') === 'pagada')>Pagada</option>
-                        <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
+                        <option value="pendiente" selected>Pendiente</option>
                     </select>
                 </div>
                 <p class="mb-5 text-sm text-gray-500">El subtotal, el IVA y el total se calculan automáticamente al agregar

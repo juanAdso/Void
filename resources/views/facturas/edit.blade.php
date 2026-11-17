@@ -20,27 +20,52 @@
             <form action="{{ route('facturas.update', $facturas->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="mb-5">
-                    <label for="id_cliente" class="mb-2 block font-semibold">Cliente</label>
-                    <select id="id_cliente" name="id_cliente" required class="w-full rounded border px-3 py-2">
-                        @foreach ($clientes as $cliente)
-                            <option value="{{ $cliente->id }}" @selected(old('id_cliente', $facturas->id_cliente) == $cliente->id)>{{ $cliente->nombre }}
-                                {{ $cliente->apellido }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-5">
-                    <label for="fecha" class="mb-2 block font-semibold">Fecha</label>
-                    <input id="fecha" type="date" name="fecha"
-                        value="{{ old('fecha', $facturas->fecha?->format('Y-m-d')) }}" required
-                        class="w-full rounded border px-3 py-2">
-                </div>
+                @if ($facturas->estado === 'pagada')
+                    <div class="mb-5">
+                        <label class="mb-2 block font-semibold">Cliente</label>
+                        <p class="rounded border border-neutral-700 bg-neutral-900 px-3 py-2 text-neutral-200">
+                            {{ $facturas->cliente?->nombre }} {{ $facturas->cliente?->apellido }}
+                        </p>
+                        <input type="hidden" name="id_cliente" value="{{ $facturas->id_cliente }}">
+                    </div>
+                    <div class="mb-5">
+                        <label class="mb-2 block font-semibold">Fecha</label>
+                        <p class="rounded border border-neutral-700 bg-neutral-900 px-3 py-2 text-neutral-200">
+                            {{ $facturas->fecha?->format('d/m/Y') }}
+                        </p>
+                        <input type="hidden" name="fecha" value="{{ $facturas->fecha?->format('Y-m-d') }}">
+                    </div>
+                    <p class="mb-5 text-sm text-amber-300">
+                        Las facturas pagadas conservan su cliente y fecha. Puedes mantener el pago o anular la factura.
+                    </p>
+                @else
+                    <div class="mb-5">
+                        <label for="id_cliente" class="mb-2 block font-semibold">Cliente</label>
+                        <select id="id_cliente" name="id_cliente" required class="w-full rounded border px-3 py-2">
+                            @foreach ($clientes as $cliente)
+                                <option value="{{ $cliente->id }}" @selected(old('id_cliente', $facturas->id_cliente) == $cliente->id)>{{ $cliente->nombre }}
+                                    {{ $cliente->apellido }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-5">
+                        <label for="fecha" class="mb-2 block font-semibold">Fecha</label>
+                        <input id="fecha" type="date" name="fecha"
+                            value="{{ old('fecha', $facturas->fecha?->format('Y-m-d')) }}" required
+                            class="w-full rounded border px-3 py-2">
+                    </div>
+                @endif
                 <div class="mb-5">
                     <label for="estado" class="mb-2 block font-semibold">Estado</label>
                     <select id="estado" name="estado" required class="w-full rounded border px-3 py-2">
-                        <option value="pendiente" @selected(old('estado', $facturas->estado) === 'pendiente')>Pendiente</option>
-                        <option value="pagada" @selected(old('estado', $facturas->estado) === 'pagada')>Pagada</option>
-                        <option value="anulada" @selected(old('estado', $facturas->estado) === 'anulada')>Anulada</option>
+                        @if ($facturas->estado === 'pagada')
+                            <option value="pagada" @selected(old('estado', $facturas->estado) === 'pagada')>Pagada</option>
+                            <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
+                        @else
+                            <option value="pendiente" @selected(old('estado', $facturas->estado) === 'pendiente')>Pendiente</option>
+                            <option value="pagada" @selected(old('estado') === 'pagada')>Pagada</option>
+                            <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
+                        @endif
                     </select>
                 </div>
                 <div class="mb-5 rounded bg-slate-50 p-4 text-sm text-slate-600">
