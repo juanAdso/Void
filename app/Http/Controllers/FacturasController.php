@@ -48,6 +48,11 @@ class FacturasController extends Controller
             ->with('success', 'Factura creada. Ahora puedes agregar sus productos desde esta misma pantalla.');
     }
 
+    /**
+     * Muestra la factura y determina las acciones permitidas según su estado y los permisos activos.
+     *
+     * Solo las facturas pendientes permiten modificar detalles o afectar las existencias.
+     */
     public function show(int $id)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
