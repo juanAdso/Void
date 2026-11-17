@@ -147,7 +147,7 @@
                                                         <button type="submit" class="w-full rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Guardar cambios</button>
                                                     </form>
                                                 </details>
-                                            @endcan
+                                            @endif
                                             @if ($puedeEliminarDetalle)
                                                 <form action="{{ route('detalle_facturas.destroy', $detalle->id) }}" method="POST" class="w-full"
                                                     onsubmit="return confirm('¿Retirar el producto de la factura #{{ $factura->id }}? Las unidades regresarán al inventario y se registrará el movimiento.');">
@@ -155,7 +155,7 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="w-full rounded-lg bg-red-600/15 px-3 py-2 text-xs font-semibold text-red-300 transition hover:bg-red-600/25">Eliminar producto</button>
                                                 </form>
-                                            @endcan
+                                            @endif
                                         </div>
                                     </td>
                                 @endif
@@ -230,7 +230,7 @@
                     @endif
                 </section>
             @endif
-        @endcan
+        @endif
 
         @can('eliminar facturas')
             @if ($factura->estado !== 'pendiente')
