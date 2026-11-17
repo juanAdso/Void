@@ -8,7 +8,8 @@
         <div>
             <p class="void-page-eyebrow">VØID / Administración</p>
             <h2 class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-neutral-50">Resumen de tu negocio</h2>
-            <p class="mt-1 text-sm text-neutral-400">Supervisa las cifras principales y accede rápidamente a la gestión de tu tienda.</p>
+            <p class="mt-1 text-sm text-neutral-400">Supervisa las cifras principales y accede rápidamente a la gestión de tu
+                tienda.</p>
         </div>
         <span class="inline-flex items-center gap-2 text-xs font-medium text-neutral-500">
             <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
@@ -39,19 +40,22 @@
         <div class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
             @can('ver productos')
                 <x-card title="Productos" subtitle="Gestión de inventario de la tienda">
-                    <p class="mb-5 text-sm text-neutral-400">Administra los productos, precios y disponibilidad de stock en tu tienda.</p>
+                    <p class="mb-5 text-sm text-neutral-400">Administra los productos, precios y disponibilidad de stock en tu
+                        tienda.</p>
                     <x-button variant="primary" href="{{ route('productos.index') }}">Ver productos</x-button>
                 </x-card>
             @endcan
             @can('ver facturas')
                 <x-card title="Facturación" subtitle="Historial y emisión de facturas">
-                    <p class="mb-5 text-sm text-neutral-400">Revisa las facturas registradas en el mes y emite nuevas ventas rápidamente.</p>
+                    <p class="mb-5 text-sm text-neutral-400">Revisa las facturas registradas en el mes y emite nuevas ventas
+                        rápidamente.</p>
                     <x-button variant="secondary" href="{{ route('facturas.index') }}">Ver facturas</x-button>
                 </x-card>
             @endcan
             @can('ver categorias')
                 <x-card title="Categorías" subtitle="Organización del catálogo">
-                    <p class="mb-5 text-sm text-neutral-400">Clasifica y organiza los productos para facilitar la búsqueda en el catálogo.</p>
+                    <p class="mb-5 text-sm text-neutral-400">Clasifica y organiza los productos para facilitar la búsqueda en el
+                        catálogo.</p>
                     <x-button variant="secondary" href="{{ route('categoria.index') }}">Ver categorías</x-button>
                 </x-card>
             @endcan
@@ -62,8 +66,10 @@
         <div class="mt-5">
             <x-card title="Reportes y movimientos de inventario" subtitle="Análisis de stock y rendimiento de ventas">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p class="max-w-2xl text-sm text-neutral-400">Consulta alertas de stock bajo, productos agotados, historial de movimientos y rendimiento por empleado de tu tienda.</p>
-                    <x-button variant="primary" href="{{ route('reportes.index') }}">Abrir reportes <span aria-hidden="true">→</span></x-button>
+                    <p class="max-w-2xl text-sm text-neutral-400">Consulta alertas de stock bajo, productos agotados, historial
+                        de movimientos y rendimiento por empleado de tu tienda.</p>
+                    <x-button variant="primary" href="{{ route('reportes.index') }}">Abrir reportes <span
+                            aria-hidden="true">→</span></x-button>
                 </div>
             </x-card>
         </div>
