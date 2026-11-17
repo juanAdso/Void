@@ -41,7 +41,7 @@ class UpdateDetalleFacturaRequest extends FormRequest
             'id_producto' => [
                 'required',
                 'integer',
-                Rule::exists('productos', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
+                Rule::exists('productos', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)->where('estado', true)),
             ],
             'cantidad' => ['required', 'integer', 'min:1'],
             'precio_unitario' => ['required', 'numeric', 'min:0'],

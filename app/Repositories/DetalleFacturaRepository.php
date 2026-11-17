@@ -44,6 +44,12 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
                 ->lockForUpdate()
                 ->findOrFail($datos['id_producto']);
 
+            if (! $producto->estado) {
+                throw ValidationException::withMessages([
+                    'id_producto' => 'No se pueden agregar productos inactivos a una factura.',
+                ]);
+            }
+
             $cantidad = (int) $datos['cantidad'];
 
             if ($producto->stock < $cantidad) {
@@ -193,6 +199,12 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             if (! $productoAnterior || ! $productoNuevo) {
                 throw ValidationException::withMessages([
                     'id_producto' => 'Los productos deben pertenecer a tu tienda.',
+                ]);
+            }
+
+            if (! $productoNuevo->estado) {
+                throw ValidationException::withMessages([
+                    'id_producto' => 'No se pueden agregar productos inactivos a una factura.',
                 ]);
             }
 

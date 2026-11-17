@@ -160,7 +160,7 @@ Route::middleware('auth')->group(function () {
 
     // Inventario y Reportes
     Route::get('/reportes', [ReportesController::class, 'index'])
-        ->middleware('modulo:ver dashboard')
+        ->middleware('modulo:gestionar seguridad')
         ->name('reportes.index');
 
     // Tiendas

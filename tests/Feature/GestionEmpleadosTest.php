@@ -69,7 +69,7 @@ test('un administrador no puede editar ni manipular empleados de otra tienda', f
     $empB->assignRole('empleado');
 
     // Intentar ver formulario de edición de empleado ajeno
-    $this->actingAs($adminA)->get(route('empleados.edit', $empB->id))->assertForbidden();
+    $this->actingAs($adminA)->get(route('empleados.edit', $empB->id))->assertNotFound();
 
     // Intentar actualizar empleado ajeno
     $this->actingAs($adminA)->put(route('empleados.update', $empB->id), [
@@ -78,10 +78,10 @@ test('un administrador no puede editar ni manipular empleados de otra tienda', f
         'documento' => $empB->documento,
         'correo' => $empB->correo,
         'estado' => 1,
-    ])->assertForbidden();
+    ])->assertNotFound();
 
     // Intentar eliminar empleado ajeno
-    $this->actingAs($adminA)->delete(route('empleados.destroy', $empB->id))->assertForbidden();
+    $this->actingAs($adminA)->delete(route('empleados.destroy', $empB->id))->assertNotFound();
 });
 
 test('un empleado no tiene permiso para acceder a la gestion de empleados', function () {

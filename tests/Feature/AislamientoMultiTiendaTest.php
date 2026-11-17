@@ -90,7 +90,7 @@ test('una tienda no puede editar productos ajenos manipulando el ID en la URL', 
         'id_categoria' => $categoria->id,
     ]);
 
-    $response->assertForbidden();
+    $response->assertNotFound();
     expect($productoB->fresh()->nombre)->toBe('Original B');
 });
 

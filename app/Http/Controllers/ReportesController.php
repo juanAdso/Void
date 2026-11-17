@@ -63,7 +63,7 @@ class ReportesController extends Controller
             ->join('usuarios', 'facturas.id_usuario', '=', 'usuarios.id')
             ->where('productos.id_tienda', $tiendaId)
             ->where('usuarios.id_tienda', $tiendaId)
-            ->where('facturas.estado', '!=', 'anulada')
+            ->where('facturas.estado', 'pagada')
             ->select(
                 'productos.id',
                 'productos.nombre',

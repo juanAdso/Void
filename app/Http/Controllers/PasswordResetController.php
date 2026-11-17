@@ -144,6 +144,18 @@ class PasswordResetController extends Controller
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
+        $verifyThrottleKey = 'password-reset-verify:'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($verifyThrottleKey, 10)) {
+            $seconds = RateLimiter::availableIn($verifyThrottleKey);
+
+            return back()->withErrors([
+                'codigo' => "Demasiados intentos de verificación. Intenta de nuevo en {$seconds} segundos.",
+            ])->withInput();
+        }
+
+        RateLimiter::hit($verifyThrottleKey, 300);
+
         $codigo = trim($request->input('codigo'));
         $cacheKey = 'password_reset_code_' . $codigo;
         $cacheData = Cache::get($cacheKey);
@@ -175,8 +187,8 @@ class PasswordResetController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        // Eliminar el código para impedir que vuelva a utilizarse.
         Cache::forget($cacheKey);
+        RateLimiter::clear($verifyThrottleKey);
 
         return redirect()->route('login')
             ->with('status', 'Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión.');

@@ -104,7 +104,8 @@ test('ejecutar seguridad seeder multiples veces no duplica roles ni permisos', f
 
     expect(Role::where('name', 'administrador')->count())->toBe(1);
     expect(Role::where('name', 'empleado')->count())->toBe(1);
-    expect(Role::count())->toBe(2);
+    expect(Role::where('name', 'superadministrador')->count())->toBe(1);
+    expect(Role::count())->toBe(3);
     expect(Permission::where('name', 'ver dashboard')->count())->toBe(1);
 });
 
@@ -117,13 +118,14 @@ test('el formulario de registro de tienda es accesible publicamente mediante la 
 
 test('el rol administrador no evita la comprobacion de permisos granulares', function () {
     $tienda = Tienda::factory()->create();
+    Role::findByName('administrador', 'web')->revokePermissionTo('ver clientes');
+
     $admin = User::factory()->create([
         'estado' => true,
         'rol' => 'administrador',
         'id_tienda' => $tienda->id,
     ]);
     $admin->assignRole('administrador');
-    $admin->revokePermissionTo('ver clientes');
 
     $this->actingAs($admin)->get(route('cliente.index'))->assertForbidden();
 });
