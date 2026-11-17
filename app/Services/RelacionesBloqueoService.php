@@ -80,7 +80,7 @@ class RelacionesBloqueoService
                 'detalle' => 'Fecha: '.($f->fecha?->format('d/m/Y') ?? 'Sin fecha').' · Estado: '.ucfirst((string) $f->estado).' · Total: $'.number_format((float) $f->total, 2, ',', '.'),
             ])->all();
 
-        return [$this->grupo('Facturas asociadas', 'El cliente tiene historial de facturación. Conserva su registro para mantener la trazabilidad de las ventas.', $total, $items, 'editar facturas', 'facturas.edit', 'ver facturas', 'facturas.index')];
+        return [$this->grupo('Facturas asociadas', 'El cliente tiene historial de facturación. Conserva su registro para mantener la trazabilidad de las ventas.', $total, $items, null, null, 'ver facturas', 'facturas.show')];
     }
 
     public function paraFactura(int $id, int $tiendaId): array
@@ -118,7 +118,7 @@ class RelacionesBloqueoService
                 'detalle' => 'Fecha: '.($f->fecha?->format('d/m/Y') ?? 'Sin fecha').' · Estado: '.ucfirst((string) $f->estado).' · Total: $'.number_format((float) $f->total, 2, ',', '.'),
             ])->all();
 
-        return [$this->grupo('Facturas emitidas por el empleado', 'El historial debe conservarse; por eso la cuenta se desactiva en lugar de eliminarse.', $total, $items, 'editar facturas', 'facturas.edit', 'ver facturas', 'facturas.index')];
+        return [$this->grupo('Facturas emitidas por el empleado', 'El historial debe conservarse; por eso la cuenta se desactiva en lugar de eliminarse.', $total, $items, null, null, 'ver facturas', 'facturas.show')];
     }
 
     public function flash(string $titulo, string $mensaje, array $grupos): void
@@ -149,8 +149,8 @@ class RelacionesBloqueoService
 
                 if ($puedeVer && $rutaVer) {
                     $item['acciones'][] = [
-                        'url' => route($rutaVer),
-                        'texto' => $rutaVer === 'facturas.show' || $rutaEditar === 'facturas.show' ? 'Consultar factura' : 'Abrir módulo',
+                        'url' => route($rutaVer, $rutaVer === 'facturas.show' ? $item['id'] : []),
+                        'texto' => $rutaVer === 'facturas.show' ? 'Consultar factura' : 'Abrir módulo',
                     ];
                 }
             }

@@ -75,7 +75,8 @@ class BusquedaService
                         'Estado: '.ucfirst((string) $factura->estado),
                         'Total: $'.number_format((float) $factura->total, 0, ',', '.'),
                     ])),
-                    'url' => route('facturas.show', $factura->id),                ])->all(),
+                    'url' => route('facturas.show', $factura->id),
+                ])->all(),
             ];
         }
 
