@@ -53,6 +53,9 @@ jobs:
       - name: Compilar frontend
         run: npm run build
 
+      - name: Preparar archivo de entorno de pruebas
+        run: touch .env
+
       - name: Ejecutar pruebas automatizadas
         run: php artisan test
 
