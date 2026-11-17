@@ -42,16 +42,15 @@
                             <x-badge status="inactivo" />
                         @endif
                     </td>
-                    <td class="px-5 py-3.5">
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('empleados.edit', $empleado->id) }}" class="text-sm font-medium text-primary-600 hover:text-primary-800">
+                    <td class="px-5 py-3.5"><div class="flex min-w-[180px] flex-wrap items-center gap-2">
+                            <a href="{{ route('empleados.edit', $empleado->id) }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">
                                 Editar
                             </a>
-                            <span class="text-slate-300">|</span>
+                            
                             <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que deseas eliminar o desactivar a este empleado?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-800">
+                                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">
                                     Eliminar
                                 </button>
                             </form>

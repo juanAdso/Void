@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('page-title', 'Gestión de tiendas')
 @section('title', 'Tiendas')
 
 @section('content')
@@ -81,12 +82,12 @@
                                         @endif
                                     </td>
                                     <td class="whitespace-nowrap px-5 py-4 text-right text-sm">
-                                        <div class="flex justify-end gap-2">
+                                        <div class="flex min-w-[180px] flex-wrap justify-end gap-2">
                                             <a href="{{ route('tiendas.show', $tienda->id) }}"
-                                                class="rounded-md border border-slate-200 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100">Ver</a>
+                                                class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 whitespace-nowrap">Ver</a>
 
                                             <a href="{{ route('tiendas.edit', $tienda->id) }}"
-                                                class="rounded-md bg-primary-600 px-3 py-1.5 font-medium text-white hover:bg-primary-700">Editar</a>
+                                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
 
                                         </div>
                                     </td>

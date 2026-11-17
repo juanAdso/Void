@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('page-title', 'Gestión de facturas')
 @section('title', 'Facturas')
 
 @section('content')
@@ -9,9 +10,9 @@
 
             <div class="bg-white shadow-lg rounded-lg p-6">
 
-                <div class="flex justify-between items-center mb-6">
+                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-                    <h2 class="text-3xl font-bold text-gray-700">
+                    <h2 class="text-2xl font-bold text-gray-800">
                         Listado de Facturas
                     </h2>
 
@@ -49,7 +50,7 @@
                     </div>
                 @endif
 
-                <table class="min-w-full border border-gray-300">
+                <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200"><table class="min-w-full border border-gray-300 min-w-[1050px] w-full">
 
                     <thead class="bg-gray-200">
 
@@ -103,23 +104,23 @@
                                     @endif
                                 </td>
                                 
-                                <td class="border px-4 py-2 flex justify-center gap-2">
+                                <td class="border px-4 py-2"><div class="flex min-w-[180px] flex-wrap items-center justify-center gap-2">
                                     <a
-                                        href="{{ route('facturas.edit', $factura->id) }}"class="bg-blue-400 hover:bg-blue-600 text-white rounded px-2 py-2">Editar</a>
-                                    <form action="{{ route('facturas.destroy', $factura->id) }}" method="post">
+                                        href="{{ route('facturas.edit', $factura->id) }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                    <form action="{{ route('facturas.destroy', $factura->id) }}" method="post" onsubmit="return confirm('¿Eliminar esta factura?')">
                                 
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-2">Eliminar</button>
-                                    </form>
+                                            class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
+                                    </form></div>
                                 </td>
                             </tr>
                         @endforeach
 
                     </tbody>
 
-                </table>
+                </table></div>
 
             </div>
 

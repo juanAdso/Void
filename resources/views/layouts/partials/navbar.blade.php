@@ -35,40 +35,6 @@
                 >
             </form>
 
-            {{-- Notificaciones --}}
-            <div x-data="{ open: false }" class="relative">
-                <button
-                    @click="open = !open"
-                    @click.outside="open = false"
-                    type="button"
-                    class="relative p-2 rounded-lg text-slate-300 hover:bg-neutral-800 hover:text-amber-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    aria-label="Ver notificaciones"
-                >
-                    <span class="w-5 h-5 block">@include('layouts.partials.icons', ['icon' => 'bell'])</span>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-neutral-950"></span>
-                </button>
-
-                <div
-                    x-show="open" x-cloak
-                    x-transition
-                    class="absolute right-0 mt-2 w-80 bg-neutral-900 rounded-xl shadow-lg border border-neutral-800 overflow-hidden"
-                >
-                    <div class="px-4 py-3 border-b border-neutral-800 font-semibold text-sm text-amber-50">
-                        Notificaciones
-                    </div>
-                    <ul class="max-h-72 overflow-y-auto divide-y divide-neutral-800">
-                        @forelse (($notifications ?? []) as $notification)
-                            <li class="px-4 py-3 text-sm hover:bg-neutral-800">
-                                <p class="text-slate-200">{{ $notification['message'] }}</p>
-                                <p class="text-xs text-slate-500 mt-1">{{ $notification['time'] }}</p>
-                            </li>
-                        @empty
-                            <li class="px-4 py-6 text-sm text-slate-400 text-center">Sin notificaciones nuevas</li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-
             {{-- Menú de usuario --}}
             <div x-data="{ open: false }" class="relative">
                 <button

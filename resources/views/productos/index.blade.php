@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
+@section('page-title', 'Gestión de productos')
 @section('title', 'Productos')
 
 @section('content')
-    <div class="container mx-auto mt-10">
-        <div class="rounded-lg bg-white p-6 shadow-lg">
-            <div class="mb-6 flex items-center justify-between">
+    <div class="mx-auto w-full max-w-full min-w-0">
+        <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h2 class="text-3xl font-bold text-gray-700">Listado de Productos</h2>
                 <a href="{{ route('productos.create') }}"
                     class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Nuevo Producto</a>
@@ -22,8 +23,8 @@
             @if ($productos->isEmpty())
                 <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
             @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-300">
+                <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="min-w-[1050px] w-full border-collapse">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>
@@ -56,14 +57,14 @@
                                     <td class="border px-4 py-2">
                                         <div class="flex justify-center gap-2">
                                             <a href="{{ route('productos.edit', $producto->id) }}"
-                                                class="rounded bg-blue-500 px-2 py-2 text-white hover:bg-blue-600">Editar</a>
+                                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
 
                                             <form action="{{ route('productos.destroy', $producto->id) }}" method="POST"
                                                 onsubmit="return confirm('¿Eliminar este producto?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                    class="rounded bg-red-500 px-2 py-2 text-white hover:bg-red-600">Eliminar</button>
+                                                    class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
                                             </form>
                                         </div>
                                     </td>

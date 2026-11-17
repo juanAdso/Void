@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
-@section('page-title', 'Dashboard')
+@section('title', 'Panel de control')
+@section('page-title', 'Panel de control')
 
 @section('content')
 
@@ -96,8 +96,8 @@
                         <td class="px-5 py-3.5 text-slate-500 whitespace-nowrap">{{ $item['date'] }}</td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('facturas.edit', $item['id']) }}" class="rounded-lg px-3 py-2 text-sm font-medium text-primary-600 hover:bg-slate-100">Editar factura</a>
-                                <a href="{{ route('detalle_facturas.index') }}" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Ver detalles</a>
+                                <a href="{{ route('facturas.edit', $item['id']) }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar factura</a>
+                                <a href="{{ route('detalle_facturas.index') }}" class="inline-flex items-center justify-center rounded-lg bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 whitespace-nowrap">Ver detalles</a>
                             </div>
                         </td>
                     </tr>

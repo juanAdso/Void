@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
+@section('page-title', 'Detalles de facturación')
 @section('title', 'Detalle Facturas')
 
 @section('content')
-<div class="container mx-auto mt-10">
+<div class="mx-auto w-full max-w-full min-w-0">
 
-    <div class="bg-white shadow-lg rounded-lg p-6">
+    <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
 
-        <div class="flex justify-between items-center mb-6">
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
             <h2 class="text-3xl font-bold text-neutral-950">
                 Detalle de Facturas
@@ -33,7 +34,7 @@
             </div>
         @endif
 
-        <table class="min-w-full border border-slate-200">
+        <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200"><table class="min-w-[900px] w-full border-collapse">
 
             <thead class="bg-slate-100">
 
@@ -82,24 +83,24 @@
                         <td class="border px-4 py-2">{{ $detalle_factura->precio_unitario }}</td>
                         <td class="border px-4 py-2">{{ $detalle_factura->subtotal }}</td>
 
-                        <td class="border px-4 py-2 flex justify-center gap-2">
+                        <td class="border px-4 py-2"><div class="flex min-w-[180px] flex-wrap items-center justify-center gap-2">
                             <a href="{{ route('detalle_facturas.edit', $detalle_factura->id) }}"
-                                class="bg-blue-600 hover:bg-blue-700 text-white rounded px-2 py-2">Editar</a>
+                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
 
                             <form action="{{ route('detalle_facturas.destroy', $detalle_factura->id) }}"
-                                method="post" class="inline-block">
+                                method="post" class="inline-block" onsubmit="return confirm('¿Eliminar este detalle de factura?')">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="bg-red-400 hover:bg-red-600 text-white rounded px-2 py-2">Eliminar</button>
-                            </form>
+                                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
+                            </form></div>
                         </td>
                     </tr>
                 @endforeach
 
             </tbody>
 
-        </table>
+        </table></div>
 
     </div>
 </div>
