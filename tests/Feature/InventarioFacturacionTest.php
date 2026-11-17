@@ -484,17 +484,12 @@ test('las transacciones revierten todas las operaciones en caso de fallo', funct
         'estado' => 'pendiente',
     ]);
 
-    try {
-        app(DetalleFacturaRepository::class)->guardar([
-            'id_factura' => $factura->id,
-            'id_producto' => $producto->id,
-            'cantidad' => 10,
-            'precio_unitario' => 200.00,
-        ], $this->tienda->id);
-        $this->fail('Debería fallar por stock insuficiente');
-    } catch (ValidationException $e) {
-
-    }
+    expect(fn () => app(DetalleFacturaRepository::class)->guardar([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 10,
+        'precio_unitario' => 200.00,
+    ], $this->tienda->id))->toThrow(ValidationException::class);
 
     expect($producto->fresh()->stock)->toBe(5);
     expect(DetalleFactura::count())->toBe(0);
