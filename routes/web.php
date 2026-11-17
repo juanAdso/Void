@@ -137,9 +137,11 @@ Route::middleware('auth')->group(function () {
         ->name('detalle_facturas.store');
     Route::match(['put', 'patch'], '/detalle_facturas/{detalle_factura}', [DetalleFacturaController::class, 'update'])
         ->middleware('modulo:editar detallefacturas')
+        ->whereNumber('detalle_factura')
         ->name('detalle_facturas.update');
     Route::delete('/detalle_facturas/{detalle_factura}', [DetalleFacturaController::class, 'destroy'])
         ->middleware('modulo:eliminar detallefacturas')
+        ->whereNumber('detalle_factura')
         ->name('detalle_facturas.destroy');
 
     Route::get('/reportes', [ReportesController::class, 'index'])
