@@ -218,6 +218,8 @@ test('la consulta de factura integra los detalles y las acciones del administrad
         'subtotal' => 25000,
     ]);
 
+    $this->admin->givePermissionTo(['editar detallefacturas', 'eliminar detallefacturas']);
+
     $this->get(route('facturas.show', $factura->id))
         ->assertOk()
         ->assertSee('Productos de la factura')

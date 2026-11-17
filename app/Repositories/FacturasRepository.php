@@ -10,6 +10,9 @@ use App\Repositories\Interfaces\FacturasRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Gestiona facturas y mantiene sincronizados sus efectos sobre el inventario.
+ */
 class FacturasRepository implements FacturasRepositoryInterface
 {
     public function listarTodo(int $tiendaId)
@@ -43,6 +46,9 @@ class FacturasRepository implements FacturasRepositoryInterface
         return Facturas::create($datos);
     }
 
+    /**
+     * Elimina una factura pendiente, devuelve existencias y registra los movimientos en una transacción.
+     */
     public function eliminar(int $id, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $tiendaId) {
@@ -116,6 +122,9 @@ class FacturasRepository implements FacturasRepositoryInterface
             ->findOrFail($id);
     }
 
+    /**
+     * Actualiza la factura y restituye el inventario cuando cambia al estado anulada.
+     */
     public function actualizar(int $id, array $datos, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $datos, $tiendaId) {

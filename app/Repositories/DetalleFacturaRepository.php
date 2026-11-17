@@ -10,6 +10,9 @@ use App\Repositories\Interfaces\DetalleFacturaRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Coordina los detalles de factura con las existencias y el historial de movimientos.
+ */
 class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
 {
     public function listarTodo(int $tiendaId)
@@ -25,6 +28,9 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             ->get();
     }
 
+    /**
+     * Registra un detalle, descuenta el stock y recalcula los totales en una transacción.
+     */
     public function guardar(array $datos, int $tiendaId)
     {
         return DB::transaction(function () use ($datos, $tiendaId) {
@@ -87,6 +93,9 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         });
     }
 
+    /**
+     * Retira un detalle, devuelve las unidades al inventario y conserva el movimiento de devolución.
+     */
     public function eliminar(int $id, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $tiendaId) {
@@ -144,6 +153,9 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
             ->findOrFail($id);
     }
 
+    /**
+     * Actualiza un detalle y sincroniza inventario y totales de las facturas involucradas.
+     */
     public function actualizar(int $id, array $datos, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $datos, $tiendaId) {
@@ -293,6 +305,9 @@ class DetalleFacturaRepository implements DetalleFacturaRepositoryInterface
         });
     }
 
+    /**
+     * Recalcula subtotal, IVA del 19 % y total usando los detalles vigentes.
+     */
     private function recalcularFactura(int $facturaId): void
     {
         $factura = Facturas::query()->lockForUpdate()->findOrFail($facturaId);

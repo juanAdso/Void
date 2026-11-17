@@ -7,6 +7,9 @@ use App\Models\Facturas;
 use App\Models\MovimientoInventario;
 use App\Models\Productos;
 
+/**
+ * Prepara las relaciones que impiden eliminar registros y las acciones permitidas para cada usuario.
+ */
 class RelacionesBloqueoService
 {
     private const LIMITE_ITEMS = 8;
@@ -24,6 +27,9 @@ class RelacionesBloqueoService
         return [$this->grupo('Productos asociados', 'Cambia la categoría de estos productos o revisa su estado antes de eliminar la categoría.', $total, $items, 'editar productos', 'productos.edit', 'ver productos', 'productos.index')];
     }
 
+    /**
+     * Reúne las facturas y movimientos asociados a un producto sin exponer datos de otras tiendas.
+     */
     public function paraProducto(int $id, int $tiendaId): array
     {
         $grupos = [];

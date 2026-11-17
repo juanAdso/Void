@@ -1,23 +1,27 @@
-name: Calidad y limpieza
+name: Calidad y pruebas
 
 on:
   push:
     branches:
       - main
-      - fix/auditoria-final-void
-      - fix/formato-global-void
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   calidad:
+    name: Validar formato, compilación y pruebas
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Obtener el repositorio
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Configurar PHP
         uses: shivammathur/setup-php@v2
@@ -29,11 +33,8 @@ jobs:
       - name: Instalar dependencias PHP
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Eliminar comentarios de código
-        run: php scripts/limpiar-comentarios.php
-
-      - name: Aplicar formato PHP
-        run: composer format
+      - name: Verificar formato PHP con Laravel Pint
+        run: composer format:check
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
@@ -41,33 +42,20 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Actualizar el bloqueo de dependencias frontend
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-
       - name: Instalar dependencias frontend
         run: npm ci
 
-      - name: Formatear vistas y recursos frontend
-        run: npm run format:frontend
+      - name: Verificar formato de vistas y recursos frontend
+        run: npm run format:frontend:check
 
       - name: Compilar frontend
         run: npm run build
 
-      - name: Preparar archivo de entorno de pruebas
+      - name: Preparar entorno de pruebas
         run: touch .env
 
       - name: Ejecutar pruebas automatizadas
         run: php artisan test
 
-      - name: Comprobar diff
+      - name: Comprobar espacios y errores de diff
         run: git diff --check
-
-      - name: Guardar formato y limpieza
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "Aplicar formato global y eliminar comentarios"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi

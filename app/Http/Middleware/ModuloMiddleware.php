@@ -6,8 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Valida el estado de la cuenta, la tienda asociada y los permisos del módulo solicitado.
+ */
 class ModuloMiddleware
 {
+    /**
+     * Permite continuar únicamente a usuarios activos con una tienda vigente y el permiso requerido.
+     */
     public function handle(Request $request, Closure $next, ...$permisos): Response
     {
         $user = $request->user();

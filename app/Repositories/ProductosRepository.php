@@ -9,6 +9,9 @@ use App\Models\Productos;
 use App\Repositories\Interfaces\ProductoRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Gestiona productos dentro del alcance de su tienda.
+ */
 class ProductosRepository implements ProductoRepositoryInterface
 {
     public function listarTodo(int $tiendaId)
@@ -31,6 +34,9 @@ class ProductosRepository implements ProductoRepositoryInterface
         return Productos::create($datos);
     }
 
+    /**
+     * Impide eliminar productos que formen parte del historial de facturas o inventario.
+     */
     public function eliminar(int $id, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $tiendaId) {
@@ -63,6 +69,9 @@ class ProductosRepository implements ProductoRepositoryInterface
             ->findOrFail($id);
     }
 
+    /**
+     * Registra los ajustes manuales de existencias antes de actualizar el producto.
+     */
     public function actualizar(int $id, array $datos, int $tiendaId)
     {
         return DB::transaction(function () use ($id, $datos, $tiendaId) {
