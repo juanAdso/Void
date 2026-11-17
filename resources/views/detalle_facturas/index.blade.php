@@ -57,7 +57,8 @@
                                                 </form>
                                             @endcan
                                         @else
-                                            <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">
+                                            <span
+                                                class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">
                                                 Factura {{ $detalle_factura->factura?->estado ?? 'no disponible' }}
                                             </span>
                                         @endif

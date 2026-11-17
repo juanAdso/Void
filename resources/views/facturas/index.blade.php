@@ -79,9 +79,13 @@
                                                 @endif
                                             @endcan
                                             @if ($factura->estado === 'anulada')
-                                                <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">Factura anulada</span>
+                                                <span
+                                                    class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">Factura
+                                                    anulada</span>
                                             @elseif ($factura->estado === 'pagada' || $factura->detalle_factura->isNotEmpty())
-                                                <span class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">No eliminable</span>
+                                                <span
+                                                    class="rounded-lg bg-neutral-800 px-3 py-2 text-xs font-semibold text-neutral-300">No
+                                                    eliminable</span>
                                             @endif
                                         </div>
                                     </td>
