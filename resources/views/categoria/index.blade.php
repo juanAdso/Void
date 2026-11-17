@@ -2,7 +2,9 @@
 @section('page-title', 'Gestión de categorías')
 @section('title', 'Categorías')
 @section('content')
-    @php($mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias']))
+    @php(
+    $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias'])
+)
     <x-card>
         <div class="container mx-auto mt-10">
             <div class="bg-white shadow-lg rounded-lg p-6">
@@ -59,15 +61,16 @@
                                         <td class="border px-4 py-2">
                                             <div class="flex min-w-[180px] flex-wrap items-center justify-center gap-2">
                                                 @can('editar categorias')
-                                                <a href="{{ route('categoria.edit', $categoria->id) }}"
-                                                    class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
-                                            @endcan
-                                            @can('eliminar categorias')
-                                                <form action="{{ route('categoria.destroy', $categoria->id) }}" method="post"
-                                                    onsubmit="return confirm('¿Eliminar esta categoría?')">@csrf
-                                                    @method('DELETE')<button type="submit"
-                                                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
-                                                </form>
+                                                    <a href="{{ route('categoria.edit', $categoria->id) }}"
+                                                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
+                                                @endcan
+                                                @can('eliminar categorias')
+                                                    <form action="{{ route('categoria.destroy', $categoria->id) }}"
+                                                        method="post" onsubmit="return confirm('¿Eliminar esta categoría?')">
+                                                        @csrf
+                                                        @method('DELETE')<button type="submit"
+                                                            class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
+                                                    </form>
                                                 @endcan
                                             </div>
                                         </td>
