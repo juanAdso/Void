@@ -85,6 +85,9 @@ body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;background:var(--voi
                 @if (session('error'))
                     <x-alert type="error" class="mb-6">{{ session('error') }}</x-alert>
                 @endif
+                @if (session()->has('relaciones_bloqueo'))
+                    @include('layouts.partials.relaciones-bloqueo', ['panel' => session('relaciones_bloqueo')])
+                @endif
 
                 @yield('content')
             </main>
