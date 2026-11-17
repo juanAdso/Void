@@ -21,18 +21,20 @@
                 </div>
             @endif
 
-            <form action="{{ route('categoria.update', $categoria->id_categoria) }}" method="post">
+            <form action="{{ route('categoria.update', ['categorium' => $categoria->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Nombre Categoria</label>
-                    <input type="text" name="nombre" value="{{ old('nombre', $categoria->nombre) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="nombre" value="{{ old('nombre', $categoria->nombre) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
                     <label for="" class="block mb-2 font-semibold">Descripcion</label>
-                    <input type="text" name="descripcion" value="{{ old('descripcion', $categoria->descripcion) }}" class="w-full border rounded px-3 py-2">
+                    <input type="text" name="descripcion" value="{{ old('descripcion', $categoria->descripcion) }}"
+                        class="w-full border rounded px-3 py-2">
                 </div>
 
                 <div class="mb-5">
@@ -44,7 +46,8 @@
                 </div>
 
                 <div class="mb-5">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white rounded px-5 py-2">Guardar</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2">Guardar</button>
                 </div>
 
             </form>

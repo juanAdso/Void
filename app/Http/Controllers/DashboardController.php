@@ -6,13 +6,14 @@ use App\Models\Facturas;
 use App\Models\Productos;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
         /** @var \App\Models\User $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
 
         // Si no hay usuario autenticado por seguridad redirige al login
         if (!$usuario) {

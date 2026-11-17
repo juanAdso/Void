@@ -59,7 +59,7 @@
                             <span class="text-xs text-slate-400">Verificadas</span>
                         </div>
                         <div class="rounded-xl bg-neutral-800/80 border border-neutral-700 p-3 text-center">
-                            <span class="block text-xl font-bold text-amber-400">Directo</span>
+                            <span class="block text-xl font-bold text-blue-400">Directo</span>
                             <span class="text-xs text-slate-400">Sin comisiones</span>
                         </div>
                     </div>
