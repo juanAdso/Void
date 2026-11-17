@@ -28,8 +28,12 @@
                                         <p class="text-sm font-medium text-neutral-200">{{ $item['titulo'] }}</p>
                                         <p class="mt-0.5 break-words text-xs leading-5 text-neutral-500">{{ $item['detalle'] }}</p>
                                     </div>
-                                    @if (!empty($item['url']))
-                                        <a href="{{ $item['url'] }}" class="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:border-blue-400/60 hover:bg-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:self-center">{{ $item['accion'] }} <span aria-hidden="true">→</span></a>
+                                    @if (!empty($item['acciones']))
+                                        <div class="flex shrink-0 flex-wrap items-center gap-2 self-start sm:self-center">
+                                            @foreach ($item['acciones'] as $accion)
+                                                <a href="{{ $accion['url'] }}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:border-blue-400/60 hover:bg-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ $accion['texto'] }} <span aria-hidden="true">→</span></a>
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
                             @endforeach

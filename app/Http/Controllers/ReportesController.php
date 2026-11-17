@@ -35,9 +35,22 @@ class ReportesController extends Controller
             ->orderBy('nombre')
             ->get();
 
-        $movimientos = MovimientoInventario::query()
+        $productoFiltro = null;
+        if ($request->filled('producto')) {
+            $productoFiltro = Productos::query()
+                ->where('id_tienda', $tiendaId)
+                ->findOrFail($request->integer('producto'));
+        }
+
+        $consultaMovimientos = MovimientoInventario::query()
             ->with(['producto', 'usuario'])
-            ->where('id_tienda', $tiendaId)
+            ->where('id_tienda', $tiendaId);
+
+        if ($productoFiltro) {
+            $consultaMovimientos->where('id_producto', $productoFiltro->id);
+        }
+
+        $movimientos = $consultaMovimientos
             ->latest('fecha')
             ->paginate(15, ['*'], 'movimientos_page')
             ->withQueryString();
@@ -115,6 +128,7 @@ class ReportesController extends Controller
         return view('reportes.index', compact(
             'productosStockBajo',
             'productosAgotados',
+            'productoFiltro',
             'movimientos',
             'productosMasVendidos',
             'ventasHoy',

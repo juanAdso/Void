@@ -47,6 +47,14 @@ class RelacionesBloqueoService
                     'titulo'=>'Movimiento #'.$m->id.' · '.str_replace('_',' ',ucfirst($m->tipo_movimiento)),
                     'detalle'=>($m->fecha?->format('d/m/Y H:i') ?? 'Sin fecha').' · Cantidad: '.($m->cantidad > 0 ? '+' : '').$m->cantidad.' · '.($m->motivo ?: 'Sin motivo registrado'),
                 ])->all();
+            $items = array_map(function ($item) use ($id) {
+                $item['acciones'] = [[
+                    'url' => route('reportes.index', ['producto' => $id]),
+                    'texto' => 'Ver historial',
+                ]];
+
+                return $item;
+            }, $items);
             $grupos[] = $this->grupo('Historial de inventario','Estos movimientos son registros de auditoría y deben conservarse.',$totalMov,$items,null,null,'ver dashboard','reportes.index');
         }
         return $grupos;
@@ -83,7 +91,7 @@ class RelacionesBloqueoService
             $grupos[] = $this->grupo('Detalles asociados','Revisa los productos incluidos en esta factura desde el módulo de detalles.',$total,$items,'editar detallefacturas','detalle_facturas.edit','ver detallefacturas','detalle_facturas.index');
         }
         if ($factura->estado !== 'pendiente') {
-            $grupos[] = ['titulo'=>'Condición de eliminación','descripcion'=>'Solo se pueden eliminar facturas pendientes. Las facturas pagadas o anuladas deben conservarse.','total'=>1,'items'=>[['titulo'=>'Estado actual: '.ucfirst((string)$factura->estado),'detalle'=>'No se permite eliminar una factura en este estado.','url'=>null,'accion'=>null]]];
+            $grupos[] = ['titulo'=>'Condición de eliminación','descripcion'=>'Solo se pueden eliminar facturas pendientes. Las facturas pagadas o anuladas deben conservarse.','total'=>1,'items'=>[['titulo'=>'Estado actual: '.ucfirst((string)$factura->estado),'detalle'=>'No se permite eliminar una factura en este estado.','acciones'=>[]]]];
         }
         return $grupos;
     }
@@ -112,22 +120,33 @@ class RelacionesBloqueoService
         $user = auth()->user();
         $puedeEditar = $permisoEditar && $user?->can($permisoEditar);
         $puedeVer = $permisoVer && $user?->can($permisoVer);
+
         if (!$puedeEditar && !$puedeVer) {
             return ['titulo'=>$titulo,'descripcion'=>$descripcion.' Tu rol no tiene permiso para consultar el detalle de estos registros.','total'=>$total,'items'=>[]];
         }
+
         $items = array_map(function($item) use ($puedeEditar,$rutaEditar,$puedeVer,$rutaVer) {
-            if ($puedeEditar && $rutaEditar) {
-                $item['url'] = route($rutaEditar,$item['id']);
-                $item['accion'] = 'Editar';
-            } elseif ($puedeVer && $rutaVer) {
-                $item['url'] = route($rutaVer);
-                $item['accion'] = 'Abrir módulo';
-            } else {
-                $item['url'] = null;
-                $item['accion'] = null;
+            if (!isset($item['acciones'])) {
+                $item['acciones'] = [];
+
+                if ($puedeEditar && $rutaEditar) {
+                    $item['acciones'][] = [
+                        'url' => route($rutaEditar,$item['id']),
+                        'texto' => 'Editar',
+                    ];
+                }
+
+                if ($puedeVer && $rutaVer) {
+                    $item['acciones'][] = [
+                        'url' => route($rutaVer),
+                        'texto' => 'Abrir módulo',
+                    ];
+                }
             }
+
             return $item;
         },$items);
+
         return ['titulo'=>$titulo,'descripcion'=>$descripcion,'total'=>$total,'items'=>$items];
     }
 }

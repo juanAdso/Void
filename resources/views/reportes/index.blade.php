@@ -156,6 +156,16 @@
         </div>
 
         <x-card title="Historial de Movimientos de Inventario" subtitle="Auditoría de ingresos, salidas, ventas y devoluciones" :padding="false">
+            @if ($productoFiltro)
+                <div class="mx-5 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
+                    <p class="text-sm text-blue-200">
+                        Mostrando movimientos de <strong>{{ $productoFiltro->nombre }}</strong>
+                        <span class="text-blue-300/80">(#{{ $productoFiltro->id }})</span>
+                    </p>
+                    <a href="{{ route('reportes.index') }}" class="text-xs font-semibold text-blue-300 transition hover:text-amber-300">Ver todos los movimientos →</a>
+                </div>
+            @endif
+
             <x-table :headers="['Fecha', 'Producto', 'Tipo de Movimiento', 'Cantidad', 'Responsable', 'Motivo']">
                 @forelse($movimientos as $mov)
                     <tr class="hover:bg-slate-50 text-sm">
