@@ -12,8 +12,20 @@
     </div>
 
     <div class="sm:col-span-2">
-        <label for="logo" class="mb-1.5 block text-sm font-semibold text-slate-700">Logo (URL o ruta)</label>
-        <input id="logo" name="logo" type="text" maxlength="255" value="{{ old('logo', $tienda?->logo) }}" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100" placeholder="https://...">
+        <label for="logo" class="mb-1.5 block text-sm font-semibold text-slate-700">Logo de la tienda</label>
+        <input id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp" onchange="previsualizarLogo(event)" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100">
+        <p class="mt-1 text-xs text-slate-500">Formatos JPG, PNG o WEBP. Tamaño máximo: 2 MB.</p>
+        @if($tienda?->logo_url)
+            <img id="vista-logo" src="{{ $tienda->logo_url }}" alt="Logo actual de {{ $tienda->nombre }}" class="mt-3 h-24 w-24 rounded-xl border border-slate-200 bg-slate-50 object-contain p-1">
+        @else
+            <img id="vista-logo" alt="Vista previa del logo" class="mt-3 hidden h-24 w-24 rounded-xl border border-slate-200 bg-slate-50 object-contain p-1">
+        @endif
+        @if($tienda?->logo)
+            <label class="mt-3 inline-flex items-center gap-2 text-sm text-slate-600">
+                <input type="checkbox" name="eliminar_logo" value="1" @checked(old('eliminar_logo'))>
+                Eliminar el logo actual al guardar
+            </label>
+        @endif
         @error('logo') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 

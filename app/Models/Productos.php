@@ -32,6 +32,19 @@ class Productos extends Model
         ];
     }
 
+    public function getImagenUrlAttribute(): ?string
+    {
+        if (! $this->imagen) {
+            return null;
+        }
+
+        if (preg_match('~^(https?:)?//~i', $this->imagen) || str_starts_with($this->imagen, '/')) {
+            return $this->imagen;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->imagen);
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'id_categoria', 'id');

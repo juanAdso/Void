@@ -16,7 +16,7 @@
         </div>
 
         <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            @if ($tienda->logo)
+            @if ($tienda->logo_url)
                 <div class="border-b border-slate-100 bg-slate-50 p-6">
                     <img src="{{ $tienda->logo }}" alt="Logo de {{ $tienda->nombre }}" class="h-24 max-w-full object-contain" onerror="this.style.display='none'">
                 </div>

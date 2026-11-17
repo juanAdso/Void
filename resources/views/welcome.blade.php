@@ -101,8 +101,8 @@
 
                         <div>
                             <div class="flex items-center justify-between">
-                                @if($tienda->logo)
-                                    <img src="{{ $tienda->logo }}" alt="{{ $tienda->nombre }}" class="h-14 w-14 rounded-xl object-cover bg-slate-50 p-1 border border-slate-200">
+                                @if($tienda->logo_url)
+                                    <img src="{{ $tienda->logo_url }}" alt="{{ $tienda->nombre }}" class="h-14 w-14 rounded-xl object-cover bg-slate-50 p-1 border border-slate-200">
                                 @else
                                     <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-2xl font-bold text-blue-600 group-hover:bg-blue-600 group-hover:text-amber-50 transition">
                                         {{ strtoupper(substr($tienda->nombre ?? 'T', 0, 1)) }}

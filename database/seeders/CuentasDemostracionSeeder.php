@@ -12,6 +12,8 @@ use App\Models\Tienda;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class CuentasDemostracionSeeder extends Seeder
@@ -111,6 +113,12 @@ class CuentasDemostracionSeeder extends Seeder
             );
         }
 
+        if (! $tienda->logo) {
+            $rutaLogo = "tiendas/{$tienda->id}/logo/demo-".Str::slug($prefijo).".svg";
+            Storage::disk('public')->put($rutaLogo, $this->crearSvgLogo($tienda->nombre, $prefijo));
+            $tienda->update(['logo' => $rutaLogo]);
+        }
+
         $productos = [];
         foreach ([
             ['nombre' => 'Audífonos inalámbricos', 'categoria' => 'Tecnología', 'precio' => 129900, 'stock' => 24],
@@ -129,6 +137,15 @@ class CuentasDemostracionSeeder extends Seeder
                     'estado' => true,
                 ]
             );
+
+            if (! $producto->imagen) {
+                $rutaImagen = "tiendas/{$tienda->id}/productos/demo-".Str::slug($producto->nombre).".svg";
+                Storage::disk('public')->put(
+                    $rutaImagen,
+                    $this->crearSvgProducto($producto->nombre, $tienda->nombre, count($productos))
+                );
+                $producto->update(['imagen' => $rutaImagen]);
+            }
 
             $productos[] = $producto;
 
@@ -150,6 +167,54 @@ class CuentasDemostracionSeeder extends Seeder
         $this->crearFacturaDemostracion($empleado, $clientes[0], $productos[0], $productos[2], now()->toDateString());
         $this->crearFacturaDemostracion($administrador, $clientes[1], $productos[1], $productos[3], now()->subDays(3)->toDateString());
         $this->crearFacturaDemostracion($empleado, $clientes[2], $productos[0], $productos[1], now()->subDays(8)->toDateString());
+    }
+
+    private function crearSvgLogo(string $nombre, string $prefijo): string
+    {
+        $inicial = htmlspecialchars(strtoupper(substr($prefijo, 0, 1)), ENT_QUOTES | ENT_XML1, 'UTF-8');
+        $nombreSeguro = htmlspecialchars($nombre, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+        return <<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+    <defs>
+        <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#111827"/>
+            <stop offset="1" stop-color="#1d4ed8"/>
+        </linearGradient>
+    </defs>
+    <rect width="512" height="512" rx="84" fill="url(#fondo)"/>
+    <circle cx="256" cy="210" r="132" fill="none" stroke="#fbbf24" stroke-width="14"/>
+    <path d="M170 260h172M200 300h112" stroke="#fbbf24" stroke-width="12" stroke-linecap="round"/>
+    <text x="256" y="238" text-anchor="middle" font-family="Arial,sans-serif" font-size="150" font-weight="700" fill="#ffffff">{$inicial}</text>
+    <text x="256" y="408" text-anchor="middle" font-family="Arial,sans-serif" font-size="24" font-weight="700" fill="#ffffff">{$nombreSeguro}</text>
+</svg>
+SVG;
+    }
+
+    private function crearSvgProducto(string $nombre, string $tienda, int $indice): string
+    {
+        $colores = ['#2563eb', '#d97706', '#0f766e', '#7c3aed'];
+        $color = $colores[$indice % count($colores)];
+        $nombreSeguro = htmlspecialchars($nombre, ENT_QUOTES | ENT_XML1, 'UTF-8');
+        $tiendaSegura = htmlspecialchars($tienda, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+        return <<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+    <defs>
+        <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f8fafc"/>
+            <stop offset="1" stop-color="#e2e8f0"/>
+        </linearGradient>
+    </defs>
+    <rect width="800" height="600" fill="url(#fondo)"/>
+    <circle cx="400" cy="245" r="150" fill="{$color}" opacity=".12"/>
+    <circle cx="400" cy="245" r="112" fill="none" stroke="{$color}" stroke-width="18"/>
+    <rect x="335" y="178" width="130" height="135" rx="28" fill="{$color}"/>
+    <path d="M365 210h70M365 238h70M365 266h48" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+    <text x="400" y="465" text-anchor="middle" font-family="Arial,sans-serif" font-size="35" font-weight="700" fill="#0f172a">{$nombreSeguro}</text>
+    <text x="400" y="515" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#475569">{$tiendaSegura} · Imagen de prueba</text>
+</svg>
+SVG;
     }
 
     private function crearFacturaDemostracion(

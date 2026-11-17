@@ -11,8 +11,8 @@
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
                 <div class="flex items-start sm:items-center gap-5">
-                    @if($tienda->logo)
-                        <img src="{{ $tienda->logo }}" alt="{{ $tienda->nombre }}" class="h-20 w-20 rounded-2xl object-cover bg-white p-1 border border-neutral-700 shadow-md">
+                    @if($tienda->logo_url)
+                        <img src="{{ $tienda->logo_url }}" alt="{{ $tienda->nombre }}" class="h-20 w-20 rounded-2xl object-cover bg-white p-1 border border-neutral-700 shadow-md">
                     @else
                         <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-3xl font-extrabold text-amber-50 shadow-md">
                             {{ strtoupper(substr($tienda->nombre, 0, 1)) }}
@@ -135,8 +135,8 @@
                     @foreach($productosDestacados as $prod)
                         <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition">
                             <a href="{{ route('portal.producto', $prod->id) }}" class="block h-48 bg-slate-100 border-b border-slate-100 overflow-hidden">
-                                @if($prod->imagen)
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($prod->imagen) }}" alt="{{ $prod->nombre }}" class="h-full w-full object-cover">
+                                @if($prod->imagen_url)
+                                    <img src="{{ $prod->imagen_url }}" alt="{{ $prod->nombre }}" class="h-full w-full object-cover">
                                 @else
                                     <div class="flex h-full w-full items-center justify-center text-slate-300">
                                         <svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">

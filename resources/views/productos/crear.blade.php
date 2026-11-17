@@ -17,7 +17,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('productos.store') }}" method="post">
+            <form action="{{ route('productos.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-5">
                     <label for="nombre" class="block mb-2 font-semibold">Nombre</label>
@@ -36,8 +36,10 @@
                     <input id="stock" type="number" name="stock" value="{{ old('stock', 0) }}" min="0" required class="w-full border rounded px-3 py-2">
                 </div>
                 <div class="mb-5">
-                    <label for="imagen" class="block mb-2 font-semibold">Ruta de imagen</label>
-                    <input id="imagen" type="text" name="imagen" value="{{ old('imagen') }}" maxlength="255" class="w-full border rounded px-3 py-2">
+                    <label for="imagen" class="block mb-2 font-semibold">Imagen del producto</label>
+                    <input id="imagen" type="file" name="imagen" accept="image/jpeg,image/png,image/webp" onchange="previsualizarImagen(event, 'vista-imagen')" class="w-full border rounded px-3 py-2">
+                    <p class="mt-1 text-xs text-slate-500">Formatos JPG, PNG o WEBP. Tamaño máximo: 2 MB.</p>
+                    <img id="vista-imagen" alt="Vista previa de la imagen" class="mt-3 hidden h-40 w-full rounded-lg border object-contain bg-slate-50">
                 </div>
                 <div class="mb-5">
                     <label for="estado" class="block mb-2 font-semibold">Estado</label>
@@ -63,3 +65,21 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    function previsualizarImagen(evento, destino) {
+        const imagen = document.getElementById(destino);
+        const archivo = evento.target.files && evento.target.files[0];
+
+        if (!archivo) {
+            imagen.removeAttribute('src');
+            imagen.classList.add('hidden');
+            return;
+        }
+
+        imagen.src = URL.createObjectURL(archivo);
+        imagen.classList.remove('hidden');
+    }
+</script>
+@endpush

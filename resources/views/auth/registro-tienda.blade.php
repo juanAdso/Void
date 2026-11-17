@@ -30,7 +30,7 @@
         @endif
 
         {{-- Formulario que envía los datos al RegistroTiendaController --}}
-        <form method="POST" action="{{ route('registro.tienda.store') }}" class="mt-6 space-y-6">
+        <form method="POST" action="{{ route('registro.tienda.store') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
             @csrf
 
             {{-- SECCIÓN 1: DATOS DE LA TIENDA --}}
@@ -56,6 +56,12 @@
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold uppercase text-slate-600">Correo de la Tienda (opcional)</label>
                         <input type="email" name="correo_tienda" value="{{ old('correo_tienda') }}" class="mt-1 w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-600" placeholder="contacto@tienda.com">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-600">Logo de la tienda</label>
+                        <input id="logo-tienda" type="file" name="logo" accept="image/jpeg,image/png,image/webp" onchange="previsualizarLogo(event)" class="mt-1 w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-600">
+                        <p class="mt-1 text-xs text-slate-500">JPG, PNG o WEBP. Tamaño máximo: 2 MB.</p>
+                        <img id="vista-logo-tienda" alt="Vista previa del logo" class="mt-3 hidden h-24 w-24 rounded-xl border border-slate-200 bg-slate-50 object-contain p-1">
                     </div>
                 </div>
             </div>
@@ -101,5 +107,20 @@
         </p>
     </main>
 
+    <script>
+        function previsualizarLogo(evento) {
+            const imagen = document.getElementById('vista-logo-tienda');
+            const archivo = evento.target.files && evento.target.files[0];
+
+            if (!archivo) {
+                imagen.removeAttribute('src');
+                imagen.classList.add('hidden');
+                return;
+            }
+
+            imagen.src = URL.createObjectURL(archivo);
+            imagen.classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>

@@ -22,7 +22,7 @@
         @endif
 
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <form action="{{ route('tiendas.update', $tienda->id) }}" method="POST" class="space-y-6">
+            <form action="{{ route('tiendas.update', $tienda->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
                 @include('tiendas._form', ['tienda' => $tienda])
@@ -34,3 +34,17 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    function previsualizarLogo(evento) {
+        const imagen = document.getElementById('vista-logo');
+        const archivo = evento.target.files && evento.target.files[0];
+
+        if (!archivo) return;
+
+        imagen.src = URL.createObjectURL(archivo);
+        imagen.classList.remove('hidden');
+    }
+</script>
+@endpush

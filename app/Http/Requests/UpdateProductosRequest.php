@@ -34,7 +34,8 @@ class UpdateProductosRequest extends FormRequest
                 'integer',
                 Rule::exists('categorias', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
             ],
-            'imagen' => ['nullable', 'string', 'max:255'],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'eliminar_imagen' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -42,6 +43,9 @@ class UpdateProductosRequest extends FormRequest
     {
         return [
             'id_categoria.exists' => 'La categoría seleccionada no pertenece a tu tienda.',
+            'imagen.image' => 'El archivo seleccionado debe ser una imagen válida.',
+            'imagen.mimes' => 'La imagen debe estar en formato JPG, JPEG, PNG o WEBP.',
+            'imagen.max' => 'La imagen no puede superar los 2 MB.',
         ];
     }
 }

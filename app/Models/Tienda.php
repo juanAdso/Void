@@ -26,6 +26,19 @@ class Tienda extends Model
         return ['estado' => 'boolean'];
     }
 
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo) {
+            return null;
+        }
+
+        if (preg_match('~^(https?:)?//~i', $this->logo) || str_starts_with($this->logo, '/')) {
+            return $this->logo;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->logo);
+    }
+
     public function productos()
     {
         return $this->hasMany(Productos::class, 'id_tienda', 'id');

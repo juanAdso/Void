@@ -21,8 +21,8 @@
         <div class="mx-auto max-w-7xl px-5 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm">
                 <div class="flex flex-col items-center justify-center bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden min-h-[350px]">
-                    @if($producto->imagen)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($producto->imagen) }}"
+                    @if($producto->imagen_url)
+                        <img src="{{ $producto->imagen_url }}"
                              alt="{{ $producto->nombre }}"
                              class="h-full w-full max-h-[500px] object-contain">
                     @else
@@ -123,8 +123,8 @@
                         @foreach($productosRelacionados as $rel)
                             <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition">
                                 <a href="{{ route('portal.producto', $rel->id) }}" class="block h-44 bg-slate-50 border-b border-slate-100 overflow-hidden">
-                                    @if($rel->imagen)
-                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($rel->imagen) }}" alt="{{ $rel->nombre }}" class="h-full w-full object-cover">
+                                    @if($rel->imagen_url)
+                                        <img src="{{ $rel->imagen_url }}" alt="{{ $rel->nombre }}" class="h-full w-full object-cover">
                                     @else
                                         <div class="flex h-full w-full items-center justify-center text-slate-300">
                                             <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">

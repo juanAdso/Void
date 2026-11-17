@@ -64,9 +64,20 @@
                                     <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">{{ $tienda->id }}
                                     </td>
                                     <td class="px-5 py-4">
-                                        <div class="font-semibold text-slate-800">{{ $tienda->nombre }}</div>
-                                        <div class="mt-1 max-w-md truncate text-sm text-slate-500">
-                                            {{ $tienda->descripcion ?: 'Sin descripción' }}</div>
+                                        <div class="flex items-center gap-3">
+                                            @if ($tienda->logo_url)
+                                                <img src="{{ $tienda->logo_url }}" alt="Logo de {{ $tienda->nombre }}" loading="lazy" class="h-12 w-12 shrink-0 rounded-lg border border-slate-200 bg-white object-contain p-1">
+                                            @else
+                                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-lg font-bold text-slate-500">
+                                                    {{ strtoupper(substr($tienda->nombre, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <div class="min-w-0">
+                                                <div class="font-semibold text-slate-800">{{ $tienda->nombre }}</div>
+                                                <div class="mt-1 max-w-md truncate text-sm text-slate-500">
+                                                    {{ $tienda->descripcion ?: 'Sin descripción' }}</div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="px-5 py-4 text-sm text-slate-600">
                                         <div>{{ $tienda->correo ?: 'Sin correo' }}</div>

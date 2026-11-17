@@ -22,7 +22,7 @@
         @endif
 
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <form action="{{ route('tiendas.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('tiendas.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @include('tiendas._form', ['tienda' => null])
                 <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">

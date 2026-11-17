@@ -20,8 +20,8 @@
                             </a>
                         </div>
                         <div class="flex items-center gap-4">
-                            @if($tiendaSeleccionada->logo)
-                                <img src="{{ $tiendaSeleccionada->logo }}" alt="{{ $tiendaSeleccionada->nombre }}" class="h-16 w-16 rounded-2xl object-cover bg-white p-1">
+                            @if($tiendaSeleccionada->logo_url)
+                                <img src="{{ $tiendaSeleccionada->logo_url }}" alt="{{ $tiendaSeleccionada->nombre }}" class="h-16 w-16 rounded-2xl object-cover bg-white p-1">
                             @else
                                 <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-3xl font-extrabold text-amber-50">
                                     {{ strtoupper(substr($tiendaSeleccionada->nombre, 0, 1)) }}
@@ -156,8 +156,8 @@
                     @forelse($productos as $producto)
                         <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-blue-400 hover:shadow-lg">
                             <a href="{{ route('portal.producto', $producto->id) }}" class="flex h-52 items-center justify-center overflow-hidden bg-slate-50 border-b border-slate-100">
-                                @if($producto->imagen)
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($producto->imagen) }}"
+                                @if($producto->imagen_url)
+                                    <img src="{{ $producto->imagen_url }}"
                                          alt="{{ $producto->nombre }}"
                                          loading="lazy"
                                          class="h-full w-full object-cover">
