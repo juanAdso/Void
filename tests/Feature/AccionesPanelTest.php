@@ -229,13 +229,13 @@ test('la consulta de factura integra los detalles y las acciones del administrad
     expect($response->original->getData()['puedeEliminarDetalle'])->toBeTrue();
 
     $response
-        ->assertSee('Productos de la factura')
-        ->assertSee('Producto visible en factura')
-        ->assertSee('Editar producto')
-        ->assertSee('Eliminar producto')
-        ->assertSee('Agregar producto')
+        ->assertSeeText('Productos de la factura')
+        ->assertSeeText('Producto visible en factura')
+        ->assertSeeText('Editar producto')
+        ->assertSeeText('Eliminar producto')
+        ->assertSeeText('Agregar producto')
         ->assertSee('¿Eliminar la factura #', false)
-        ->assertSee('29.750,00');
+        ->assertSeeText('29.750,00');
 
     $this->get('/detalle_facturas')->assertStatus(405);
     $this->get('/detalle_facturas/create')->assertNotFound();
