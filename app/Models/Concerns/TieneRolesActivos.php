@@ -29,6 +29,9 @@ trait TieneRolesActivos
         return $this->hasRole($roles);
     }
 
+    /**
+     * Impide que una cuenta desactivada conserve permisos efectivos por sus roles.
+     */
     public function tienePermisoActivo(string $permiso): bool
     {
         if (! $this->estaActivo()) {
