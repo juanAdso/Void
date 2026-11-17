@@ -1,14 +1,14 @@
 <?php
 
-use App\\Models\\Categoria;
-use App\\Models\\Cliente;
-use App\\Models\\DetalleFactura;
-use App\\Models\\Facturas;
-use App\\Models\\Productos;
-use App\\Models\\Tienda;
-use App\\Models\\User;
-use Database\\Seeders\\SeguridadSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
+use App\Models\Categoria;
+use App\Models\Cliente;
+use App\Models\DetalleFactura;
+use App\Models\Facturas;
+use App\Models\Productos;
+use App\Models\Tienda;
+use App\Models\User;
+use Database\Seeders\SeguridadSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
