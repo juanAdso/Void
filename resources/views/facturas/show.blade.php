@@ -4,6 +4,7 @@
 @section('page-title', 'Consulta de factura #' . $factura->id)
 
 @section('content')
+    @php($mostrarAccionesDetalle = $factura->estado === 'pendiente' && auth()->user()->canAny(['editar detallefacturas', 'eliminar detallefacturas']))
     <div class="mx-auto max-w-7xl space-y-6">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
@@ -97,7 +98,7 @@
                             <th class="px-4 py-3 text-right text-xs uppercase tracking-wider">Cantidad</th>
                             <th class="px-4 py-3 text-right text-xs uppercase tracking-wider">Precio unitario</th>
                             <th class="px-4 py-3 text-right text-xs uppercase tracking-wider">Subtotal</th>
-                            @if ($factura->estado === 'pendiente' && (auth()->user()->can('editar detallefacturas') || auth()->user()->can('eliminar detallefacturas')))
+                            @if ($mostrarAccionesDetalle)
                                 <th class="px-4 py-3 text-center text-xs uppercase tracking-wider">Acciones</th>
                             @endif
                         </tr>
@@ -112,7 +113,7 @@
                                 <td class="px-4 py-4 text-right">{{ $detalle->cantidad }}</td>
                                 <td class="px-4 py-4 text-right">$ {{ number_format((float) $detalle->precio_unitario, 2, ',', '.') }}</td>
                                 <td class="px-4 py-4 text-right font-semibold">$ {{ number_format((float) $detalle->subtotal, 2, ',', '.') }}</td>
-                                @if ($factura->estado === 'pendiente' && (auth()->user()->can('editar detallefacturas') || auth()->user()->can('eliminar detallefacturas')))
+                                @if ($mostrarAccionesDetalle)
                                     <td class="px-4 py-4">
                                         <div class="flex min-w-[170px] flex-col items-center gap-2">
                                             @can('editar detallefacturas')
@@ -162,7 +163,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ auth()->user()->can('editar detallefacturas') || auth()->user()->can('eliminar detallefacturas') ? 5 : 4 }}" class="px-5 py-10 text-center text-sm text-neutral-400">
+                                <td colspan="{{ $mostrarAccionesDetalle ? 5 : 4 }}" class="px-5 py-10 text-center text-sm text-neutral-400">
                                     Esta factura todavía no tiene productos asociados.
                                 </td>
                             </tr>

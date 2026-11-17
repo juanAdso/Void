@@ -8,6 +8,7 @@ use App\Models\Productos;
 use App\Models\Tienda;
 use App\Models\User;
 use Database\Seeders\SeguridadSeeder;
+use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -184,7 +185,9 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
         ->assertSee('<option value="anulada"', false)
         ->assertDontSee('<option value="pendiente"', false);
 
-    $this->get(route('facturas.edit', $anulada->id))->assertNotFound();
+    $this->get(route('facturas.edit', $anulada->id))
+        ->assertRedirect(route('facturas.show', $anulada->id))
+        ->assertSessionHas('error', 'Esta factura está anulada y se conserva como parte del historial. No se puede editar.');
 });
 
 test('la consulta de factura integra los detalles y las acciones del administrador', function () {
@@ -222,6 +225,7 @@ test('la consulta de factura integra los detalles y las acciones del administrad
         ->assertSee('Editar producto')
         ->assertSee('Eliminar producto')
         ->assertSee('Agregar producto')
+        ->assertSee('¿Eliminar la factura #', false)
         ->assertSee('29.750,00');
 
     $this->get('/detalle_facturas')->assertNotFound();
@@ -273,6 +277,112 @@ test('el empleado consulta facturas y solo ve acciones permitidas por sus permis
     $this->actingAs($empleado)->get(route('dashboard.index'))
         ->assertOk()
         ->assertDontSee('Reportes e Inventario')
+        ->assertDontSee('Reportes y movimientos de inventario')
         ->assertDontSee('Detalle de Facturas')
         ->assertDontSee('Empleados');
+
+    $this->actingAs($empleado)->get(route('productos.index'))
+        ->assertOk()
+        ->assertDontSee('Acciones')
+        ->assertDontSee('Editar')
+        ->assertDontSee('Eliminar');
+
+    $this->actingAs($empleado)->get(route('categoria.index'))
+        ->assertOk()
+        ->assertDontSee('Acciones')
+        ->assertDontSee('Editar')
+        ->assertDontSee('Eliminar');
+
+    $this->actingAs($empleado)->get(route('cliente.index'))
+        ->assertOk()
+        ->assertDontSee('Acciones')
+        ->assertDontSee('Editar')
+        ->assertDontSee('Eliminar');
+});
+
+
+test('el administrador ve los productos disponibles al editar detalles aunque no pueda crear nuevos', function () {
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'id_categoria' => $categoria->id,
+        'nombre' => 'Producto editable de factura',
+        'estado' => true,
+        'stock' => 8,
+    ]);
+    $factura = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 100,
+        'iva' => 19,
+        'total' => 119,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 100,
+        'subtotal' => 100,
+    ]);
+
+    Role::findByName('administrador')->revokePermissionTo('crear detallefacturas');
+
+    $this->get(route('facturas.show', $factura->id))
+        ->assertOk()
+        ->assertSee('Editar producto')
+        ->assertSee('Producto editable de factura')
+        ->assertDontSee('Agregar producto');
+});
+
+test('si se bloquea la eliminacion de un producto se muestran las facturas asociadas', function () {
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'id_categoria' => $categoria->id,
+        'nombre' => 'Producto con historial',
+        'estado' => true,
+        'stock' => 8,
+    ]);
+    $factura = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 100,
+        'iva' => 19,
+        'total' => 119,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 100,
+        'subtotal' => 100,
+    ]);
+
+    $this->delete(route('productos.destroy', $producto->id))
+        ->assertRedirect(route('productos.index'));
+
+    $this->get(route('productos.index'))
+        ->assertOk()
+        ->assertSee('No se puede eliminar este producto')
+        ->assertSee('Facturas asociadas')
+        ->assertSee('Factura #'.$factura->id)
+        ->assertSee('Editar detalle')
+        ->assertSee(route('facturas.show', $factura->id));
+
+    $this->assertDatabaseHas('productos', ['id' => $producto->id]);
+});
+
+test('los paneles no muestran accesos cuando el permiso correspondiente no existe', function () {
+    Role::findByName('administrador')->revokePermissionTo('gestionar seguridad');
+
+    $this->get(route('dashboard.index'))
+        ->assertOk()
+        ->assertDontSee('Reportes y movimientos de inventario')
+        ->assertDontSee('Abrir reportes');
 });

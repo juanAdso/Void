@@ -33,25 +33,26 @@ class ProductosRepository implements ProductoRepositoryInterface
 
     public function eliminar(int $id, int $tiendaId)
     {
-        $producto = Productos::query()
-            ->where('id_tienda', $tiendaId)
-            ->findOrFail($id);
+        return DB::transaction(function () use ($id, $tiendaId) {
+            $producto = Productos::query()
+                ->where('id_tienda', $tiendaId)
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-        $tieneDetalles = DetalleFactura::query()
-            ->where('id_producto', $producto->id)
-            ->whereHas('factura.usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-            ->exists();
+            $tieneDetalles = DetalleFactura::query()
+                ->where('id_producto', $producto->id)
+                ->exists();
 
-        $tieneMovimientos = MovimientoInventario::query()
-            ->where('id_producto', $producto->id)
-            ->where('id_tienda', $tiendaId)
-            ->exists();
+            $tieneMovimientos = MovimientoInventario::query()
+                ->where('id_producto', $producto->id)
+                ->exists();
 
-        if ($tieneDetalles || $tieneMovimientos) {
-            return false;
-        }
+            if ($tieneDetalles || $tieneMovimientos) {
+                return false;
+            }
 
-        return $producto->delete();
+            return $producto->delete();
+        });
     }
 
     public function buscarPorId(int $id, int $tiendaId)

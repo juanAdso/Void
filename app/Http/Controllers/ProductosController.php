@@ -126,7 +126,18 @@ class ProductosController extends Controller
         }
 
         if (! $this->productosService->eliminar($id, $tiendaId)) {
-            return redirect()->route('productos.index')->with('error', 'No se pudo eliminar el producto porque todavía tiene registros asociados.');
+            $bloqueos = $this->relacionesBloqueoService->paraProducto($id, $tiendaId);
+
+            if ($bloqueos !== []) {
+                $this->relacionesBloqueoService->flash(
+                    'No se puede eliminar este producto',
+                    'El producto tiene registros relacionados que deben conservarse. Revisa las facturas y los movimientos de inventario que aparecen a continuación.',
+                    $bloqueos
+                );
+            }
+
+            return redirect()->route('productos.index')
+                ->with('error', 'No se pudo eliminar el producto porque todavía tiene registros asociados.');
         }
 
         $this->imagenesService->eliminarProducto($producto->imagen, $tiendaId);

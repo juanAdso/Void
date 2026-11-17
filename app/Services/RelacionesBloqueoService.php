@@ -33,12 +33,30 @@ class RelacionesBloqueoService
             ->with(['factura', 'producto'])->orderBy('id');
         $total = (clone $q)->count();
         if ($total) {
-            $items = (clone $q)->limit(self::LIMITE_ITEMS)->get()->map(fn ($d) => [
-                'id' => $d->id_factura,
-                'titulo' => 'Factura #'.$d->id_factura.' · Detalle #'.$d->id,
-                'detalle' => ($d->producto?->nombre ?? 'Producto').' · Cantidad: '.$d->cantidad.' · Fecha: '.($d->factura?->fecha?->format('d/m/Y') ?? 'Sin fecha'),
-            ])->all();
-            $grupos[] = $this->grupo('Facturas asociadas', 'Este producto aparece en facturas registradas. Consulta cada factura para revisar sus productos y movimientos.', $total, $items, null, null, 'ver facturas', 'facturas.show');
+            $usuario = auth()->user();
+            $items = (clone $q)->limit(self::LIMITE_ITEMS)->get()->map(function ($d) use ($usuario) {
+                $acciones = [];
+
+                if ($usuario?->can('editar detallefacturas') && $d->factura?->estado === 'pendiente') {
+                    $acciones[] = [
+                        'url' => route('facturas.show', $d->id_factura),
+                        'texto' => 'Editar detalle',
+                    ];
+                } elseif ($usuario?->can('ver facturas')) {
+                    $acciones[] = [
+                        'url' => route('facturas.show', $d->id_factura),
+                        'texto' => 'Consultar factura',
+                    ];
+                }
+
+                return [
+                    'id' => $d->id_factura,
+                    'titulo' => 'Factura #'.$d->id_factura.' · Detalle #'.$d->id,
+                    'detalle' => ($d->producto?->nombre ?? 'Producto').' · Cantidad: '.$d->cantidad.' · Fecha: '.($d->factura?->fecha?->format('d/m/Y') ?? 'Sin fecha'),
+                    'acciones' => $acciones,
+                ];
+            })->all();
+            $grupos[] = $this->grupo('Facturas asociadas', 'Este producto aparece en facturas registradas. Consulta o edita el detalle desde la factura correspondiente.', $total, $items, null, null, 'ver facturas', 'facturas.show');
         }
 
         $qMov = MovimientoInventario::query()->where('id_producto', $id)->where('id_tienda', $tiendaId)->orderByDesc('fecha');

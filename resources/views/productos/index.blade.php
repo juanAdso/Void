@@ -2,6 +2,7 @@
 @section('page-title', 'Gestión de productos')
 @section('title', 'Productos')
 @section('content')
+    @php($mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']))
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -33,7 +34,9 @@
                                 <th class="border px-4 py-2">Stock</th>
                                 <th class="border px-4 py-2">Categoría</th>
                                 <th class="border px-4 py-2">Estado</th>
-                                <th class="border px-4 py-2">Acciones</th>
+                                @if ($mostrarAcciones)
+                                    <th class="border px-4 py-2">Acciones</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -63,21 +66,25 @@
                                                 class="rounded bg-red-500 px-2 py-1 text-white">Inactivo</span>
                                         @endif
                                     </td>
-                                    <td class="border px-4 py-2">
-                                        <div class="flex justify-center gap-2">
-                                            @can('editar productos')
+                                    @if ($mostrarAcciones)
+                                        <td class="border px-4 py-2">
+                                            <div class="flex justify-center gap-2">
+                                                @can('editar productos')
                                                 <a href="{{ route('productos.edit', $producto->id) }}"
                                                     class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
                                             @endcan
-                                            @can('eliminar productos')
-                                                <form action="{{ route('productos.destroy', $producto->id) }}" method="POST"
-                                                    onsubmit="return confirm('¿Eliminar este producto?')">@csrf
-                                                    @method('DELETE')<button type="submit"
-                                                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap">Eliminar</button>
-                                                </form>
-                                            @endcan
-                                        </div>
-                                    </td>
+                                                @can('eliminar productos')
+                                                    <form action="{{ route('productos.destroy', $producto->id) }}" method="POST"
+                                                        onsubmit="return confirm('¿Eliminar el producto {{ addslashes($producto->nombre) }}? Si tiene facturas o movimientos asociados, no se eliminará y VOID te mostrará los registros relacionados.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Eliminar</button>
+                                                    </form>
+                                                @endcan
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

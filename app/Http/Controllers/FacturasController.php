@@ -56,7 +56,7 @@ class FacturasController extends Controller
 
         $productos = collect();
 
-        if ($factura->estado === 'pendiente' && auth()->user()->can('crear detallefacturas')) {
+        if ($factura->estado === 'pendiente' && auth()->user()->canAny(['crear detallefacturas', 'editar detallefacturas'])) {
             $productos = $this->productosService->listarTodo($tiendaId)
                 ->where('estado', true)
                 ->values();
@@ -70,7 +70,10 @@ class FacturasController extends Controller
         $tiendaId = (int) auth()->user()->id_tienda;
         $facturas = $this->facturasService->buscarPorId($id, $tiendaId);
 
-        abort_if($facturas->estado === 'anulada', 404);
+        if ($facturas->estado === 'anulada') {
+            return redirect()->route('facturas.show', $id)
+                ->with('error', 'Esta factura está anulada y se conserva como parte del historial. No se puede editar.');
+        }
 
         $clientes = $this->clientesService->listarTodo($tiendaId);
 

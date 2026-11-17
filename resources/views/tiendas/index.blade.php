@@ -4,6 +4,7 @@
 @section('title', 'Tiendas')
 
 @section('content')
+    @php($mostrarAcciones = auth()->user()->canAny(['ver tiendas', 'editar tiendas']))
     <div class="container mx-auto max-w-7xl">
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -53,9 +54,9 @@
                                 <th
                                     class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                                     Estado</th>
-                                <th
-                                    class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Acciones</th>
+                                @if ($mostrarAcciones)
+                                    <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 bg-white">
@@ -95,16 +96,20 @@
                                                 class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-800">Inactiva</span>
                                         @endif
                                     </td>
-                                    <td class="whitespace-nowrap px-5 py-4 text-right text-sm">
-                                        <div class="flex min-w-[180px] flex-wrap justify-end gap-2">
-                                            <a href="{{ route('tiendas.show', $tienda->id) }}"
-                                                class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 whitespace-nowrap">Ver</a>
-
-                                            <a href="{{ route('tiendas.edit', $tienda->id) }}"
-                                                class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap">Editar</a>
-
-                                        </div>
-                                    </td>
+                                    @if ($mostrarAcciones)
+                                        <td class="whitespace-nowrap px-5 py-4 text-right text-sm">
+                                            <div class="flex min-w-[180px] flex-wrap justify-end gap-2">
+                                                @can('ver tiendas')
+                                                    <a href="{{ route('tiendas.show', $tienda->id) }}"
+                                                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800">Ver</a>
+                                                @endcan
+                                                @can('editar tiendas')
+                                                    <a href="{{ route('tiendas.edit', $tienda->id) }}"
+                                                        class="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Editar</a>
+                                                @endcan
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
