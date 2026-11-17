@@ -4,7 +4,6 @@
 @section('page-title', 'Consulta de factura #' . $factura->id)
 
 @section('content')
-    @php($mostrarAccionesDetalle = $factura->estado === 'pendiente' && auth()->user()->canAny(['editar detallefacturas', 'eliminar detallefacturas']))
     <div class="mx-auto max-w-7xl space-y-6">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
@@ -116,7 +115,7 @@
                                 @if ($mostrarAccionesDetalle)
                                     <td class="px-4 py-4">
                                         <div class="flex min-w-[170px] flex-col items-center gap-2">
-                                            @can('editar detallefacturas')
+                                            @if ($puedeEditarDetalle)
                                                 <details class="w-full max-w-[260px] rounded-lg border border-blue-500/30 bg-blue-500/5 p-2">
                                                     <summary class="cursor-pointer text-center text-xs font-semibold text-blue-300">Editar producto</summary>
                                                     <form action="{{ route('detalle_facturas.update', $detalle->id) }}" method="POST" class="mt-3 space-y-3">
@@ -149,7 +148,7 @@
                                                     </form>
                                                 </details>
                                             @endcan
-                                            @can('eliminar detallefacturas')
+                                            @if ($puedeEliminarDetalle)
                                                 <form action="{{ route('detalle_facturas.destroy', $detalle->id) }}" method="POST" class="w-full"
                                                     onsubmit="return confirm('¿Retirar el producto de la factura #{{ $factura->id }}? Las unidades regresarán al inventario y se registrará el movimiento.');">
                                                     @csrf
@@ -190,7 +189,7 @@
             </div>
         </section>
 
-        @can('crear detallefacturas')
+        @if ($puedeAgregarDetalle)
             @if ($factura->estado === 'pendiente')
                 <section class="rounded-2xl border border-blue-500/25 bg-neutral-900/80 p-5">
                     <div class="mb-4">

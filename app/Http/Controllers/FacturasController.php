@@ -54,15 +54,28 @@ class FacturasController extends Controller
         $factura = $this->facturasService->buscarPorId($id, $tiendaId);
         $factura->load('usuario');
 
+        $usuario = auth()->user();
+        $esPendiente = $factura->estado === 'pendiente';
+        $puedeEditarDetalle = $esPendiente && $usuario->can('editar detallefacturas');
+        $puedeEliminarDetalle = $esPendiente && $usuario->can('eliminar detallefacturas');
+        $puedeAgregarDetalle = $esPendiente && $usuario->can('crear detallefacturas');
+        $mostrarAccionesDetalle = $puedeEditarDetalle || $puedeEliminarDetalle;
         $productos = collect();
 
-        if ($factura->estado === 'pendiente' && auth()->user()->canAny(['crear detallefacturas', 'editar detallefacturas'])) {
+        if ($puedeAgregarDetalle || $puedeEditarDetalle) {
             $productos = $this->productosService->listarTodo($tiendaId)
                 ->where('estado', true)
                 ->values();
         }
 
-        return view('facturas.show', compact('factura', 'productos'));
+        return view('facturas.show', compact(
+            'factura',
+            'productos',
+            'mostrarAccionesDetalle',
+            'puedeEditarDetalle',
+            'puedeEliminarDetalle',
+            'puedeAgregarDetalle'
+        ));
     }
 
     public function edit(int $id)
