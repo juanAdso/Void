@@ -120,7 +120,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Aplica controles a las tablas de todos los módulos, incluso las que usan <x-table>.
+            // Aplica controles a las tablas de todos los módulos, incluidas las tablas reutilizables.
             document.querySelectorAll('main table').forEach(function (table) {
                 let area = table.closest('.table-scroll-area');
 
