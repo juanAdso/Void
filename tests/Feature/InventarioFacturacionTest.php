@@ -673,7 +673,6 @@ test('el repositorio tambien rechaza un producto desactivado al editar un detall
     expect($producto->fresh()->stock)->toBe(9);
 });
 
-
 test('eliminar factura pendiente devuelve todos los productos, elimina sus detalles y registra movimientos', function () {
     $producto = Productos::create([
         'id_categoria' => $this->categoria->id,

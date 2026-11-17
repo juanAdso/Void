@@ -8,8 +8,8 @@ use App\Models\Productos;
 use App\Models\Tienda;
 use App\Models\User;
 use Database\Seeders\SeguridadSeeder;
-use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
@@ -301,7 +301,6 @@ test('el empleado consulta facturas y solo ve acciones permitidas por sus permis
         ->assertDontSee('Editar')
         ->assertDontSee('Eliminar');
 });
-
 
 test('el administrador ve los productos disponibles al editar detalles aunque no pueda crear nuevos', function () {
     $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);

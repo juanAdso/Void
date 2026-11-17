@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Cliente;
+use App\Models\DetalleFactura;
 use App\Models\Facturas;
 use App\Models\MovimientoInventario;
 use App\Models\Productos;
@@ -61,7 +62,7 @@ class FacturasRepository implements FacturasRepositoryInterface
                 return false;
             }
 
-            $detalles = \App\Models\DetalleFactura::query()
+            $detalles = DetalleFactura::query()
                 ->where('id_factura', $factura->id)
                 ->orderBy('id')
                 ->get();
