@@ -40,7 +40,8 @@
                         <option value="pendiente" selected>Pendiente</option>
                     </select>
                 </div>
-                <p class="mb-5 text-sm text-gray-500">Después de crear la factura podrás agregar sus productos desde la pantalla de consulta. El subtotal, el IVA y el total se calcularán automáticamente.</p>
+                <p class="mb-5 text-sm text-gray-500">Después de crear la factura podrás agregar sus productos desde la
+                    pantalla de consulta. El subtotal, el IVA y el total se calcularán automáticamente.</p>
                 <div class="flex gap-3">
                     <button type="submit" class="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700">Crear
                         factura</button>
