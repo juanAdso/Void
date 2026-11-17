@@ -5,68 +5,38 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDetalleFacturaRequest;
 use App\Http\Requests\UpdateDetalleFacturaRequest;
 use App\Services\DetalleFacturaService;
-use App\Services\FacturasService;
-use App\Services\ProductosService;
 
 class DetalleFacturaController extends Controller
 {
-    public function __construct(
-        private DetalleFacturaService $detallefacturaservice,
-        private ProductosService $productoService,
-        private FacturasService $facturaservice
-    ) {}
-
-    public function index()
-    {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $detalle_facturas = $this->detallefacturaservice->listarTodo($tiendaId);
-
-        return view('detalle_facturas.index', compact('detalle_facturas'));
-    }
-
-    public function create()
-    {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $productos = $this->productoService->listarTodo($tiendaId)->where('estado', true)->values();
-        $facturas = $this->facturaservice->listarTodo($tiendaId)->where('estado', 'pendiente')->values();
-
-        return view('detalle_facturas.create', compact('productos', 'facturas'));
-    }
+    public function __construct(private DetalleFacturaService $detalleFacturaService) {}
 
     public function store(StoreDetalleFacturaRequest $request)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-        $this->detallefacturaservice->guardar($request->validated(), $tiendaId);
+        $detalle = $this->detalleFacturaService->guardar($request->validated(), $tiendaId);
 
-        return redirect()->route('detalle_facturas.index')->with('success', 'Detalle creado correctamente. El inventario y los totales se actualizaron.');
-    }
-
-    public function edit(int $id)
-    {
-        $tiendaId = (int) auth()->user()->id_tienda;
-        $detalle_factura = $this->detallefacturaservice->buscarPorId($id, $tiendaId);
-
-        abort_unless($detalle_factura->factura?->estado === 'pendiente', 404);
-
-        $productos = $this->productoService->listarTodo($tiendaId)->where('estado', true)->values();
-        $facturas = $this->facturaservice->listarTodo($tiendaId)->where('estado', 'pendiente')->values();
-
-        return view('detalle_facturas.edit', compact('detalle_factura', 'productos', 'facturas'));
+        return redirect()->route('facturas.show', $detalle->id_factura)
+            ->with('success', 'Producto agregado a la factura. El inventario y los totales se actualizaron.');
     }
 
     public function update(int $id, UpdateDetalleFacturaRequest $request)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-        $this->detallefacturaservice->actualizar($id, $request->validated(), $tiendaId);
+        $detalle = $this->detalleFacturaService->actualizar($id, $request->validated(), $tiendaId);
 
-        return redirect()->route('detalle_facturas.index')->with('success', 'Detalle actualizado correctamente. El inventario y los totales se actualizaron.');
+        return redirect()->route('facturas.show', $detalle->id_factura)
+            ->with('success', 'Producto de la factura actualizado. El inventario y los totales se recalcularon.');
     }
 
     public function destroy(int $id)
     {
         $tiendaId = (int) auth()->user()->id_tienda;
-        $this->detallefacturaservice->eliminar($id, $tiendaId);
+        $detalle = $this->detalleFacturaService->buscarPorId($id, $tiendaId);
+        $facturaId = (int) $detalle->id_factura;
 
-        return redirect()->route('detalle_facturas.index')->with('success', 'Detalle eliminado correctamente. El inventario y los totales se actualizaron.');
+        $this->detalleFacturaService->eliminar($id, $tiendaId);
+
+        return redirect()->route('facturas.show', $facturaId)
+            ->with('success', 'Producto retirado de la factura. Las unidades regresaron al inventario.');
     }
 }

@@ -45,15 +45,61 @@ class FacturasRepository implements FacturasRepositoryInterface
 
     public function eliminar(int $id, int $tiendaId)
     {
-        $factura = Facturas::query()
-            ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
-            ->findOrFail($id);
+        return DB::transaction(function () use ($id, $tiendaId) {
+            $factura = Facturas::query()
+                ->whereHas('usuario', fn ($query) => $query->where('id_tienda', $tiendaId))
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-        if ($factura->detalle_factura()->exists() || $factura->estado !== 'pendiente') {
-            return false;
-        }
+            if ($factura->estado !== 'pendiente') {
+                return false;
+            }
 
-        return $factura->delete();
+            $detalles = \App\Models\DetalleFactura::query()
+                ->where('id_factura', $factura->id)
+                ->orderBy('id')
+                ->get();
+
+            $productosIds = $detalles->pluck('id_producto')->unique()->sort()->values();
+            $productos = collect();
+
+            if ($productosIds->isNotEmpty()) {
+                $productos = Productos::query()
+                    ->where('id_tienda', $tiendaId)
+                    ->whereIn('id', $productosIds)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
+            }
+
+            foreach ($detalles as $detalle) {
+                $producto = $productos->get((int) $detalle->id_producto);
+
+                if (! $producto) {
+                    throw ValidationException::withMessages([
+                        'factura' => 'No se puede eliminar la factura porque uno de sus productos no pertenece a esta tienda o ya no está disponible.',
+                    ]);
+                }
+
+                $cantidad = (int) $detalle->cantidad;
+                $producto->increment('stock', $cantidad);
+
+                MovimientoInventario::create([
+                    'id_producto' => $producto->id,
+                    'id_tienda' => $tiendaId,
+                    'id_usuario' => auth()->id() ?? $factura->id_usuario,
+                    'tipo_movimiento' => 'eliminacion_factura',
+                    'cantidad' => $cantidad,
+                    'fecha' => now(),
+                    'motivo' => "Devolución de {$cantidad} unidad(es) por eliminación de factura #{$factura->id}",
+                ]);
+
+                $detalle->delete();
+            }
+
+            return $factura->delete();
+        });
     }
 
     public function buscarPorId(int $id, int $tiendaId)

@@ -36,8 +36,8 @@ test('administrador tiene acceso a todos los modulos y operaciones', function ()
     $this->actingAs($admin)->get(route('facturas.index'))->assertOk();
     $this->actingAs($admin)->get(route('facturas.create'))->assertOk();
 
-    $this->actingAs($admin)->get(route('detalle_facturas.index'))->assertOk();
-    $this->actingAs($admin)->get(route('detalle_facturas.create'))->assertOk();
+    $this->actingAs($admin)->get('/detalle_facturas')->assertNotFound();
+    $this->actingAs($admin)->get('/detalle_facturas/create')->assertNotFound();
     $this->actingAs($admin)->get(route('reportes.index'))->assertOk();
 });
 
@@ -57,8 +57,8 @@ test('empleado tiene acceso solo a los modulos y operaciones autorizadas', funct
     $this->actingAs($empleado)->get(route('cliente.index'))->assertOk();
     $this->actingAs($empleado)->get(route('facturas.index'))->assertOk();
     $this->actingAs($empleado)->get(route('facturas.create'))->assertOk();
-    $this->actingAs($empleado)->get(route('detalle_facturas.index'))->assertOk();
-    $this->actingAs($empleado)->get(route('detalle_facturas.create'))->assertOk();
+    $this->actingAs($empleado)->get('/detalle_facturas')->assertNotFound();
+    $this->actingAs($empleado)->get('/detalle_facturas/create')->assertNotFound();
     $this->actingAs($empleado)->get(route('reportes.index'))->assertForbidden();
 
     $this->actingAs($empleado)->get(route('tiendas.index'))->assertForbidden();

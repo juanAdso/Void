@@ -120,13 +120,14 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
 
     $this->get(route('facturas.create'))->assertOk();
 
-    $this->post(route('facturas.store'), [
+    $responseCrear = $this->post(route('facturas.store'), [
         'id_cliente' => $cliente->id,
         'fecha' => '2026-11-17',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.index'));
+    ]);
 
     $factura = Facturas::query()->where('id_usuario', $this->admin->id)->firstOrFail();
+    $responseCrear->assertRedirect(route('facturas.show', $factura->id));
 
     $this->get(route('facturas.edit', $factura->id))->assertOk();
 
@@ -134,7 +135,7 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
         'id_cliente' => $cliente->id,
         'fecha' => '2026-11-16',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.index'));
+    ])->assertRedirect(route('facturas.show', $factura->id));
 
     expect($factura->fresh()->fecha->toDateString())->toBe('2026-11-16');
 
@@ -186,78 +187,92 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
     $this->get(route('facturas.edit', $anulada->id))->assertNotFound();
 });
 
-test('los detalles solo permiten seleccionar facturas pendientes y productos activos', function () {
+test('la consulta de factura integra los detalles y las acciones del administrador', function () {
     $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
-    $facturaPendiente = Facturas::create([
-        'id_cliente' => $cliente->id,
-        'id_usuario' => $this->admin->id,
-        'fecha' => '2026-11-12',
-        'subtotal' => 0,
-        'iva' => 0,
-        'total' => 0,
-        'estado' => 'pendiente',
-    ]);
-    $facturaPagada = Facturas::create([
-        'id_cliente' => $cliente->id,
-        'id_usuario' => $this->admin->id,
-        'fecha' => '2026-11-11',
-        'subtotal' => 100,
-        'iva' => 19,
-        'total' => 119,
-        'estado' => 'pagada',
-    ]);
-    $facturaAnulada = Facturas::create([
-        'id_cliente' => $cliente->id,
-        'id_usuario' => $this->admin->id,
-        'fecha' => '2026-11-10',
-        'subtotal' => 0,
-        'iva' => 0,
-        'total' => 0,
-        'estado' => 'anulada',
-    ]);
-
     $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
-    $productoActivo = Productos::factory()->create([
+    $producto = Productos::factory()->create([
         'id_tienda' => $this->tienda->id,
         'id_categoria' => $categoria->id,
+        'nombre' => 'Producto visible en factura',
+        'precio' => 25000,
         'estado' => true,
         'stock' => 10,
     ]);
-    $productoInactivo = Productos::factory()->create([
+    $factura = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 25000,
+        'iva' => 4750,
+        'total' => 29750,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 25000,
+        'subtotal' => 25000,
+    ]);
+
+    $this->get(route('facturas.show', $factura->id))
+        ->assertOk()
+        ->assertSee('Productos de la factura')
+        ->assertSee('Producto visible en factura')
+        ->assertSee('Editar producto')
+        ->assertSee('Eliminar producto')
+        ->assertSee('Agregar producto')
+        ->assertSee('29.750,00');
+
+    $this->get('/detalle_facturas')->assertNotFound();
+    $this->get('/detalle_facturas/create')->assertNotFound();
+});
+
+test('el empleado consulta facturas y solo ve acciones permitidas por sus permisos', function () {
+    $empleado = User::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'rol' => 'empleado',
+        'estado' => true,
+    ]);
+    $empleado->assignRole('empleado');
+
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
         'id_tienda' => $this->tienda->id,
         'id_categoria' => $categoria->id,
-        'estado' => false,
+        'nombre' => 'Producto de empleado',
+        'estado' => true,
         'stock' => 10,
     ]);
+    $factura = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 100,
+        'iva' => 19,
+        'total' => 119,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 100,
+        'subtotal' => 100,
+    ]);
 
-    $this->get(route('detalle_facturas.create'))
+    $this->actingAs($empleado)->get(route('facturas.show', $factura->id))
         ->assertOk()
-        ->assertSee('value="'.$facturaPendiente->id.'"', false)
-        ->assertDontSee('value="'.$facturaPagada->id.'"', false)
-        ->assertDontSee('value="'.$facturaAnulada->id.'"', false)
-        ->assertSee('value="'.$productoActivo->id.'"', false)
-        ->assertDontSee('value="'.$productoInactivo->id.'"', false);
+        ->assertSee('Producto de empleado')
+        ->assertSee('Agregar producto')
+        ->assertDontSee('Editar producto')
+        ->assertDontSee('Eliminar producto')
+        ->assertDontSee('Eliminar factura');
 
-    $detallePendiente = DetalleFactura::create([
-        'id_factura' => $facturaPendiente->id,
-        'id_producto' => $productoActivo->id,
-        'cantidad' => 1,
-        'precio_unitario' => 25000,
-        'subtotal' => 25000,
-    ]);
-    $detallePagado = DetalleFactura::create([
-        'id_factura' => $facturaPagada->id,
-        'id_producto' => $productoActivo->id,
-        'cantidad' => 1,
-        'precio_unitario' => 25000,
-        'subtotal' => 25000,
-    ]);
-
-    $listado = $this->get(route('detalle_facturas.index'))->assertOk();
-    $listado->assertSee(route('detalle_facturas.edit', $detallePendiente->id));
-    $listado->assertDontSee(route('detalle_facturas.edit', $detallePagado->id));
-    $listado->assertDontSee(route('detalle_facturas.destroy', $detallePagado->id));
-
-    $this->get(route('detalle_facturas.edit', $detallePendiente->id))->assertOk();
-    $this->get(route('detalle_facturas.edit', $detallePagado->id))->assertNotFound();
+    $this->actingAs($empleado)->get(route('dashboard.index'))
+        ->assertOk()
+        ->assertDontSee('Reportes e Inventario')
+        ->assertDontSee('Detalle de Facturas')
+        ->assertDontSee('Empleados');
 });

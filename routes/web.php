@@ -100,6 +100,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/facturas', [FacturasController::class, 'store'])
         ->middleware('modulo:crear facturas')
         ->name('facturas.store');
+    Route::get('/facturas/{factura}', [FacturasController::class, 'show'])
+        ->middleware('modulo:ver facturas')
+        ->name('facturas.show');
     Route::get('/facturas/{factura}/edit', [FacturasController::class, 'edit'])
         ->middleware('modulo:editar facturas')
         ->name('facturas.edit');
@@ -129,18 +132,9 @@ Route::middleware('auth')->group(function () {
         ->middleware('modulo:eliminar productos')
         ->name('productos.destroy');
 
-    Route::get('/detalle_facturas', [DetalleFacturaController::class, 'index'])
-        ->middleware('modulo:ver detallefacturas')
-        ->name('detalle_facturas.index');
-    Route::get('/detalle_facturas/create', [DetalleFacturaController::class, 'create'])
-        ->middleware('modulo:crear detallefacturas')
-        ->name('detalle_facturas.create');
     Route::post('/detalle_facturas', [DetalleFacturaController::class, 'store'])
         ->middleware('modulo:crear detallefacturas')
         ->name('detalle_facturas.store');
-    Route::get('/detalle_facturas/{detalle_factura}/edit', [DetalleFacturaController::class, 'edit'])
-        ->middleware('modulo:editar detallefacturas')
-        ->name('detalle_facturas.edit');
     Route::match(['put', 'patch'], '/detalle_facturas/{detalle_factura}', [DetalleFacturaController::class, 'update'])
         ->middleware('modulo:editar detallefacturas')
         ->name('detalle_facturas.update');

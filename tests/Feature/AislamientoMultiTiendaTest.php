@@ -328,7 +328,7 @@ test('una tienda no puede consultar ni modificar detalles de factura ajenos', fu
         'subtotal' => 100,
     ]);
 
-    $this->actingAs($adminA)->get(route('detalle_facturas.edit', $detalleB->id))->assertNotFound();
+    $this->actingAs($adminA)->get('/detalle_facturas/'.$detalleB->id.'/edit')->assertNotFound();
 
     $responseUpdate = $this->actingAs($adminA)->put(route('detalle_facturas.update', $detalleB->id), [
         'id_factura' => $facturaB->id,

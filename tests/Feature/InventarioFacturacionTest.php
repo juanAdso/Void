@@ -67,9 +67,8 @@ test('crear factura en estado pendiente con totales iniciales en cero', function
         'total' => 9999,
     ]);
 
-    $response->assertRedirect(route('facturas.index'));
-
     $factura = Facturas::first();
+    $response->assertRedirect(route('facturas.show', $factura->id));
     expect($factura)->not->toBeNull();
     expect($factura->estado)->toBe('pendiente');
     expect((float) $factura->subtotal)->toBe(0.0);
@@ -106,7 +105,7 @@ test('agregar detalle descuenta inventario, registra movimiento y recalcula tota
         'precio_unitario' => 100.00,
     ]);
 
-    $response->assertRedirect(route('detalle_facturas.index'));
+    $response->assertRedirect(route('facturas.show', $factura->id));
 
     expect($producto->fresh()->stock)->toBe(7);
 
@@ -672,4 +671,49 @@ test('el repositorio tambien rechaza un producto desactivado al editar un detall
     }
 
     expect($producto->fresh()->stock)->toBe(9);
+});
+
+
+test('eliminar factura pendiente devuelve todos los productos, elimina sus detalles y registra movimientos', function () {
+    $producto = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto para eliminar factura',
+        'descripcion' => 'Producto de prueba',
+        'precio' => 75.00,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+
+    $factura = Facturas::create([
+        'id_cliente' => $this->cliente->id,
+        'id_usuario' => $this->usuario->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 0,
+        'iva' => 0,
+        'total' => 0,
+        'estado' => 'pendiente',
+    ]);
+
+    $this->actingAs($this->usuario)->post(route('detalle_facturas.store'), [
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 3,
+        'precio_unitario' => 75.00,
+    ])->assertRedirect(route('facturas.show', $factura->id));
+
+    expect($producto->fresh()->stock)->toBe(7);
+    expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(1);
+
+    $response = $this->actingAs($this->usuario)->delete(route('facturas.destroy', $factura->id));
+    $response->assertRedirect(route('facturas.index'));
+
+    expect(Facturas::find($factura->id))->toBeNull();
+    expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(0);
+    expect($producto->fresh()->stock)->toBe(10);
+
+    $movimiento = MovimientoInventario::where('id_producto', $producto->id)->latest('id')->first();
+    expect($movimiento)->not->toBeNull();
+    expect($movimiento->tipo_movimiento)->toBe('eliminacion_factura');
+    expect($movimiento->cantidad)->toBe(3);
 });

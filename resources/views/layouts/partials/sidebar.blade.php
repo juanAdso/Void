@@ -30,7 +30,7 @@
                 'route' => 'reportes.index',
                 'active' => 'reportes.*',
                 'icon' => 'chart',
-                'can' => ['ver dashboard'],
+                'can' => ['gestionar seguridad'],
             ],
             [
                 'label' => 'Tiendas',
@@ -66,13 +66,6 @@
                 'active' => 'facturas.*',
                 'icon' => 'chart',
                 'can' => ['ver facturas'],
-            ],
-            [
-                'label' => 'Detalle de Facturas',
-                'route' => 'detalle_facturas.index',
-                'active' => 'detalle_facturas.*',
-                'icon' => 'cog',
-                'can' => ['ver detallefacturas'],
             ],
             [
                 'label' => 'Empleados',
