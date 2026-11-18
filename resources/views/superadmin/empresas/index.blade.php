@@ -26,7 +26,7 @@
                             Clientes</th>
                         <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Estado
                         </th>
-                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500" data-searchable="false" data-orderable="false">
                             Acciones</th>
                     </tr>
                 </thead>
