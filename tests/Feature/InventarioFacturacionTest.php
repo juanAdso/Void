@@ -793,7 +793,6 @@ test('eliminar factura pendiente devuelve todos los productos, elimina sus detal
     expect($movimiento->cantidad)->toBe(3);
 });
 
-
 test('guardar cambios de una factura pagada actualiza detalles inventario movimientos y totales en una transaccion', function () {
     $clienteNuevo = Cliente::create([
         'id_tienda' => $this->tienda->id,
