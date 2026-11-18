@@ -396,5 +396,4 @@ class FacturasRepository implements FacturasRepositoryInterface
     {
         return $this->actualizarCompleta($id, $datos, $tiendaId);
     }
-
 }
