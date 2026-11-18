@@ -250,8 +250,8 @@ SVG;
         }
 
         foreach ($factura->detalle_factura()->get() as $detalle) {
-            $producto = $productos = Productos::query()
-                ->where('id_tienda', $tiendaId = $tienda->id)
+            $producto = Productos::query()
+                ->where('id_tienda', $tienda->id)
                 ->findOrFail($detalle->id_producto);
             $motivo = "Venta de demostración por factura #{$factura->id}";
 
