@@ -4,9 +4,11 @@
 @section('title', 'Tiendas')
 
 @section('content')
-    @php(
-    $mostrarAcciones = auth()->user()->canAny(['ver tiendas', 'editar tiendas'])
-)
+    @php
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['ver tiendas', 'editar tiendas']);
+    @endphp
     <div class="container mx-auto max-w-7xl">
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -41,7 +43,7 @@
                 </div>
             @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
+                    <table class="datatable min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
                                 <th
@@ -57,8 +59,8 @@
                                     class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                                     Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th
-                                        class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
+                                        data-searchable="false" data-orderable="false">
                                         Acciones</th>
                                 @endif
                             </tr>

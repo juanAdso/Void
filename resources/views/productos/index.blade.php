@@ -2,9 +2,11 @@
 @section('page-title', 'Gestión de productos')
 @section('title', 'Productos')
 @section('content')
-    @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos'])
-)
+    @php
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['editar productos', 'eliminar productos']);
+    @endphp
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -25,11 +27,11 @@
                 <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
             @else
                 <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="min-w-[1150px] w-full border-collapse">
+                    <table class="datatable min-w-[1150px] w-full border-collapse">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>
-                                <th class="border px-4 py-2">Imagen</th>
+                                <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Imagen</th>
                                 <th class="border px-4 py-2">Nombre</th>
                                 <th class="border px-4 py-2">Descripción</th>
                                 <th class="border px-4 py-2">Precio</th>
@@ -37,7 +39,8 @@
                                 <th class="border px-4 py-2">Categoría</th>
                                 <th class="border px-4 py-2">Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th class="border px-4 py-2">Acciones</th>
+                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones
+                                    </th>
                                 @endif
                             </tr>
                         </thead>

@@ -2,9 +2,11 @@
 @section('page-title', 'Gestión de clientes')
 @section('title', 'Clientes')
 @section('content')
-    @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar clientes', 'eliminar clientes'])
-)
+    @php
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['editar clientes', 'eliminar clientes']);
+    @endphp
     <x-card>
         <div class="container mx-auto mt-10">
             <div class="bg-white shadow-lg rounded-lg p-6">
@@ -32,7 +34,7 @@
                         {{ session('eliminar') }}</div>
                 @endif
                 <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="min-w-full border border-gray-300 min-w-[1100px] w-full">
+                    <table class="datatable min-w-full border border-gray-300 min-w-[1100px] w-full">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>
@@ -43,7 +45,8 @@
                                 <th class="border px-4 py-2">Correo</th>
                                 <th class="border px-4 py-2">Dirección</th>
                                 @if ($mostrarAcciones)
-                                    <th class="border px-4 py-2">Acciones</th>
+                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones
+                                    </th>
                                 @endif
                             </tr>
                         </thead>

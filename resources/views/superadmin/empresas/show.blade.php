@@ -43,13 +43,14 @@
                     historial.</p>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200">
+                <table class="datatable min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Usuario</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Rol</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Estado</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">Acceso</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500"
+                                data-searchable="false" data-orderable="false">Acceso</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
