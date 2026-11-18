@@ -13,4 +13,6 @@ interface FacturasRepositoryInterface
     public function buscarPorId(int $id, int $tiendaId);
 
     public function actualizar(int $id, array $datos, int $tiendaId);
+
+    public function actualizarCompleta(int $id, array $datos, int $tiendaId);
 }
