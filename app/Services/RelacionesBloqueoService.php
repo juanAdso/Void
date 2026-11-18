@@ -43,7 +43,7 @@ class RelacionesBloqueoService
             $items = (clone $q)->limit(self::LIMITE_ITEMS)->get()->map(function ($d) use ($usuario) {
                 $acciones = [];
 
-                if ($usuario?->can('editar detallefacturas') && $d->factura?->estado === 'pendiente') {
+                if ($usuario?->can('editar detallefacturas') && $d->factura?->estado !== 'anulada') {
                     $acciones[] = [
                         'url' => route('facturas.show', $d->id_factura),
                         'texto' => 'Editar detalle',

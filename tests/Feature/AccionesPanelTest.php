@@ -178,6 +178,26 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
         'estado' => 'anulada',
     ]);
 
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'id_categoria' => $categoria->id,
+        'nombre' => 'Producto de factura editable',
+        'precio' => 100,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+
+    foreach ([$pagada, $anulada] as $facturaConDetalle) {
+        DetalleFactura::create([
+            'id_factura' => $facturaConDetalle->id,
+            'id_producto' => $producto->id,
+            'cantidad' => 1,
+            'precio_unitario' => 100,
+            'subtotal' => 100,
+        ]);
+    }
+
     $index = $this->get(route('facturas.index'))->assertOk();
     $index->assertSee(route('facturas.show', $pagada->id));
     $index->assertDontSee(route('facturas.edit', $anulada->id));
@@ -188,11 +208,18 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
         ->assertSee('id="fecha" type="date" name="fecha"', false)
         ->assertSee('<option value="pagada"', false)
         ->assertSee('<option value="anulada"', false)
-        ->assertDontSee('<option value="pendiente"', false);
+        ->assertDontSee('<option value="pendiente"', false)
+        ->assertSee('name="detalles[0][id_producto]"', false)
+        ->assertSee('name="detalles[0][cantidad]"', false)
+        ->assertSee('name="detalles[0][precio_unitario]"', false)
+        ->assertSeeText('Guardar cambios');
 
     $this->get(route('facturas.show', $anulada->id))
         ->assertOk()
         ->assertDontSee('name="id_cliente"', false)
+        ->assertDontSee('name="detalles[0][id_producto]"', false)
+        ->assertDontSee('name="detalles[0][cantidad]"', false)
+        ->assertDontSee('name="detalles[0][precio_unitario]"', false)
         ->assertSeeText('Sus datos y detalles son de solo lectura.');
 });
 
