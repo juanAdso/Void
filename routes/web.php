@@ -109,6 +109,9 @@ Route::middleware('auth')->group(function () {
     Route::match(['put', 'patch'], '/facturas/{factura}', [FacturasController::class, 'update'])
         ->middleware('modulo:editar facturas')
         ->name('facturas.update');
+    Route::put('/facturas/{factura}/guardar-cambios', [FacturasController::class, 'guardarCambios'])
+        ->middleware('modulo:ver facturas')
+        ->name('facturas.guardar-cambios');
     Route::delete('/facturas/{factura}', [FacturasController::class, 'destroy'])
         ->middleware('modulo:eliminar facturas')
         ->name('facturas.destroy');
