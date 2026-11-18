@@ -25,11 +25,11 @@
                 <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
             @else
                 <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="min-w-[1150px] w-full border-collapse">
+                    <table class="datatable min-w-[1150px] w-full border-collapse">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>
-                                <th class="border px-4 py-2">Imagen</th>
+                                <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Imagen</th>
                                 <th class="border px-4 py-2">Nombre</th>
                                 <th class="border px-4 py-2">Descripción</th>
                                 <th class="border px-4 py-2">Precio</th>
@@ -37,7 +37,7 @@
                                 <th class="border px-4 py-2">Categoría</th>
                                 <th class="border px-4 py-2">Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th class="border px-4 py-2">Acciones</th>
+                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones</th>
                                 @endif
                             </tr>
                         </thead>
