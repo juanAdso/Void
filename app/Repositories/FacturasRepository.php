@@ -123,7 +123,6 @@ class FacturasRepository implements FacturasRepositoryInterface
             ->findOrFail($id);
     }
 
-
     /**
      * Guarda en una sola transacción los cambios generales, los detalles y sus efectos en inventario.
      */
