@@ -2,9 +2,9 @@
 @section('page-title', 'Gestión de productos')
 @section('title', 'Productos')
 @section('content')
-    @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']),
-)
+    @php
+        $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']);
+    @endphp
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
