@@ -168,10 +168,10 @@ class FacturasRepository implements FacturasRepositoryInterface
             $productosIds = $detallesActuales->pluck('id_producto')->map(fn ($valor) => (int) $valor)->all();
 
             foreach ($detallesEntrada as $detalleEntrada) {
-                if (!empty($detalleEntrada['id'])) {
+                if (! empty($detalleEntrada['id'])) {
                     $detalleId = (int) $detalleEntrada['id'];
 
-                    if (!$detallesActuales->has($detalleId) || in_array($detalleId, $idsActualizados, true)) {
+                    if (! $detallesActuales->has($detalleId) || in_array($detalleId, $idsActualizados, true)) {
                         throw ValidationException::withMessages([
                             'detalles' => 'Uno de los detalles no pertenece a esta factura o está repetido.',
                         ]);
@@ -184,7 +184,7 @@ class FacturasRepository implements FacturasRepositoryInterface
             }
 
             foreach ($idsEliminados as $detalleId) {
-                if (!$detallesActuales->has($detalleId) || in_array($detalleId, $idsActualizados, true)) {
+                if (! $detallesActuales->has($detalleId) || in_array($detalleId, $idsActualizados, true)) {
                     throw ValidationException::withMessages([
                         'eliminar_detalles' => 'Uno de los detalles que intentas retirar no pertenece a esta factura.',
                     ]);
@@ -214,7 +214,7 @@ class FacturasRepository implements FacturasRepositoryInterface
             $nuevosDetalles = [];
 
             foreach ($detallesEntrada as $detalleEntrada) {
-                $detalleId = !empty($detalleEntrada['id']) ? (int) $detalleEntrada['id'] : null;
+                $detalleId = ! empty($detalleEntrada['id']) ? (int) $detalleEntrada['id'] : null;
                 $productoNuevoId = (int) $detalleEntrada['id_producto'];
                 $productoNuevo = $productos->get($productoNuevoId);
                 $cantidadNueva = (int) $detalleEntrada['cantidad'];
@@ -226,7 +226,7 @@ class FacturasRepository implements FacturasRepositoryInterface
                     $cantidadAnterior = (int) $detalleActual->cantidad;
                     $precioAnterior = round((float) $detalleActual->precio_unitario, 2);
 
-                    if ($productoNuevoId !== $productoAnteriorId && !$productoNuevo->estado) {
+                    if ($productoNuevoId !== $productoAnteriorId && ! $productoNuevo->estado) {
                         throw ValidationException::withMessages([
                             'detalles' => 'No se puede cambiar un detalle a un producto inactivo.',
                         ]);
@@ -270,7 +270,7 @@ class FacturasRepository implements FacturasRepositoryInterface
                         'precio_unitario' => $precioNuevo,
                     ];
                 } else {
-                    if (!$productoNuevo->estado) {
+                    if (! $productoNuevo->estado) {
                         throw ValidationException::withMessages([
                             'detalles' => 'No se pueden agregar productos inactivos a una factura.',
                         ]);
