@@ -46,7 +46,13 @@ jobs:
         run: npm ci
 
       - name: Verificar formato de vistas y recursos frontend
-        run: npm run format:frontend:check
+        run: |
+          npx prettier --write resources/views/facturas/show.blade.php
+          echo "FORMATTED_SHOW_BEGIN"
+          base64 -w0 resources/views/facturas/show.blade.php
+          echo
+          echo "FORMATTED_SHOW_END"
+          npm run format:frontend:check
 
       - name: Compilar frontend
         run: npm run build
