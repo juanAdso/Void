@@ -61,11 +61,13 @@
                                 <td class="border px-4 py-3">
                                     <div class="flex min-w-[190px] flex-wrap items-center justify-center gap-2">
                                         <a href="{{ route('facturas.show', $factura->id) }}"
-                                            class="inline-flex items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:bg-blue-500/20">@if ($factura->estado !== 'anulada' && auth()->user()->tienePermisoActivo('editar facturas'))
+                                            class="inline-flex items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:bg-blue-500/20">
+                                            @if ($factura->estado !== 'anulada' && auth()->user()->tienePermisoActivo('editar facturas'))
                                                 Editar factura
                                             @else
                                                 Ver factura
-                                            @endif</a>
+                                            @endif
+                                        </a>
 
                                         @can('eliminar facturas')
                                             @if ($factura->estado === 'pendiente')
