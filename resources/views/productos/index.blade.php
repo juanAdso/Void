@@ -3,7 +3,9 @@
 @section('title', 'Productos')
 @section('content')
     @php
-        $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']);
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['editar productos', 'eliminar productos']);
     @endphp
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">

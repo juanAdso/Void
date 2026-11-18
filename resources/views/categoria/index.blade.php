@@ -3,7 +3,9 @@
 @section('title', 'Categorías')
 @section('content')
     @php
-        $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias']);
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['editar categorias', 'eliminar categorias']);
     @endphp
     <x-card>
         <div class="container mx-auto mt-10">

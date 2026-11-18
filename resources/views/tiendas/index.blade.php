@@ -5,7 +5,9 @@
 
 @section('content')
     @php
-        $mostrarAcciones = auth()->user()->canAny(['ver tiendas', 'editar tiendas']);
+        $mostrarAcciones = auth()
+            ->user()
+            ->canAny(['ver tiendas', 'editar tiendas']);
     @endphp
     <div class="container mx-auto max-w-7xl">
         <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
