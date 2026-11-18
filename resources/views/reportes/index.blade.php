@@ -177,7 +177,7 @@
                 </div>
             @endif
 
-            <x-table :headers="['Fecha', 'Producto', 'Tipo de Movimiento', 'Cantidad', 'Responsable', 'Motivo']">
+            <x-table :headers="['Fecha', 'Producto', 'Tipo de Movimiento', 'Cantidad', 'Responsable', 'Motivo']" :paging="false">
                 @forelse($movimientos as $mov)
                     <tr class="hover:bg-slate-50 text-sm">
                         <td class="px-5 py-3 text-slate-500 whitespace-nowrap">
