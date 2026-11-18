@@ -779,7 +779,8 @@
             document.querySelectorAll('main table').forEach(function(table) {
                 table.classList.add('void-compact-table');
 
-                if (table.dataset.noColumnFilters === 'true' || table.dataset.columnFiltersReady === 'true') {
+                if (table.dataset.noColumnFilters === 'true' || table.dataset.columnFiltersReady ===
+                    'true') {
                     return;
                 }
 
@@ -793,7 +794,9 @@
 
                 const headers = Array.from(headerRow.cells);
 
-                if (headers.some(function(header) { return header.colSpan !== 1; })) {
+                if (headers.some(function(header) {
+                        return header.colSpan !== 1;
+                    })) {
                     return;
                 }
 
@@ -820,11 +823,15 @@
                         const input = document.createElement('input');
                         input.type = 'search';
                         input.placeholder = 'Filtrar';
-                        input.setAttribute('aria-label', 'Filtrar por ' + header.textContent.trim());
+                        input.setAttribute('aria-label', 'Filtrar por ' + header.textContent
+                    .trim());
                         input.autocomplete = 'off';
                         input.addEventListener('input', aplicarFiltros);
                         cell.appendChild(input);
-                        inputs.push({ index: index, input: input });
+                        inputs.push({
+                            index: index,
+                            input: input
+                        });
                     }
 
                     filterRow.appendChild(cell);
@@ -876,7 +883,8 @@
                             }
 
                             const cell = row.cells[filter.index];
-                            return cell && normalizar(cell.innerText || cell.textContent || '').includes(buscado);
+                            return cell && normalizar(cell.innerText || cell.textContent ||
+                                '').includes(buscado);
                         });
 
                         row.hidden = !coincide;
