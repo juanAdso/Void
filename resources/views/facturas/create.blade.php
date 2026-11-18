@@ -41,7 +41,8 @@
                 <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
                     <div>
                         <label for="id_cliente" class="mb-2 block text-sm font-medium text-neutral-300">Cliente</label>
-                        <select id="id_cliente" name="id_cliente" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                        <select id="id_cliente" name="id_cliente" required
+                            class="w-full rounded-lg border px-3 py-2.5 text-sm">
                             <option value="">Selecciona un cliente</option>
                             @foreach ($clientes as $cliente)
                                 <option value="{{ $cliente->id }}" @selected(old('id_cliente') == $cliente->id)>
@@ -51,9 +52,11 @@
                         </select>
                     </div>
                     <div>
-                        <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de emisión</label>
-                        <input id="fecha" type="date" name="fecha" value="{{ old('fecha', now()->toDateString()) }}"
-                            required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                        <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de
+                            emisión</label>
+                        <input id="fecha" type="date" name="fecha"
+                            value="{{ old('fecha', now()->toDateString()) }}" required
+                            class="w-full rounded-lg border px-3 py-2.5 text-sm">
                     </div>
                     <div>
                         <label class="mb-2 block text-sm font-medium text-neutral-300">Estado inicial</label>
@@ -65,10 +68,12 @@
             </section>
 
             <section class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80">
-                <div class="flex flex-col gap-3 border-b border-neutral-800 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div
+                    class="flex flex-col gap-3 border-b border-neutral-800 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h2 class="text-lg font-semibold text-neutral-100">Productos y detalles</h2>
-                        <p class="mt-1 text-sm text-neutral-400">Puedes agregar varios productos y ajustar su cantidad y precio unitario.</p>
+                        <p class="mt-1 text-sm text-neutral-400">Puedes agregar varios productos y ajustar su cantidad y
+                            precio unitario.</p>
                     </div>
                     <button type="button" id="agregar-detalle"
                         class="inline-flex items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/20">
@@ -77,34 +82,41 @@
                 </div>
 
                 <div class="space-y-3 p-5" id="detalles-container">
-                    <p id="sin-detalles" class="rounded-xl border border-dashed border-neutral-700 px-4 py-8 text-center text-sm text-neutral-400">
+                    <p id="sin-detalles"
+                        class="rounded-xl border border-dashed border-neutral-700 px-4 py-8 text-center text-sm text-neutral-400">
                         Aún no has agregado productos. Usa «Agregar producto» para incluir el primer detalle.
                     </p>
                 </div>
 
                 <template id="detalle-template">
-                    <div class="grid grid-cols-1 items-end gap-3 rounded-xl border border-neutral-800 bg-neutral-950/50 p-4 md:grid-cols-2 xl:grid-cols-[minmax(220px,2fr)_minmax(100px,0.7fr)_minmax(140px,1fr)_minmax(130px,1fr)_auto]" data-detalle-row>
+                    <div class="grid grid-cols-1 items-end gap-3 rounded-xl border border-neutral-800 bg-neutral-950/50 p-4 md:grid-cols-2 xl:grid-cols-[minmax(220px,2fr)_minmax(100px,0.7fr)_minmax(140px,1fr)_minmax(130px,1fr)_auto]"
+                        data-detalle-row>
                         <div>
-                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Producto</label>
+                            <label
+                                class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Producto</label>
                             <select name="detalles[__INDEX__][id_producto]" required data-product-select
                                 class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                 <option value="">Selecciona un producto</option>
                                 @foreach ($productos as $producto)
-                                    <option value="{{ $producto->id }}" data-price="{{ $producto->precio }}" data-stock="{{ $producto->stock }}">
+                                    <option value="{{ $producto->id }}" data-price="{{ $producto->precio }}"
+                                        data-stock="{{ $producto->stock }}">
                                         {{ $producto->nombre }} · Stock: {{ $producto->stock }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Cantidad</label>
-                            <input type="number" name="detalles[__INDEX__][cantidad]" min="1" step="1" value="1" required data-quantity
-                                class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                            <label
+                                class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Cantidad</label>
+                            <input type="number" name="detalles[__INDEX__][cantidad]" min="1" step="1"
+                                value="1" required data-quantity class="w-full rounded-lg border px-3 py-2.5 text-sm">
                         </div>
                         <div>
-                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Precio unitario</label>
-                            <input type="number" name="detalles[__INDEX__][precio_unitario]" min="0" step="0.01" required data-price-input
-                                class="w-full rounded-lg border px-3 py-2.5 text-sm" placeholder="0.00">
+                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Precio
+                                unitario</label>
+                            <input type="number" name="detalles[__INDEX__][precio_unitario]" min="0" step="0.01"
+                                required data-price-input class="w-full rounded-lg border px-3 py-2.5 text-sm"
+                                placeholder="0.00">
                         </div>
                         <div class="pb-2 text-sm">
                             <span class="block text-xs text-neutral-500">Subtotal del detalle</span>
@@ -133,7 +145,8 @@
                         </div>
                     </div>
                     <p class="mt-3 text-xs text-neutral-500">
-                        Los valores son una vista previa. VOID valida las existencias y vuelve a calcular los totales al guardar.
+                        Los valores son una vista previa. VOID valida las existencias y vuelve a calcular los totales al
+                        guardar.
                     </p>
                 </div>
             </section>
@@ -154,7 +167,7 @@
 
 @push('scripts')
     <script>
-        (function () {
+        (function() {
             const container = document.getElementById('detalles-container');
             const template = document.getElementById('detalle-template');
             const addButton = document.getElementById('agregar-detalle');

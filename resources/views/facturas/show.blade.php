@@ -11,14 +11,17 @@
                 <div class="mt-2 flex flex-wrap items-center gap-3">
                     <h1 class="text-2xl font-bold text-neutral-50 sm:text-3xl">Factura #{{ $factura->id }}</h1>
                     @if ($factura->estado === 'pagada')
-                        <span class="rounded-full bg-green-500/15 px-3 py-1 text-xs font-semibold text-green-300">Pagada</span>
+                        <span
+                            class="rounded-full bg-green-500/15 px-3 py-1 text-xs font-semibold text-green-300">Pagada</span>
                     @elseif ($factura->estado === 'pendiente')
-                        <span class="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-300">Pendiente</span>
+                        <span
+                            class="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-300">Pendiente</span>
                     @else
                         <span class="rounded-full bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-300">Anulada</span>
                     @endif
                 </div>
-                <p class="mt-2 text-sm text-neutral-400">Consulta y gestiona los datos generales y los productos de esta factura desde una sola pantalla.</p>
+                <p class="mt-2 text-sm text-neutral-400">Consulta y gestiona los datos generales y los productos de esta
+                    factura desde una sola pantalla.</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('facturas.index') }}"
@@ -71,7 +74,8 @@
                                     class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                 <input type="hidden" name="id_cliente" value="{{ $factura->id_cliente }}">
                             @else
-                                <select id="id_cliente" name="id_cliente" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                <select id="id_cliente" name="id_cliente" required
+                                    class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                     <option value="">Selecciona un cliente</option>
                                     @foreach ($clientes as $cliente)
                                         <option value="{{ $cliente->id }}" @selected(old('id_cliente', $factura->id_cliente) == $cliente->id)>
@@ -82,7 +86,8 @@
                             @endif
                         </div>
                         <div>
-                            <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de emisión</label>
+                            <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de
+                                emisión</label>
                             @if ($factura->estado === 'pagada')
                                 <input type="text" disabled value="{{ $factura->fecha?->format('d/m/Y') }}"
                                     class="w-full rounded-lg border px-3 py-2.5 text-sm">
@@ -95,7 +100,8 @@
                         </div>
                         <div>
                             <label for="estado" class="mb-2 block text-sm font-medium text-neutral-300">Estado</label>
-                            <select id="estado" name="estado" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                            <select id="estado" name="estado" required
+                                class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                 @if ($factura->estado === 'pagada')
                                     <option value="pagada" selected>Pagada</option>
                                     <option value="anulada">Anulada</option>
@@ -110,11 +116,13 @@
 
                     @if ($factura->estado === 'pagada')
                         <p class="rounded-lg border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-sm text-amber-200">
-                            Una factura pagada conserva su cliente, fecha y detalles. Solo puede mantenerse pagada o anularse.
+                            Una factura pagada conserva su cliente, fecha y detalles. Solo puede mantenerse pagada o
+                            anularse.
                         </p>
                     @else
                         <p class="rounded-lg border border-blue-500/25 bg-blue-500/5 px-4 py-3 text-sm text-blue-200">
-                            El subtotal, el IVA y el total se calculan automáticamente a partir de los detalles; no se modifican manualmente.
+                            El subtotal, el IVA y el total se calculan automáticamente a partir de los detalles; no se
+                            modifican manualmente.
                         </p>
                     @endif
 
@@ -136,7 +144,8 @@
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Fecha</p>
-                        <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
+                        <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}
+                        </p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable</p>
@@ -154,10 +163,12 @@
         </section>
 
         <section class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80">
-            <div class="flex flex-col gap-2 border-b border-neutral-800 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-2 border-b border-neutral-800 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-lg font-semibold text-neutral-100">Productos y detalles de factura</h2>
-                    <p class="mt-1 text-sm text-neutral-400">Edita producto, cantidad y precio unitario directamente en cada renglón.</p>
+                    <p class="mt-1 text-sm text-neutral-400">Edita producto, cantidad y precio unitario directamente en cada
+                        renglón.</p>
                 </div>
                 <span class="rounded-full bg-neutral-800 px-3 py-1 text-xs font-medium text-neutral-300">
                     {{ $factura->detalle_factura->count() }} detalle(s)
@@ -166,7 +177,8 @@
 
             @if ($factura->estado === 'pagada')
                 <p class="border-b border-amber-500/20 bg-amber-500/5 px-5 py-3 text-sm text-amber-200">
-                    Los detalles de una factura pagada son de solo lectura. Puedes anularla desde los datos generales cuando corresponda.
+                    Los detalles de una factura pagada son de solo lectura. Puedes anularla desde los datos generales cuando
+                    corresponda.
                 </p>
             @elseif ($factura->estado === 'pendiente' && !$puedeEditarDetalle && !$puedeEliminarDetalle && !$puedeAgregarDetalle)
                 <p class="border-b border-neutral-800 px-5 py-3 text-sm text-neutral-400">
@@ -180,10 +192,13 @@
                         <tr>
                             <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Producto</th>
                             <th class="w-28 px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Cantidad</th>
-                            <th class="w-40 px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Precio unitario</th>
-                            <th class="w-36 px-3 py-3 text-right text-xs font-semibold uppercase tracking-wide">Subtotal</th>
+                            <th class="w-40 px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide">Precio
+                                unitario</th>
+                            <th class="w-36 px-3 py-3 text-right text-xs font-semibold uppercase tracking-wide">Subtotal
+                            </th>
                             @if ($mostrarAccionesDetalle)
-                                <th class="w-40 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide">Acciones</th>
+                                <th class="w-40 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide">
+                                    Acciones</th>
                             @endif
                         </tr>
                     </thead>
@@ -197,7 +212,8 @@
                                             class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
                                             @if (!$productos->contains('id', $detalle->id_producto))
                                                 <option value="{{ $detalle->id_producto }}" selected disabled>
-                                                    {{ $detalle->producto?->nombre ?? 'Producto inactivo' }} (no disponible)
+                                                    {{ $detalle->producto?->nombre ?? 'Producto inactivo' }} (no
+                                                    disponible)
                                                 </option>
                                             @endif
                                             @foreach ($productos as $producto)
@@ -216,29 +232,33 @@
                                 </td>
                                 <td class="px-3 py-3">
                                     @if ($puedeEditarDetalle)
-                                        <input type="number" name="cantidad" form="{{ $formDetalle }}" min="1" required
-                                            value="{{ $detalle->cantidad }}" class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
+                                        <input type="number" name="cantidad" form="{{ $formDetalle }}" min="1"
+                                            required value="{{ $detalle->cantidad }}"
+                                            class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
                                     @else
                                         <span>{{ $detalle->cantidad }}</span>
                                     @endif
                                 </td>
                                 <td class="px-3 py-3">
                                     @if ($puedeEditarDetalle)
-                                        <input type="number" name="precio_unitario" form="{{ $formDetalle }}" min="0"
-                                            step="0.01" required value="{{ $detalle->precio_unitario }}"
+                                        <input type="number" name="precio_unitario" form="{{ $formDetalle }}"
+                                            min="0" step="0.01" required
+                                            value="{{ $detalle->precio_unitario }}"
                                             class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
                                     @else
                                         <span>$ {{ number_format((float) $detalle->precio_unitario, 2, ',', '.') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-3 py-3 text-right font-semibold text-neutral-100">
-                                    $ <span data-line-subtotal>{{ number_format((float) $detalle->subtotal, 2, ',', '.') }}</span>
+                                    $ <span
+                                        data-line-subtotal>{{ number_format((float) $detalle->subtotal, 2, ',', '.') }}</span>
                                 </td>
                                 @if ($mostrarAccionesDetalle)
                                     <td class="px-3 py-3">
                                         <div class="flex flex-wrap items-center justify-center gap-2">
                                             @if ($puedeEditarDetalle)
-                                                <form id="{{ $formDetalle }}" action="{{ route('detalle_facturas.update', $detalle->id) }}"
+                                                <form id="{{ $formDetalle }}"
+                                                    action="{{ route('detalle_facturas.update', $detalle->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -250,7 +270,8 @@
                                                 </button>
                                             @endif
                                             @if ($puedeEliminarDetalle)
-                                                <form action="{{ route('detalle_facturas.destroy', $detalle->id) }}" method="POST"
+                                                <form action="{{ route('detalle_facturas.destroy', $detalle->id) }}"
+                                                    method="POST"
                                                     onsubmit="return confirm('¿Retirar este producto? Las existencias se devolverán al inventario.');">
                                                     @csrf
                                                     @method('DELETE')
@@ -280,15 +301,18 @@
                 <div class="ml-auto grid max-w-md grid-cols-3 gap-3 text-sm">
                     <div>
                         <p class="text-xs text-neutral-400">Subtotal</p>
-                        <p class="mt-1 font-semibold text-neutral-100">$ {{ number_format((float) $factura->subtotal, 2, ',', '.') }}</p>
+                        <p class="mt-1 font-semibold text-neutral-100">$
+                            {{ number_format((float) $factura->subtotal, 2, ',', '.') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-neutral-400">IVA (19 %)</p>
-                        <p class="mt-1 font-semibold text-neutral-100">$ {{ number_format((float) $factura->iva, 2, ',', '.') }}</p>
+                        <p class="mt-1 font-semibold text-neutral-100">$
+                            {{ number_format((float) $factura->iva, 2, ',', '.') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-neutral-400">Total</p>
-                        <p class="mt-1 font-bold text-blue-300">$ {{ number_format((float) $factura->total, 2, ',', '.') }}</p>
+                        <p class="mt-1 font-bold text-blue-300">$
+                            {{ number_format((float) $factura->total, 2, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
@@ -310,7 +334,8 @@
                         @csrf
                         <input type="hidden" name="id_factura" value="{{ $factura->id }}">
                         <div>
-                            <label for="id_producto_nuevo" class="mb-2 block text-sm font-medium text-neutral-300">Producto</label>
+                            <label for="id_producto_nuevo"
+                                class="mb-2 block text-sm font-medium text-neutral-300">Producto</label>
                             <select id="id_producto_nuevo" name="id_producto" required data-product-select
                                 class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                 <option value="">Selecciona un producto</option>
@@ -323,14 +348,16 @@
                             </select>
                         </div>
                         <div>
-                            <label for="cantidad_nueva" class="mb-2 block text-sm font-medium text-neutral-300">Cantidad</label>
-                            <input id="cantidad_nueva" type="number" name="cantidad" min="1" required value="1"
-                                class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                            <label for="cantidad_nueva"
+                                class="mb-2 block text-sm font-medium text-neutral-300">Cantidad</label>
+                            <input id="cantidad_nueva" type="number" name="cantidad" min="1" required
+                                value="1" class="w-full rounded-lg border px-3 py-2.5 text-sm">
                         </div>
                         <div>
-                            <label for="precio_unitario_nuevo" class="mb-2 block text-sm font-medium text-neutral-300">Precio unitario</label>
-                            <input id="precio_unitario_nuevo" type="number" name="precio_unitario" min="0" step="0.01"
-                                required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                            <label for="precio_unitario_nuevo"
+                                class="mb-2 block text-sm font-medium text-neutral-300">Precio unitario</label>
+                            <input id="precio_unitario_nuevo" type="number" name="precio_unitario" min="0"
+                                step="0.01" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
                         </div>
                         <div class="flex items-end">
                             <button type="submit"
@@ -345,7 +372,8 @@
 
         @can('eliminar facturas')
             @if ($factura->estado !== 'pendiente')
-                <p class="text-xs text-neutral-500">Las facturas pagadas o anuladas se conservan como parte del historial comercial.</p>
+                <p class="text-xs text-neutral-500">Las facturas pagadas o anuladas se conservan como parte del historial
+                    comercial.</p>
             @endif
         @endcan
     </div>
@@ -359,7 +387,8 @@
 
             if (!priceInput) {
                 const row = select.closest('tr');
-                const linkedForm = row ? document.getElementById(row.querySelector('[name="cantidad"]')?.getAttribute('form')) : null;
+                const linkedForm = row ? document.getElementById(row.querySelector('[name="cantidad"]')
+                    ?.getAttribute('form')) : null;
                 const linkedPrice = row ? row.querySelector('[name="precio_unitario"]') : null;
                 if (linkedPrice) {
                     select.addEventListener('change', function() {
