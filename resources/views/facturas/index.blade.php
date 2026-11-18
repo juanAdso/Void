@@ -18,8 +18,8 @@
             </div>
 
 
-            <div class="dt-container">
-                <table class="">
+            <div class="w-full max-w-full overflow-hidden rounded-xl border border-slate-800">
+                <table class="datatable min-w-full w-full border-collapse">
                     <thead>
                         <tr>
                             <th>Factura</th>
@@ -29,12 +29,12 @@
                             <th>IVA</th>
                             <th>Total</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th data-searchable="false" data-orderable="false">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach ($facturas as $factura)
+                        @forelse ($facturas as $factura)
                             <tr>
                                 <td>{{ $factura->id }}</td>
 
@@ -108,7 +108,13 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-5 py-10 text-center text-sm text-slate-400">
+                                    Todavía no hay facturas registradas.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
