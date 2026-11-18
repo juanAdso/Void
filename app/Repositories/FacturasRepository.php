@@ -242,7 +242,7 @@ class FacturasRepository implements FacturasRepositoryInterface
                                 'id_producto' => $productoAnteriorId,
                                 'tipo_movimiento' => $tipo,
                                 'cantidad' => $diferencia,
-                                'motivo' => "Edición factura #{$factura->id}: cantidad {$cantidadAnterior} a {$cantidadNueva}; valor unitario $".number_format($precioAnterior, 2, ',', '.').' a 
+                                'motivo' => "Edición factura #{$factura->id}: cantidad {$cantidadAnterior} a {$cantidadNueva}; valor unitario $".number_format($precioAnterior, 2, ',', '.').' a $'.number_format($precioNuevo, 2, ',', '.'),
                             ];
                         }
                     } else {
@@ -281,7 +281,7 @@ class FacturasRepository implements FacturasRepositoryInterface
                         'id_producto' => $productoNuevoId,
                         'tipo_movimiento' => 'venta_detalle',
                         'cantidad' => -$cantidadNueva,
-                        'motivo' => "Nuevo detalle en factura #{$factura->id}: {$cantidadNueva} unidad(es); valor unitario $".number_format($precioNuevo, 2, ',', '.').'; subtotal 
+                        'motivo' => "Nuevo detalle en factura #{$factura->id}: {$cantidadNueva} unidad(es); valor unitario $".number_format($precioNuevo, 2, ',', '.').'; subtotal $'.number_format($cantidadNueva * $precioNuevo, 2, ',', '.'),
                     ];
                     $nuevosDetalles[] = [
                         'id_producto' => $productoNuevoId,
