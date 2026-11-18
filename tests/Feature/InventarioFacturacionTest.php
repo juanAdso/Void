@@ -1029,7 +1029,6 @@ test('la edicion completa rechaza facturas anuladas', function () {
     expect($factura->fresh()->estado)->toBe('anulada');
 });
 
-
 test('guardar cambios de una factura pagada actualiza detalles inventario movimientos y totales en una transaccion', function () {
     $clienteNuevo = Cliente::create([
         'id_tienda' => $this->tienda->id,
