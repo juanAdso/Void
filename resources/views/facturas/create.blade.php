@@ -76,11 +76,6 @@
                     </button>
                 </div>
 
-                @if ($productos->isEmpty())
-                    <p class="mx-5 mt-4 rounded-lg border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-sm text-amber-200">
-                        No hay productos activos disponibles. Puedes guardar la factura sin detalles y agregarlos después.
-                    </p>
-                @endif
                 <div class="space-y-3 p-5" id="detalles-container">
                     <p id="sin-detalles" class="rounded-xl border border-dashed border-neutral-700 px-4 py-8 text-center text-sm text-neutral-400">
                         Aún no has agregado productos. Usa «Agregar producto» para incluir el primer detalle.

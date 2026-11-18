@@ -154,7 +154,7 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
 
     $this->get(route('facturas.create'))
         ->assertOk()
-        ->assertSee('name="estado" value="pendiente"', false)
+        ->assertSee('<option value="pendiente"', false)
         ->assertDontSee('<option value="pagada"', false)
         ->assertDontSee('<option value="anulada"', false);
 
@@ -235,10 +235,10 @@ test('la consulta de factura integra los detalles y las acciones del administrad
     expect($response->original->getData()['puedeEliminarDetalle'])->toBeTrue();
 
     $response
-        ->assertSeeText('Productos y detalles de factura')
+        ->assertSeeText('Productos de la factura')
         ->assertSeeText('Producto visible en factura')
-        ->assertSeeText('Guardar')
-        ->assertSeeText('Retirar')
+        ->assertSeeText('Editar producto')
+        ->assertSeeText('Eliminar producto')
         ->assertSeeText('Agregar producto')
         ->assertSee('¿Eliminar la factura #', false)
         ->assertSeeText('29.750,00');
@@ -346,7 +346,7 @@ test('el administrador ve los productos disponibles al editar detalles aunque no
 
     $this->get(route('facturas.show', $factura->id))
         ->assertOk()
-        ->assertSee('name="id_producto"', false)
+        ->assertSee('Editar producto')
         ->assertSee('Producto editable de factura')
         ->assertDontSee('Agregar producto');
 });

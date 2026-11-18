@@ -359,6 +359,7 @@
 
             if (!priceInput) {
                 const row = select.closest('tr');
+                const linkedForm = row ? document.getElementById(row.querySelector('[name="cantidad"]')?.getAttribute('form')) : null;
                 const linkedPrice = row ? row.querySelector('[name="precio_unitario"]') : null;
                 if (linkedPrice) {
                     select.addEventListener('change', function() {
