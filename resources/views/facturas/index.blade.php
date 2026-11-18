@@ -17,7 +17,6 @@
                 @endcan
             </div>
 
-
             <div class="w-full max-w-full overflow-hidden rounded-xl border border-slate-800">
                 <table class="datatable min-w-full w-full border-collapse">
                     <thead>
@@ -61,15 +60,18 @@
 
                                 <td>
                                     @if ($factura->estado === 'pagada')
-                                        <span class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">
+                                        <span
+                                            class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">
                                             Pagada
                                         </span>
                                     @elseif ($factura->estado === 'pendiente')
-                                        <span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">
+                                        <span
+                                            class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">
                                             Pendiente
                                         </span>
                                     @else
-                                        <span class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">
+                                        <span
+                                            class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">
                                             Anulada
                                         </span>
                                     @endif
@@ -88,8 +90,7 @@
 
                                         @can('eliminar facturas')
                                             @if ($factura->estado === 'pendiente')
-                                                <form action="{{ route('facturas.destroy', $factura->id) }}"
-                                                    method="POST"
+                                                <form action="{{ route('facturas.destroy', $factura->id) }}" method="POST"
                                                     onsubmit="return confirm('¿Eliminar la factura #{{ $factura->id }}? También se eliminarán sus productos asociados, se devolverán las unidades al inventario y se registrarán los movimientos.');">
                                                     @csrf
                                                     @method('DELETE')

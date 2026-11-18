@@ -3,7 +3,7 @@
 @section('title', 'Categorías')
 @section('content')
     @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias'])
+    $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias']),
 )
     <x-card>
         <div class="container mx-auto mt-10">
@@ -40,7 +40,8 @@
                                 <th class="border px-4 py-2">Descripción</th>
                                 <th class="border px-4 py-2">Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones</th>
+                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones
+                                    </th>
                                 @endif
                             </tr>
                         </thead>

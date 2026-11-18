@@ -3,7 +3,7 @@
 @section('title', 'Productos')
 @section('content')
     @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos'])
+    $mostrarAcciones = auth()->user()->canAny(['editar productos', 'eliminar productos']),
 )
     <div class="mx-auto w-full max-w-full min-w-0">
         <div class="w-full min-w-0 rounded-xl bg-white p-4 shadow-lg sm:p-6">
@@ -37,7 +37,8 @@
                                 <th class="border px-4 py-2">Categoría</th>
                                 <th class="border px-4 py-2">Estado</th>
                                 @if ($mostrarAcciones)
-                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones</th>
+                                    <th class="border px-4 py-2" data-searchable="false" data-orderable="false">Acciones
+                                    </th>
                                 @endif
                             </tr>
                         </thead>
