@@ -370,7 +370,7 @@
                     <h2 class="text-lg font-semibold text-neutral-100">Productos y detalles de factura</h2>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[700px] border-collapse">
+                    <table class="datatable w-full min-w-[700px] border-collapse">
                         <thead>
                             <tr>
                                 <th class="px-3 py-3 text-left text-xs font-semibold uppercase text-neutral-400">Producto
