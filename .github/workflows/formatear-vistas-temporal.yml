@@ -1,0 +1,33 @@
+name: Formatear vistas temporal
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/formatear-vistas-temporal.yml
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener repositorio
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Aplicar Prettier a las vistas
+        run: npx prettier --write resources/views/facturas/edit.blade.php resources/views/layouts/app.blade.php
+      - name: Publicar vistas formateadas
+        uses: actions/upload-artifact@v4
+        with:
+          name: vistas-formateadas
+          path: |
+            resources/views/facturas/edit.blade.php
+            resources/views/layouts/app.blade.php

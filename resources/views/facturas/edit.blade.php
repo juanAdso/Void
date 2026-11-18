@@ -169,7 +169,7 @@
                             <tr class="border-t border-neutral-800">
                                 <td class="px-3 py-3">
                                     @if ($puedeEditarDetalle)
-                                        <select name="id_producto" form="{{ $formDetalle }}" required
+                                        <select name="id_producto" form="{{ $formDetalle }}" data-product-select required
                                             class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
                                             @if (!$productos->contains('id', $detalle->id_producto))
                                                 <option value="{{ $detalle->id_producto }}" selected disabled>
@@ -177,7 +177,7 @@
                                                 </option>
                                             @endif
                                             @foreach ($productos as $producto)
-                                                <option value="{{ $producto->id }}" @selected($detalle->id_producto == $producto->id)>
+                                                <option value="{{ $producto->id }}" data-price="{{ $producto->precio }}" @selected($detalle->id_producto == $producto->id)>
                                                     {{ $producto->nombre }} · Stock: {{ $producto->stock }}
                                                 </option>
                                             @endforeach
