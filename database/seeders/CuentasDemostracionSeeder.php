@@ -249,6 +249,31 @@ SVG;
             );
         }
 
+        foreach ($factura->detalle_factura()->get() as $detalle) {
+            $producto = $productos = Productos::query()
+                ->where('id_tienda', $tiendaId = $tienda->id)
+                ->findOrFail($detalle->id_producto);
+            $motivo = "Venta de demostración por factura #{$factura->id}";
+
+            $movimiento = MovimientoInventario::firstOrCreate(
+                [
+                    'id_producto' => $producto->id,
+                    'tipo_movimiento' => 'venta_detalle',
+                    'motivo' => $motivo,
+                ],
+                [
+                    'id_tienda' => $tienda->id,
+                    'id_usuario' => $usuario->id,
+                    'cantidad' => -((int) $detalle->cantidad),
+                    'fecha' => now(),
+                ]
+            );
+
+            if ($movimiento->wasRecentlyCreated) {
+                $producto->decrement('stock', (int) $detalle->cantidad);
+            }
+        }
+
         $subtotal = round((float) $factura->detalle_factura()->sum('subtotal'), 2);
         $iva = round($subtotal * 0.19, 2);
 
