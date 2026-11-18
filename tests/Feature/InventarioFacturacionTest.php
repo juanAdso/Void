@@ -57,7 +57,6 @@ beforeEach(function () {
     ]);
 });
 
-
 test('crear factura con varios detalles descuenta inventario y calcula sus totales en una sola operacion', function () {
     $productoA = Productos::create([
         'id_categoria' => $this->categoria->id,
