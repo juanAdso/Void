@@ -136,7 +136,7 @@ class FacturasRepository implements FacturasRepositoryInterface
 
             if ($factura->estado === 'anulada') {
                 throw ValidationException::withMessages([
-                    'factura' => 'Una factura anulada no se puede modificar.',
+                    'estado' => 'Una factura anulada no se puede modificar.',
                 ]);
             }
 

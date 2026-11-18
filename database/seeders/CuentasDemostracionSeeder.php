@@ -251,7 +251,7 @@ SVG;
 
         foreach ($factura->detalle_factura()->get() as $detalle) {
             $producto = Productos::query()
-                ->where('id_tienda', $tienda->id)
+                ->where('id_tienda', $usuario->id_tienda)
                 ->findOrFail($detalle->id_producto);
             $motivo = "Venta de demostración por factura #{$factura->id}";
 
@@ -262,7 +262,7 @@ SVG;
                     'motivo' => $motivo,
                 ],
                 [
-                    'id_tienda' => $tienda->id,
+                    'id_tienda' => $usuario->id_tienda,
                     'id_usuario' => $usuario->id,
                     'cantidad' => -((int) $detalle->cantidad),
                     'fecha' => now(),
