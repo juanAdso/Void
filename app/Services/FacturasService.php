@@ -33,6 +33,11 @@ class FacturasService
         return $this->repository->actualizar($id, $data, $tiendaId);
     }
 
+    public function actualizarCompleta(int $id, array $datos, int $tiendaId)
+    {
+        return $this->repository->actualizarCompleta($id, $datos, $tiendaId);
+    }
+
     public function eliminar(int $id, int $tiendaId)
     {
         return $this->repository->eliminar($id, $tiendaId);
