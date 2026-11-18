@@ -577,6 +577,96 @@
         .table-scroll-toolbar {
             color: #b7c1d0;
         }
+
+        .void-compact-table {
+            width: 100% !important;
+            min-width: 100% !important;
+            table-layout: auto;
+            font-size: .75rem !important;
+        }
+
+        .void-compact-table th,
+        .void-compact-table td {
+            padding: .45rem .55rem !important;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+            vertical-align: middle;
+        }
+
+        .void-compact-table thead th {
+            font-size: .68rem !important;
+            letter-spacing: .035em;
+        }
+
+        .void-compact-table tbody td img {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+        }
+
+        .void-column-filter-row th {
+            padding: .35rem .45rem !important;
+            background: #111a26 !important;
+        }
+
+        .void-column-filter-row input {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            border: 1px solid #405064;
+            border-radius: .45rem;
+            background: #101720;
+            padding: .35rem .45rem;
+            color: #e5eaf1;
+            font-size: .68rem;
+            font-weight: 400;
+            letter-spacing: normal;
+        }
+
+        .void-column-filter-row input::placeholder {
+            color: #8290a3;
+        }
+
+        .table-filter-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin: .75rem 0 .35rem;
+            color: #b7c1d0;
+            font-size: .72rem;
+        }
+
+        .table-filter-toolbar button {
+            border: 1px solid #405064;
+            border-radius: .5rem;
+            background: #151e2a;
+            padding: .35rem .7rem;
+            color: #dce5f1;
+            font-weight: 600;
+        }
+
+        .table-filter-toolbar button:hover {
+            border-color: #60a5fa;
+            color: #93c5fd;
+        }
+
+        .void-filter-empty td {
+            padding: 1rem !important;
+            text-align: center;
+            color: #9aa8ba;
+            font-size: .75rem;
+        }
+
+        @media(max-width:640px) {
+            .table-filter-toolbar {
+                align-items: flex-start;
+            }
+
+            .void-compact-table th,
+            .void-compact-table td {
+                padding: .35rem .4rem !important;
+            }
+        }
     </style>
 
     @stack('styles')
@@ -672,6 +762,132 @@
                 });
                 window.addEventListener('resize', updateControls);
                 updateControls();
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const normalizar = function(valor) {
+                return valor
+                    .toLocaleLowerCase('es')
+                    .normalize('NFD')
+                    .replace(/[\\u0300-\\u036f]/g, '')
+                    .trim();
+            };
+
+            document.querySelectorAll('main table').forEach(function(table) {
+                table.classList.add('void-compact-table');
+
+                if (table.dataset.noColumnFilters === 'true' || table.dataset.columnFiltersReady === 'true') {
+                    return;
+                }
+
+                const thead = table.tHead;
+                const tbody = table.tBodies[0];
+                const headerRow = thead ? thead.rows[0] : null;
+
+                if (!headerRow || !tbody || !headerRow.cells.length) {
+                    return;
+                }
+
+                const headers = Array.from(headerRow.cells);
+
+                if (headers.some(function(header) { return header.colSpan !== 1; })) {
+                    return;
+                }
+
+                const rows = Array.from(tbody.rows).filter(function(row) {
+                    return !row.classList.contains('void-filter-empty') &&
+                        row.cells.length > 0 &&
+                        row.cells[0].colSpan === 1;
+                });
+
+                if (!rows.length) {
+                    return;
+                }
+
+                const inputs = [];
+                const filterRow = document.createElement('tr');
+                filterRow.className = 'void-column-filter-row';
+
+                headers.forEach(function(header, index) {
+                    const cell = document.createElement('th');
+                    cell.scope = 'col';
+                    const title = normalizar(header.textContent || '');
+
+                    if (title && !title.includes('accion') && !title.includes('imagen')) {
+                        const input = document.createElement('input');
+                        input.type = 'search';
+                        input.placeholder = 'Filtrar';
+                        input.setAttribute('aria-label', 'Filtrar por ' + header.textContent.trim());
+                        input.autocomplete = 'off';
+                        input.addEventListener('input', aplicarFiltros);
+                        cell.appendChild(input);
+                        inputs.push({ index: index, input: input });
+                    }
+
+                    filterRow.appendChild(cell);
+                });
+
+                if (!inputs.length) {
+                    return;
+                }
+
+                headerRow.parentNode.insertBefore(filterRow, headerRow.nextSibling);
+                table.dataset.columnFiltersReady = 'true';
+
+                const noResultsRow = document.createElement('tr');
+                noResultsRow.className = 'void-filter-empty';
+                noResultsRow.hidden = true;
+                const noResultsCell = document.createElement('td');
+                noResultsCell.colSpan = headers.length;
+                noResultsCell.textContent = 'No hay registros que coincidan con los filtros.';
+                noResultsRow.appendChild(noResultsCell);
+                tbody.appendChild(noResultsRow);
+
+                const toolbar = document.createElement('div');
+                toolbar.className = 'table-filter-toolbar';
+                const help = document.createElement('span');
+                help.textContent = 'Filtra los registros cargados por una o varias columnas.';
+                const clear = document.createElement('button');
+                clear.type = 'button';
+                clear.textContent = 'Limpiar filtros';
+                clear.addEventListener('click', function() {
+                    inputs.forEach(function(filter) {
+                        filter.input.value = '';
+                    });
+                    aplicarFiltros();
+                });
+                toolbar.append(help, clear);
+
+                const scrollArea = table.closest('.table-scroll-area') || table.parentElement;
+                scrollArea.parentNode.insertBefore(toolbar, scrollArea);
+
+                function aplicarFiltros() {
+                    let visibles = 0;
+
+                    rows.forEach(function(row) {
+                        const coincide = inputs.every(function(filter) {
+                            const buscado = normalizar(filter.input.value);
+
+                            if (!buscado) {
+                                return true;
+                            }
+
+                            const cell = row.cells[filter.index];
+                            return cell && normalizar(cell.innerText || cell.textContent || '').includes(buscado);
+                        });
+
+                        row.hidden = !coincide;
+
+                        if (coincide) {
+                            visibles++;
+                        }
+                    });
+
+                    noResultsRow.hidden = visibles > 0;
+                }
             });
         });
     </script>

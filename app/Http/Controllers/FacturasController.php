@@ -93,9 +93,30 @@ class FacturasController extends Controller
                 ->with('error', 'Esta factura está anulada y se conserva como parte del historial. No se puede editar.');
         }
 
+        $usuario = auth()->user();
+        $esPendiente = $facturas->estado === 'pendiente';
+        $puedeEditarDetalle = $esPendiente && $usuario->tienePermisoActivo('editar detallefacturas');
+        $puedeEliminarDetalle = $esPendiente && $usuario->tienePermisoActivo('eliminar detallefacturas');
+        $puedeAgregarDetalle = $esPendiente && $usuario->tienePermisoActivo('crear detallefacturas');
+        $mostrarAccionesDetalle = $puedeEditarDetalle || $puedeEliminarDetalle;
         $clientes = $this->clientesService->listarTodo($tiendaId);
+        $productos = collect();
 
-        return view('facturas.edit', compact('facturas', 'clientes'));
+        if ($puedeAgregarDetalle || $puedeEditarDetalle) {
+            $productos = $this->productosService->listarTodo($tiendaId)
+                ->where('estado', true)
+                ->values();
+        }
+
+        return view('facturas.edit', compact(
+            'facturas',
+            'clientes',
+            'productos',
+            'mostrarAccionesDetalle',
+            'puedeEditarDetalle',
+            'puedeEliminarDetalle',
+            'puedeAgregarDetalle'
+        ));
     }
 
     public function update(int $id, UpdateFacturasRequest $request)
@@ -105,7 +126,7 @@ class FacturasController extends Controller
         unset($datos['id_usuario'], $datos['id_tienda']);
         $this->facturasService->actualizar($id, $datos, $tiendaId);
 
-        return redirect()->route('facturas.show', $id)
+        return redirect()->route('facturas.edit', $id)
             ->with('success', 'Factura actualizada correctamente.');
     }
 

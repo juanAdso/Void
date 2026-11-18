@@ -136,7 +136,7 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
         'id_cliente' => $cliente->id,
         'fecha' => '2026-11-16',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.show', $factura->id));
+    ])->assertRedirect(route('facturas.edit', $factura->id));
 
     expect($factura->fresh()->fecha->toDateString())->toBe('2026-11-16');
 
@@ -393,4 +393,51 @@ test('los paneles no muestran accesos cuando el permiso correspondiente no exist
         ->assertOk()
         ->assertDontSee('Reportes y movimientos de inventario')
         ->assertDontSee('Abrir reportes');
+});
+
+test('la edicion de factura integra los campos de sus detalles en la misma vista', function () {
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'id_categoria' => $categoria->id,
+        'nombre' => 'Producto editable desde factura',
+        'precio' => 25000,
+        'estado' => true,
+        'stock' => 8,
+    ]);
+    $factura = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => '2026-11-17',
+        'subtotal' => 50000,
+        'iva' => 9500,
+        'total' => 59500,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $factura->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 2,
+        'precio_unitario' => 25000,
+        'subtotal' => 50000,
+    ]);
+
+    Role::findByName('administrador')->givePermissionTo([
+        'crear detallefacturas',
+        'editar detallefacturas',
+        'eliminar detallefacturas',
+    ]);
+    $this->admin->refresh();
+
+    $response = $this->get(route('facturas.edit', $factura->id))->assertOk();
+
+    $response
+        ->assertSeeText('Productos y detalles de factura')
+        ->assertSeeText('Producto editable desde factura')
+        ->assertSee('name="id_producto"', false)
+        ->assertSee('name="cantidad"', false)
+        ->assertSee('name="precio_unitario"', false)
+        ->assertSee('name="volver_edicion" value="1"', false)
+        ->assertSeeText('Agregar producto a la factura');
 });
