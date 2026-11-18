@@ -2,9 +2,9 @@
 @section('page-title', 'Gestión de categorías')
 @section('title', 'Categorías')
 @section('content')
-    @php(
-    $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias']),
-)
+    @php
+        $mostrarAcciones = auth()->user()->canAny(['editar categorias', 'eliminar categorias']);
+    @endphp
     <x-card>
         <div class="container mx-auto mt-10">
             <div class="bg-white shadow-lg rounded-lg p-6">
