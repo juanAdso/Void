@@ -824,7 +824,7 @@
                         input.type = 'search';
                         input.placeholder = 'Filtrar';
                         input.setAttribute('aria-label', 'Filtrar por ' + header.textContent
-                    .trim());
+                            .trim());
                         input.autocomplete = 'off';
                         input.addEventListener('input', aplicarFiltros);
                         cell.appendChild(input);
