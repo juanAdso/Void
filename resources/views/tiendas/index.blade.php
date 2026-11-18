@@ -58,7 +58,7 @@
                                     Estado</th>
                                 @if ($mostrarAcciones)
                                     <th
-                                        class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                        class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500" data-searchable="false" data-orderable="false">
                                         Acciones</th>
                                 @endif
                             </tr>
