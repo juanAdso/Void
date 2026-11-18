@@ -33,7 +33,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
+            <table class="datatable min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
                         <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -44,7 +44,8 @@
                             Empleados</th>
                         <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Estado
                         </th>
-                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500"
+                            data-searchable="false" data-orderable="false">
                             Acción</th>
                     </tr>
                 </thead>
