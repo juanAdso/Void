@@ -119,7 +119,12 @@ test('la gestion de productos permite crear editar y eliminar un producto sin mo
 test('la gestion de facturas permite crear editar y eliminar una factura pendiente vacia', function () {
     $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
 
-    $this->get(route('facturas.create'))->assertOk();
+    $this->get(route('facturas.create'))
+        ->assertOk()
+        ->assertSeeText('Productos y detalles')
+        ->assertSee('detalles[__INDEX__][id_producto]', false)
+        ->assertSee('detalles[__INDEX__][cantidad]', false)
+        ->assertSee('detalles[__INDEX__][precio_unitario]', false);
 
     $responseCrear = $this->post(route('facturas.store'), [
         'id_cliente' => $cliente->id,
@@ -130,13 +135,13 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
     $factura = Facturas::query()->where('id_usuario', $this->admin->id)->firstOrFail();
     $responseCrear->assertRedirect(route('facturas.show', $factura->id));
 
-    $this->get(route('facturas.edit', $factura->id))->assertOk();
+    $this->get(route('facturas.edit', $factura->id))->assertRedirect(route('facturas.show', $factura->id));
 
     $this->put(route('facturas.update', $factura->id), [
         'id_cliente' => $cliente->id,
         'fecha' => '2026-11-16',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.edit', $factura->id));
+    ])->assertRedirect(route('facturas.show', $factura->id));
 
     expect($factura->fresh()->fecha->toDateString())->toBe('2026-11-16');
 
@@ -174,10 +179,10 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
     ]);
 
     $index = $this->get(route('facturas.index'))->assertOk();
-    $index->assertSee(route('facturas.edit', $pagada->id));
+    $index->assertSee(route('facturas.show', $pagada->id));
     $index->assertDontSee(route('facturas.edit', $anulada->id));
 
-    $this->get(route('facturas.edit', $pagada->id))
+    $this->get(route('facturas.show', $pagada->id))
         ->assertOk()
         ->assertSee('type="hidden" name="id_cliente"', false)
         ->assertSee('name="fecha" value="2026-11-10"', false)
@@ -185,9 +190,10 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
         ->assertSee('<option value="anulada"', false)
         ->assertDontSee('<option value="pendiente"', false);
 
-    $this->get(route('facturas.edit', $anulada->id))
-        ->assertRedirect(route('facturas.show', $anulada->id))
-        ->assertSessionHas('error', 'Esta factura está anulada y se conserva como parte del historial. No se puede editar.');
+    $this->get(route('facturas.show', $anulada->id))
+        ->assertOk()
+        ->assertDontSee('name="id_cliente"', false)
+        ->assertSeeText('Sus datos y detalles son de solo lectura.');
 });
 
 test('la consulta de factura integra los detalles y las acciones del administrador', function () {
@@ -430,14 +436,16 @@ test('la edicion de factura integra los campos de sus detalles en la misma vista
     ]);
     $this->admin->refresh();
 
-    $response = $this->get(route('facturas.edit', $factura->id))->assertOk();
+    $response = $this->get(route('facturas.show', $factura->id))->assertOk();
 
     $response
+        ->assertSeeText('Datos generales de la factura')
+        ->assertSee('name="id_cliente"', false)
+        ->assertSee('name="fecha"', false)
         ->assertSeeText('Productos y detalles de factura')
         ->assertSeeText('Producto editable desde factura')
         ->assertSee('name="id_producto"', false)
         ->assertSee('name="cantidad"', false)
         ->assertSee('name="precio_unitario"', false)
-        ->assertSee('name="volver_edicion" value="1"', false)
         ->assertSeeText('Agregar producto a la factura');
 });

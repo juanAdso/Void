@@ -57,6 +57,88 @@ beforeEach(function () {
     ]);
 });
 
+
+test('crear factura con varios detalles descuenta inventario y calcula sus totales en una sola operacion', function () {
+    $productoA = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto de factura nueva A',
+        'descripcion' => 'Prueba de creacion',
+        'precio' => 100,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+    $productoB = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto de factura nueva B',
+        'descripcion' => 'Prueba de creacion',
+        'precio' => 200,
+        'stock' => 8,
+        'estado' => true,
+    ]);
+
+    $response = $this->actingAs($this->usuario)->post(route('facturas.store'), [
+        'id_cliente' => $this->cliente->id,
+        'fecha' => '2026-11-18',
+        'estado' => 'pendiente',
+        'detalles' => [
+            ['id_producto' => $productoA->id, 'cantidad' => 2, 'precio_unitario' => 100],
+            ['id_producto' => $productoB->id, 'cantidad' => 3, 'precio_unitario' => 200],
+        ],
+    ]);
+
+    $factura = Facturas::firstOrFail();
+
+    $response->assertRedirect(route('facturas.show', $factura->id));
+    expect($productoA->fresh()->stock)->toBe(8);
+    expect($productoB->fresh()->stock)->toBe(5);
+    expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(2);
+    expect((float) $factura->fresh()->subtotal)->toBe(800.0);
+    expect((float) $factura->fresh()->iva)->toBe(152.0);
+    expect((float) $factura->fresh()->total)->toBe(952.0);
+    expect(MovimientoInventario::where('tipo_movimiento', 'venta_detalle')->count())->toBe(2);
+});
+
+test('si falla un detalle al crear una factura se revierte toda la operacion y el inventario', function () {
+    $productoA = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto disponible',
+        'descripcion' => 'Prueba transaccional',
+        'precio' => 100,
+        'stock' => 10,
+        'estado' => true,
+    ]);
+    $productoB = Productos::create([
+        'id_categoria' => $this->categoria->id,
+        'id_tienda' => $this->tienda->id,
+        'nombre' => 'Producto sin stock suficiente',
+        'descripcion' => 'Prueba transaccional',
+        'precio' => 200,
+        'stock' => 1,
+        'estado' => true,
+    ]);
+
+    $response = $this->actingAs($this->usuario)->from(route('facturas.create'))
+        ->post(route('facturas.store'), [
+            'id_cliente' => $this->cliente->id,
+            'fecha' => '2026-11-18',
+            'estado' => 'pendiente',
+            'detalles' => [
+                ['id_producto' => $productoA->id, 'cantidad' => 2, 'precio_unitario' => 100],
+                ['id_producto' => $productoB->id, 'cantidad' => 3, 'precio_unitario' => 200],
+            ],
+        ]);
+
+    $response->assertSessionHasErrors(['cantidad']);
+    expect(Facturas::count())->toBe(0);
+    expect(DetalleFactura::count())->toBe(0);
+    expect($productoA->fresh()->stock)->toBe(10);
+    expect($productoB->fresh()->stock)->toBe(1);
+    expect(MovimientoInventario::count())->toBe(0);
+});
+
 test('crear factura en estado pendiente con totales iniciales en cero', function () {
     $response = $this->actingAs($this->usuario)->post(route('facturas.store'), [
         'id_cliente' => $this->cliente->id,
