@@ -9,18 +9,19 @@
         "format:frontend:check": "prettier --check \"resources/views/**/*.blade.php\" \"resources/css/**/*.css\" \"resources/js/**/*.js\" \"vite.config.js\" \"package.json\" \"composer.json\" \".github/workflows/**/*.yml\" \"README.md\""
     },
     "devDependencies": {
+        "@shufo/prettier-plugin-blade": "^1.15.1",
         "@tailwindcss/vite": "^4.0.0",
         "concurrently": "^10.0.3",
         "laravel-vite-plugin": "^3.1",
+        "prettier": "3.6.2",
         "tailwindcss": "^4.0.0",
-        "vite": "^8.0.0",
-        "@shufo/prettier-plugin-blade": "1.16.2",
-        "prettier": "3.6.2"
+        "vite": "^8.0.0"
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
-        "alpinejs": "^3.17.5"
+        "alpinejs": "^3.17.5",
+        "datatables.net": "^3.1.5"
     }
 }
