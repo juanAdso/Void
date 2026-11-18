@@ -17,7 +17,7 @@
                 @endcan
             </div>
 
-            <div class="w-full max-w-full overflow-hidden rounded-xl border border-slate-800">
+            <div class="w-full max-w-full overflow-x-auto rounded-xl border border-slate-800">
                 <table class="datatable min-w-full w-full border-collapse">
                     <thead>
                         <tr>

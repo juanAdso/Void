@@ -34,9 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
             paging,
             lengthChange: paging,
             info: true,
-            autoWidth: false,
+            autoWidth: true,
             deferRender: true,
-            scrollX: true,
+            scrollX: false,
             order: [],
             columns,
             language: {

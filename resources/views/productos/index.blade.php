@@ -27,7 +27,7 @@
                 <p class="py-8 text-center text-gray-500">No hay productos registrados.</p>
             @else
                 <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="datatable min-w-[1150px] w-full border-collapse">
+                    <table class="datatable min-w-full w-full border-collapse">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>

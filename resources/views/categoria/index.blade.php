@@ -34,7 +34,7 @@
                         {{ session('eliminar') }}</div>
                 @endif
                 <div class="w-full max-w-full overflow-x-auto rounded-lg border border-slate-200">
-                    <table class="datatable min-w-[760px] w-full border-collapse">
+                    <table class="datatable min-w-full w-full border-collapse">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border px-4 py-2">ID</th>
