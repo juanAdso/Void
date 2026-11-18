@@ -503,14 +503,13 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
-
-    @stack('scripts')
+        @stack('scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Aplica controles a las tablas de todos los módulos, incluidas las tablas reutilizables.
             document.querySelectorAll('main table').forEach(function(table) {
+                if (table.classList.contains('datatable')) return;
                 let area = table.closest('.table-scroll-area');
 
                 if (!area) {
@@ -576,6 +575,7 @@
             };
 
             document.querySelectorAll('main table').forEach(function(table) {
+                if (table.classList.contains('datatable')) return;
                 table.classList.add('void-compact-table');
 
                 if (table.dataset.noColumnFilters === 'true' || table.dataset.columnFiltersReady ===
