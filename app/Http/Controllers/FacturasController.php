@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFacturasRequest;
 use App\Http\Requests\UpdateFacturasRequest;
+use App\Http\Requests\GuardarCambiosFacturaRequest;
 use App\Services\ClienteService;
 use App\Services\DetalleFacturaService;
 use App\Services\FacturasService;
@@ -77,10 +78,10 @@ class FacturasController extends Controller
         $esPendiente = $factura->estado === 'pendiente';
         $esAnulada = $factura->estado === 'anulada';
         $puedeEditarFactura = ! $esAnulada && $usuario->tienePermisoActivo('editar facturas');
-        $puedeEditarDetalle = $esPendiente && $usuario->tienePermisoActivo('editar detallefacturas');
-        $puedeEliminarDetalle = $esPendiente && $usuario->tienePermisoActivo('eliminar detallefacturas');
-        $puedeAgregarDetalle = $esPendiente && $usuario->tienePermisoActivo('crear detallefacturas');
-        $mostrarAccionesDetalle = $puedeEditarDetalle || $puedeEliminarDetalle;
+        $puedeEditarDetalle = ! $esAnulada && $usuario->tienePermisoActivo('editar detallefacturas');
+        $puedeEliminarDetalle = ! $esAnulada && $usuario->tienePermisoActivo('eliminar detallefacturas');
+        $puedeAgregarDetalle = ! $esAnulada && $usuario->tienePermisoActivo('crear detallefacturas');
+        $puedeGuardarCambios = $puedeEditarFactura || $puedeEditarDetalle || $puedeEliminarDetalle || $puedeAgregarDetalle;
         $clientes = $puedeEditarFactura ? $this->clientesService->listarTodo($tiendaId) : collect();
         $productos = collect();
 
@@ -95,7 +96,7 @@ class FacturasController extends Controller
             'clientes',
             'productos',
             'puedeEditarFactura',
-            'mostrarAccionesDetalle',
+            'puedeGuardarCambios',
             'puedeEditarDetalle',
             'puedeEliminarDetalle',
             'puedeAgregarDetalle'
@@ -120,6 +121,17 @@ class FacturasController extends Controller
             ->with('success', $factura->estado === 'anulada'
                 ? 'Factura anulada correctamente. El inventario fue restituido.'
                 : 'Datos de la factura actualizados correctamente.');
+    }
+
+    public function guardarCambios(int $id, GuardarCambiosFacturaRequest $request)
+    {
+        $tiendaId = (int) auth()->user()->id_tienda;
+        $factura = $this->facturasService->actualizarCompleta($id, $request->validated(), $tiendaId);
+
+        return redirect()->route('facturas.show', $factura->id)
+            ->with('success', $factura->estado === 'anulada'
+                ? 'Los cambios se guardaron y la factura quedó anulada. El inventario y los movimientos se actualizaron correctamente.'
+                : 'Cambios de la factura guardados correctamente. Los detalles, valores, inventario y movimientos quedaron sincronizados.');
     }
 
     public function destroy(int $id)
