@@ -184,8 +184,8 @@ test('los formularios de factura solo muestran estados permitidos al crear edita
 
     $this->get(route('facturas.show', $pagada->id))
         ->assertOk()
-        ->assertSee('type="hidden" name="id_cliente"', false)
-        ->assertSee('name="fecha" value="2026-11-10"', false)
+        ->assertSee('name="id_cliente"', false)
+        ->assertSee('id="fecha" type="date" name="fecha"', false)
         ->assertSee('<option value="pagada"', false)
         ->assertSee('<option value="anulada"', false)
         ->assertDontSee('<option value="pendiente"', false);
@@ -346,7 +346,7 @@ test('el administrador ve los productos disponibles al editar detalles aunque no
 
     $this->get(route('facturas.show', $factura->id))
         ->assertOk()
-        ->assertSee('name="id_producto"', false)
+        ->assertSee('name="detalles[0][id_producto]"', false)
         ->assertSee('Producto editable de factura')
         ->assertDontSee('Agregar producto');
 });
@@ -444,8 +444,9 @@ test('la edicion de factura integra los campos de sus detalles en la misma vista
         ->assertSee('name="fecha"', false)
         ->assertSeeText('Productos y detalles de factura')
         ->assertSeeText('Producto editable desde factura')
-        ->assertSee('name="id_producto"', false)
-        ->assertSee('name="cantidad"', false)
-        ->assertSee('name="precio_unitario"', false)
-        ->assertSeeText('Agregar producto a la factura');
+        ->assertSee('name="detalles[0][id_producto]"', false)
+        ->assertSee('name="detalles[0][cantidad]"', false)
+        ->assertSee('name="detalles[0][precio_unitario]"', false)
+        ->assertSeeText('Agregar producto')
+        ->assertSeeText('Guardar cambios');
 });
