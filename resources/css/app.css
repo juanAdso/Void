@@ -123,7 +123,9 @@
         line-height: 1.2;
         outline: none;
         box-shadow: none;
-        transition: border-color 160ms ease, box-shadow 160ms ease;
+        transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
     }
 
     .dt-container .dt-search input {
@@ -177,7 +179,10 @@
         font-weight: 600;
         line-height: 1;
         cursor: pointer;
-        transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+        transition:
+            color 160ms ease,
+            background-color 160ms ease,
+            border-color 160ms ease;
     }
 
     .dt-container .dt-paging .dt-paging-button.current {

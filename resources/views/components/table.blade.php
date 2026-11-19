@@ -7,9 +7,13 @@
             <tr class="bg-neutral-800">
                 @foreach ($headers as $header)
                     @php
-                        $headerLabel = is_array($header) ? ($header['label'] ?? '') : $header;
+                        $headerLabel = is_array($header) ? $header['label'] ?? '' : $header;
                         $headerNormalizado = strtolower(trim((string) $headerLabel));
-                        $esColumnaAcciones = in_array($headerNormalizado, ['accion', 'acción', 'acciones', 'opciones'], true);
+                        $esColumnaAcciones = in_array(
+                            $headerNormalizado,
+                            ['accion', 'acción', 'acciones', 'opciones'],
+                            true,
+                        );
                     @endphp
                     <th scope="col"
                         @if ($esColumnaAcciones) data-searchable="false" data-orderable="false" @endif

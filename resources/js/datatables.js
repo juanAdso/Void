@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Los listados vacíos se representan con el mensaje propio de DataTables.
         const bodyRows = Array.from(tbody.rows);
         const emptyPlaceholder =
-            bodyRows.length === 1 &&
-            Array.from(bodyRows[0].cells).some((cell) => cell.colSpan > 1);
+            bodyRows.length === 1 && Array.from(bodyRows[0].cells).some((cell) => cell.colSpan > 1);
 
         if (emptyPlaceholder) {
             tbody.replaceChildren();
