@@ -17,9 +17,18 @@ test('un visitante puede ver el directorio publico de tiendas', function () {
     $response = $this->get(route('inicio'));
 
     $response->assertOk();
+    $response->assertSee('#tiendas');
     $response->assertSee('Tienda Alfa');
     $response->assertSee('Tienda Beta');
     $response->assertDontSee('Tienda Oculta');
+});
+
+test('los filtros del catálogo devuelven al usuario a la sección de productos', function () {
+    $tienda = Tienda::factory()->create(['estado' => true]);
+
+    $this->get(route('catalogo', ['tienda' => $tienda->id]))
+        ->assertOk()
+        ->assertSee('#productos');
 });
 
 test('la busqueda publica encuentra tiendas por nombre y muestra las tiendas que tienen el producto', function () {

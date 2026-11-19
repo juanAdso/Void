@@ -20,8 +20,10 @@
             <x-stat-card label="Ingresos del mes" :value="'$' . number_format($ingresosMes, 2)" icon="tag" />
         </div>
 
-        <x-card title="Ingresos por Período Personalizado" subtitle="Consulta las ventas recaudadas en un rango de fechas">
-            <form action="{{ route('reportes.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
+        <x-card id="consulta-periodo" title="Ingresos por Período Personalizado"
+            subtitle="Consulta las ventas recaudadas en un rango de fechas">
+            <form action="{{ route('reportes.index') }}#consulta-periodo" method="GET"
+                class="flex flex-wrap items-end gap-4">
                 <div>
                     <label for="fecha_inicio" class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha
                         inicio</label>
@@ -162,7 +164,7 @@
             </x-card>
         </div>
 
-        <x-card title="Historial de Movimientos de Inventario"
+        <x-card id="historial-movimientos" title="Historial de Movimientos de Inventario"
             subtitle="Auditoría de ingresos, salidas, ventas y devoluciones" :padding="false">
             @if ($productoFiltro)
                 <div
@@ -171,13 +173,14 @@
                         Mostrando movimientos de <strong>{{ $productoFiltro->nombre }}</strong>
                         <span class="text-blue-300/80">(#{{ $productoFiltro->id }})</span>
                     </p>
-                    <a href="{{ route('reportes.index') }}"
-                        class="text-xs font-semibold text-blue-300 transition hover:text-amber-300">Ver todos los
-                        movimientos →</a>
+                    <a href="{{ route('reportes.index') }}#historial-movimientos"
+                        class="text-xs font-semibold text-blue-300 transition hover:text-amber-300">
+                        Ver todos los movimientos →
+                    </a>
                 </div>
             @endif
 
-            <form method="GET" action="{{ route('reportes.index') }}"
+            <form method="GET" action="{{ route('reportes.index') }}#historial-movimientos"
                 class="mx-5 mt-4 rounded-xl border border-slate-700 bg-slate-900/70 p-4">
                 <input type="hidden" name="fecha_inicio" value="{{ $fechaInicio }}">
                 <input type="hidden" name="fecha_fin" value="{{ $fechaFin }}">
@@ -205,7 +208,7 @@
                         class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
                         Filtrar movimientos
                     </button>
-                    <a href="{{ route('reportes.index', request()->except(['mov_fecha_inicio', 'mov_fecha_fin', 'movimientos_page'])) }}"
+                    <a href="{{ route('reportes.index', request()->except(['mov_fecha_inicio', 'mov_fecha_fin', 'movimientos_page'])) }}#historial-movimientos"
                         class="rounded-lg border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
                         Limpiar
                     </a>

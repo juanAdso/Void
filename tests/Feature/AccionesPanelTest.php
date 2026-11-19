@@ -416,7 +416,7 @@ test('el empleado no puede cambiar la fecha al crear facturas aunque envie otro 
         'id_cliente' => $cliente->id,
         'fecha' => '2000-01-01',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.index'));
+    ])->assertRedirect(route('dashboard.index'));
 
     $factura = Facturas::query()
         ->where('id_usuario', $empleado->id)

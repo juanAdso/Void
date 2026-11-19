@@ -10,6 +10,7 @@ use App\Services\DetalleFacturaService;
 use App\Services\FacturasService;
 use App\Services\ProductosService;
 use App\Services\RelacionesBloqueoService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -67,7 +68,7 @@ class FacturasController extends Controller
             return $this->facturasService->buscarPorId((int) $factura->id, $tiendaId);
         });
 
-        return redirect()->route('facturas.index')
+        return redirect()->route(auth()->user()->rol === 'empleado' ? 'dashboard.index' : 'facturas.index')
             ->with('success', 'Factura creada correctamente. Sus productos, inventario y totales quedaron actualizados.');
     }
 
@@ -108,6 +109,17 @@ class FacturasController extends Controller
             'puedeEliminarDetalle',
             'puedeAgregarDetalle'
         ));
+    }
+
+    public function imprimir(int $id)
+    {
+        $tiendaId = (int) auth()->user()->id_tienda;
+        $factura = $this->facturasService->buscarPorId($id, $tiendaId);
+        $factura->loadMissing(['cliente', 'usuario', 'detalle_factura.producto']);
+
+        return Pdf::loadView('facturas.pdf', compact('factura'))
+            ->setPaper('a4', 'portrait')
+            ->stream('factura-'.$factura->id.'.pdf');
     }
 
     public function edit(int $id)

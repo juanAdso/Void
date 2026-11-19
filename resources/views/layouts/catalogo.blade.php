@@ -52,7 +52,7 @@
                                 Cambiar de tienda:
                             </label>
                             <select id="cambiar-tienda"
-                                onchange="window.location.href = '{{ route('catalogo') }}?tienda=' + this.value"
+                                onchange="window.location.href = '{{ route('catalogo') }}?tienda=' + this.value + '#productos'"
                                 class="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-amber-50 outline-none focus:border-blue-500">
                                 @foreach ($tiendas as $t)
                                     <option value="{{ $t->id }}" @selected($t->id === $tiendaSeleccionada->id)>
@@ -70,7 +70,7 @@
             <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
                 <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm mb-8">
-                    <form action="{{ route('catalogo') }}" method="GET"
+                    <form action="{{ route('catalogo') }}#productos" method="GET"
                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <input type="hidden" name="tienda" value="{{ $tiendaSeleccionada->id }}">
 
@@ -120,7 +120,7 @@
                                     request('disponibilidad') ||
                                     request('precio_min') ||
                                     request('precio_max'))
-                                <a href="{{ route('catalogo', ['tienda' => $tiendaSeleccionada->id]) }}"
+                                <a href="{{ route('catalogo', ['tienda' => $tiendaSeleccionada->id]) }}#productos"
                                     class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 flex items-center justify-center">
                                     Limpiar
                                 </a>

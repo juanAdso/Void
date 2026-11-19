@@ -11,6 +11,18 @@ beforeEach(function () {
     $this->seed(SeguridadSeeder::class);
 });
 
+test('los formularios de reportes conservan el contexto de consulta al mostrar resultados', function () {
+    $tienda = Tienda::factory()->create(['estado' => true]);
+    $admin = User::factory()->create(['id_tienda' => $tienda->id, 'rol' => 'administrador', 'estado' => true]);
+    $admin->assignRole('administrador');
+
+    $response = $this->actingAs($admin)->get(route('reportes.index'));
+
+    $response->assertOk()
+        ->assertSee('#consulta-periodo')
+        ->assertSee('#historial-movimientos');
+});
+
 test('el modulo de reportes muestra las alertas de stock bajo y productos agotados de la tienda', function () {
     $tienda = Tienda::factory()->create(['estado' => true]);
     $admin = User::factory()->create(['id_tienda' => $tienda->id, 'rol' => 'administrador', 'estado' => true]);

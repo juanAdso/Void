@@ -109,11 +109,19 @@
                                     <div class="flex min-w-[190px] flex-wrap items-center justify-center gap-2">
                                         <a href="{{ route('facturas.show', $factura->id) }}"
                                             class="inline-flex items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:bg-blue-500/20">
-                                            @if ($factura->estado !== 'anulada' && auth()->user()->tienePermisoActivo('editar facturas'))
-                                                Editar factura
-                                            @else
-                                                Ver factura
-                                            @endif
+                                            Ver factura
+                                        </a>
+                                        <a href="{{ route('facturas.imprimir', $factura->id) }}" target="_blank"
+                                            rel="noopener" title="Imprimir factura #{{ $factura->id }}"
+                                            aria-label="Imprimir factura #{{ $factura->id }}"
+                                            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-700 text-neutral-300 transition hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
+                                                fill="none" stroke="currentColor" stroke-width="1.8"
+                                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <polyline points="6 9 6 2 18 2 18 9" />
+                                                <path d="M6 18H4v-8h16v8h-2" />
+                                                <path d="M6 14h12v8H6z" />
+                                            </svg>
                                         </a>
 
                                         @can('eliminar facturas')

@@ -103,6 +103,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/facturas/{factura}', [FacturasController::class, 'show'])
         ->middleware('modulo:ver facturas')
         ->name('facturas.show');
+    Route::get('/facturas/{factura}/imprimir', [FacturasController::class, 'imprimir'])
+        ->middleware('modulo:ver facturas')
+        ->whereNumber('factura')
+        ->name('facturas.imprimir');
     Route::get('/facturas/{factura}/edit', [FacturasController::class, 'edit'])
         ->middleware('modulo:editar facturas')
         ->name('facturas.edit');

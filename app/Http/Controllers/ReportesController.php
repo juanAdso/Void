@@ -75,7 +75,8 @@ class ReportesController extends Controller
         $movimientos = $consultaMovimientos
             ->latest('fecha')
             ->paginate(15, ['*'], 'movimientos_page')
-            ->withQueryString();
+            ->withQueryString()
+            ->fragment('historial-movimientos');
 
         $usuariosTienda = User::where('id_tienda', $tiendaId)->pluck('id');
 

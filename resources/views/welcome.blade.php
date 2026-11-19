@@ -73,7 +73,7 @@
 
     <section id="tiendas" class="mx-auto max-w-7xl scroll-mt-24 px-5 py-14 lg:px-8">
 
-        <form action="{{ route('inicio') }}" method="GET"
+        <form action="{{ route('inicio') }}#tiendas" method="GET"
             class="mb-8 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-end">
             <div class="flex-1">
                 <label for="buscar-publico" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-600">

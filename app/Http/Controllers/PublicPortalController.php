@@ -125,7 +125,7 @@ class PublicPortalController extends Controller
             $productosQuery->where('productos.precio', '<=', (float) $request->input('precio_max'));
         }
 
-        $productos = $productosQuery->orderBy('productos.nombre')->paginate(12)->withQueryString();
+        $productos = $productosQuery->orderBy('productos.nombre')->paginate(12)->withQueryString()->fragment('productos');
 
         $categorias = Categoria::query()
             ->where('id_tienda', $tiendaSeleccionada->id)

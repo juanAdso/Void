@@ -25,7 +25,7 @@ class DashboardController extends Controller
 
             $ventasHoy = Facturas::where('id_usuario', $usuario->id)
                 ->whereDate('fecha', today())
-                ->where('estado', 'pagada')
+                ->whereIn('estado', ['pendiente', 'pagada'])
                 ->count();
 
             $ingresosHoy = (float) Facturas::where('id_usuario', $usuario->id)
@@ -40,6 +40,7 @@ class DashboardController extends Controller
             $facturasRecientes = Facturas::with('cliente')
                 ->where('id_usuario', $usuario->id)
                 ->latest('fecha')
+                ->orderByDesc('id')
                 ->limit(5)
                 ->get();
 
