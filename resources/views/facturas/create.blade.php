@@ -33,7 +33,9 @@
         @php
             $clienteSeleccionado = $clientes->firstWhere('id', (int) old('id_cliente'));
             $clienteEtiqueta = $clienteSeleccionado
-                ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) . ' · CC ' . $clienteSeleccionado->documento
+                ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) .
+                    ' · CC ' .
+                    $clienteSeleccionado->documento
                 : '';
         @endphp
 
@@ -57,9 +59,12 @@
                         <input id="id_cliente" type="hidden" name="id_cliente" value="{{ old('id_cliente') }}">
                         <datalist id="clientes-disponibles">
                             @foreach ($clientes as $cliente)
-                                <option value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
+                                <option
+                                    value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
                                     data-id="{{ $cliente->id }}"></option>
-                                <option value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}" data-id="{{ $cliente->id }}"></option>
+                                <option
+                                    value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}"
+                                    data-id="{{ $cliente->id }}"></option>
                             @endforeach
                         </datalist>
                     </div>

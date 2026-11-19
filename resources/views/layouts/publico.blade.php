@@ -37,17 +37,23 @@
             </div>
 
             <div class="hidden flex-1 items-center justify-center gap-8 md:flex">
-                <a href="{{ route('inicio') }}" class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Inicio</a>
-                <a href="{{ url('/#tiendas') }}" class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Tiendas</a>
-                <a href="{{ route('catalogo') }}" class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Catálogos</a>
+                <a href="{{ route('inicio') }}"
+                    class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Inicio</a>
+                <a href="{{ url('/#tiendas') }}"
+                    class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Tiendas</a>
+                <a href="{{ route('catalogo') }}"
+                    class="text-sm font-medium text-slate-300 transition hover:text-blue-400">Catálogos</a>
             </div>
 
             <div class="flex flex-1 items-center justify-end gap-3 sm:gap-4">
-                <a href="{{ route('inicio') }}" class="shrink-0 text-sm font-semibold text-slate-300 transition hover:text-blue-400 md:hidden">Inicio</a>
+                <a href="{{ route('inicio') }}"
+                    class="shrink-0 text-sm font-semibold text-slate-300 transition hover:text-blue-400 md:hidden">Inicio</a>
                 <a href="{{ route('login') }}"
-                    class="shrink-0 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-semibold text-amber-50 transition hover:bg-blue-500 shadow-sm sm:px-4 sm:text-sm">Iniciar sesión</a>
+                    class="shrink-0 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-semibold text-amber-50 transition hover:bg-blue-500 shadow-sm sm:px-4 sm:text-sm">Iniciar
+                    sesión</a>
                 <a href="{{ route('registro.tienda') }}"
-                    class="hidden shrink-0 text-sm font-semibold text-blue-500 transition hover:text-blue-400 sm:inline">Registrar mi tienda</a>
+                    class="hidden shrink-0 text-sm font-semibold text-blue-500 transition hover:text-blue-400 sm:inline">Registrar
+                    mi tienda</a>
             </div>
 
         </nav>

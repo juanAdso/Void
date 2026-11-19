@@ -67,16 +67,24 @@
 
                 @if ($puedeEditarCliente)
                     @php
-                        $clienteSeleccionado = $clientes->firstWhere('id', (int) old('id_cliente', $factura->id_cliente));
+                        $clienteSeleccionado = $clientes->firstWhere(
+                            'id',
+                            (int) old('id_cliente', $factura->id_cliente),
+                        );
                         $clienteEtiqueta = $clienteSeleccionado
-                            ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) . ' · CC ' . $clienteSeleccionado->documento
+                            ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) .
+                                ' · CC ' .
+                                $clienteSeleccionado->documento
                             : '';
                     @endphp
                     <datalist id="clientes-disponibles">
                         @foreach ($clientes as $cliente)
-                            <option value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
+                            <option
+                                value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
                                 data-id="{{ $cliente->id }}"></option>
-                            <option value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}" data-id="{{ $cliente->id }}"></option>
+                            <option
+                                value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}"
+                                data-id="{{ $cliente->id }}"></option>
                         @endforeach
                     </datalist>
                 @endif
@@ -111,24 +119,29 @@
                                     <p class="mt-1 font-medium text-neutral-100">
                                         {{ trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? '')) ?: 'Cliente no disponible' }}
                                     </p>
-                                    <p class="mt-1 text-xs text-neutral-500">{{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
+                                    <p class="mt-1 text-xs text-neutral-500">
+                                        {{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
                                 @endif
                             </div>
                             <div>
                                 @if ($puedeEditarFactura)
-                                    <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de emisión</label>
+                                    <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de
+                                        emisión</label>
                                     <input id="fecha" type="date" name="fecha" required
                                         value="{{ old('fecha', $factura->fecha?->format('Y-m-d')) }}"
                                         class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                 @else
                                     <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Fecha</p>
-                                    <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
+                                    <p class="mt-1 font-medium text-neutral-100">
+                                        {{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
                                 @endif
                             </div>
                             @if ($puedeEditarFactura)
                                 <div>
-                                    <label for="estado" class="mb-2 block text-sm font-medium text-neutral-300">Estado</label>
-                                    <select id="estado" name="estado" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                    <label for="estado"
+                                        class="mb-2 block text-sm font-medium text-neutral-300">Estado</label>
+                                    <select id="estado" name="estado" required
+                                        class="w-full rounded-lg border px-3 py-2.5 text-sm">
                                         @if ($factura->estado === 'pagada')
                                             <option value="pagada" @selected(old('estado', $factura->estado) === 'pagada')>Pagada</option>
                                             <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
@@ -142,7 +155,8 @@
                             @endif
                             @if (!$puedeEditarFactura)
                                 <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable</p>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable
+                                    </p>
                                     <p class="mt-1 font-medium text-neutral-100">
                                         {{ trim(($factura->usuario?->nombre ?? '') . ' ' . ($factura->usuario?->apellido ?? '')) ?: 'Usuario no disponible' }}
                                     </p>
@@ -156,11 +170,13 @@
                                 <p class="mt-1 font-medium text-neutral-100">
                                     {{ trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? '')) ?: 'Cliente no disponible' }}
                                 </p>
-                                <p class="mt-1 text-xs text-neutral-500">{{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
+                                <p class="mt-1 text-xs text-neutral-500">
+                                    {{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Fecha</p>
-                                <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
+                                <p class="mt-1 font-medium text-neutral-100">
+                                    {{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable</p>
@@ -227,7 +243,8 @@
                                             @if ($puedeEditarDetalle)
                                                 <input type="hidden" name="detalles[{{ $loop->index }}][id]"
                                                     value="{{ $detalle->id }}">
-                                                <input type="search" list="productos-disponibles" data-product-search required
+                                                <input type="search" list="productos-disponibles" data-product-search
+                                                    required
                                                     value="{{ $productoActivoEnLista
                                                         ? $productoActual->nombre . ' · Stock: ' . $productoActual->stock
                                                         : ($productoActual?->nombre ?? 'Producto no disponible') . ' (inactivo)' }}"
@@ -244,7 +261,8 @@
                                         <td class="px-3 py-3">
                                             @if ($puedeEditarDetalle)
                                                 <input type="number" name="detalles[{{ $loop->index }}][cantidad]"
-                                                    min="1" required value="{{ $detalle->cantidad }}" data-quantity
+                                                    min="1" required value="{{ $detalle->cantidad }}"
+                                                    data-quantity
                                                     class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
                                             @else
                                                 <span>{{ $detalle->cantidad }}</span>

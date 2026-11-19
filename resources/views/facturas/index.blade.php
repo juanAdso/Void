@@ -3,8 +3,8 @@
 @section('title', 'Facturas')
 @section('content')
     @php
-        $puedeCambiarEstado = auth()->user()->rol === 'administrador'
-            && auth()->user()->tienePermisoActivo('editar facturas');
+        $puedeCambiarEstado =
+            auth()->user()->rol === 'administrador' && auth()->user()->tienePermisoActivo('editar facturas');
     @endphp
 
     <x-card>
@@ -69,11 +69,14 @@
                                     <td>
                                         <div class="flex flex-wrap items-center gap-2">
                                             @if ($factura->estado === 'pagada')
-                                                <span class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">Pagada</span>
+                                                <span
+                                                    class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">Pagada</span>
                                             @elseif ($factura->estado === 'pendiente')
-                                                <span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">Pendiente</span>
+                                                <span
+                                                    class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">Pendiente</span>
                                             @else
-                                                <span class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">Anulada</span>
+                                                <span
+                                                    class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">Anulada</span>
                                             @endif
 
                                             @if ($factura->estado === 'pendiente')
@@ -136,7 +139,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $puedeCambiarEstado ? 8 : 7 }}" class="px-5 py-10 text-center text-sm text-slate-400">
+                                <td colspan="{{ $puedeCambiarEstado ? 8 : 7 }}"
+                                    class="px-5 py-10 text-center text-sm text-slate-400">
                                     Todavía no hay facturas registradas.
                                 </td>
                             </tr>

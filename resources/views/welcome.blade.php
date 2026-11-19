@@ -84,11 +84,13 @@
                     class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-blue-600 focus:bg-white">
             </div>
             <div class="flex gap-2">
-                <button type="submit" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500">
+                <button type="submit"
+                    class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500">
                     Buscar
                 </button>
                 @if ($buscar !== '')
-                    <a href="{{ route('inicio') }}" class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">Limpiar</a>
+                    <a href="{{ route('inicio') }}"
+                        class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">Limpiar</a>
                 @endif
             </div>
         </form>
@@ -100,7 +102,8 @@
                         <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Coincidencias en catálogos</p>
                         <h3 class="mt-1 text-xl font-bold text-neutral-950">Productos disponibles</h3>
                     </div>
-                    <span class="text-xs font-medium text-slate-500">{{ $productosEncontrados->count() }} resultado(s)</span>
+                    <span class="text-xs font-medium text-slate-500">{{ $productosEncontrados->count() }}
+                        resultado(s)</span>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($productosEncontrados as $producto)
@@ -125,7 +128,8 @@
                                         class="font-semibold text-blue-600 hover:underline">{{ $producto->tienda->nombre }}</a>
                                 </p>
                                 <a href="{{ route('portal.producto', $producto->id) }}"
-                                    class="mt-2 inline-flex text-xs font-semibold text-blue-600 hover:text-blue-800">Ver producto &rarr;</a>
+                                    class="mt-2 inline-flex text-xs font-semibold text-blue-600 hover:text-blue-800">Ver
+                                    producto &rarr;</a>
                             </div>
                         </article>
                     @endforeach
@@ -148,7 +152,8 @@
                 </p>
             </div>
             @php
-                $tiendasCoincidentes = $tiendas->pluck('id')
+                $tiendasCoincidentes = $tiendas
+                    ->pluck('id')
                     ->merge($productosEncontrados->pluck('id_tienda'))
                     ->unique()
                     ->count();
@@ -223,10 +228,13 @@
         @else
             @if ($productosEncontrados->isEmpty())
                 <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-3xl">🏪</div>
+                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-3xl">🏪
+                    </div>
                     @if ($buscar !== '')
-                        <h3 class="mt-4 font-bold text-neutral-950 text-lg">No se encontraron tiendas o productos con ese término</h3>
-                        <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">Prueba con otro nombre de tienda o producto.</p>
+                        <h3 class="mt-4 font-bold text-neutral-950 text-lg">No se encontraron tiendas o productos con ese
+                            término</h3>
+                        <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">Prueba con otro nombre de tienda o producto.
+                        </p>
                     @else
                         <h3 class="mt-4 font-bold text-neutral-950 text-lg">No hay tiendas registradas actualmente</h3>
                         <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
