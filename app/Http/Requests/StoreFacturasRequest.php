@@ -12,6 +12,13 @@ class StoreFacturasRequest extends FormRequest
         return (bool) $this->user()?->id_tienda;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->user()?->rol === 'empleado') {
+            $this->merge(['fecha' => now()->toDateString()]);
+        }
+    }
+
     public function rules(): array
     {
         $tiendaId = $this->user()->id_tienda;

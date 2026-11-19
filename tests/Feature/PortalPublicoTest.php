@@ -22,6 +22,42 @@ test('un visitante puede ver el directorio publico de tiendas', function () {
     $response->assertDontSee('Tienda Oculta');
 });
 
+test('la busqueda publica encuentra tiendas por nombre y muestra las tiendas que tienen el producto', function () {
+    $tiendaUno = Tienda::factory()->create(['nombre' => 'Tienda Aurora', 'estado' => true]);
+    $tiendaDos = Tienda::factory()->create(['nombre' => 'Tienda Central', 'estado' => true]);
+    Tienda::factory()->create(['nombre' => 'Tienda Ropa', 'estado' => true]);
+
+    $categoriaUno = Categoria::factory()->create(['id_tienda' => $tiendaUno->id, 'estado' => true]);
+    $categoriaDos = Categoria::factory()->create(['id_tienda' => $tiendaDos->id, 'estado' => true]);
+
+    Productos::factory()->create([
+        'id_tienda' => $tiendaUno->id,
+        'id_categoria' => $categoriaUno->id,
+        'nombre' => 'Auriculares Bluetooth',
+        'stock' => 5,
+        'estado' => true,
+    ]);
+    Productos::factory()->create([
+        'id_tienda' => $tiendaDos->id,
+        'id_categoria' => $categoriaDos->id,
+        'nombre' => 'Auriculares Bluetooth',
+        'stock' => 3,
+        'estado' => true,
+    ]);
+
+    $this->get(route('inicio', ['buscar' => 'Auriculares Bluetooth']))
+        ->assertOk()
+        ->assertSee('Auriculares Bluetooth')
+        ->assertSee('Tienda Aurora')
+        ->assertSee('Tienda Central')
+        ->assertDontSee('Tienda Ropa');
+
+    $this->get(route('inicio', ['buscar' => 'Tienda Aurora']))
+        ->assertOk()
+        ->assertSee('Tienda Aurora')
+        ->assertDontSee('Tienda Central');
+});
+
 test('un visitante puede consultar la ficha de una tienda activa con datos de contacto', function () {
     $tienda = Tienda::factory()->create([
         'nombre' => 'Boutique Central',

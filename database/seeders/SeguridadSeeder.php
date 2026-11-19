@@ -75,6 +75,8 @@ class SeguridadSeeder extends Seeder
             'ver categorias',
             'ver productos',
             'ver clientes',
+            'crear clientes',
+            'editar clientes',
             'ver facturas',
             'crear facturas',
             'ver detallefacturas',

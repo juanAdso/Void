@@ -44,10 +44,6 @@
             </div>
         </header>
 
-        @if (session('success'))
-            <div class="rounded-xl border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-200" role="status">
-                {{ session('success') }}</div>
-        @endif
         @if (session('error'))
             <div class="rounded-xl border border-red-500/40 bg-red-950/30 p-4 text-sm text-red-200" role="alert">
                 {{ session('error') }}</div>
@@ -69,48 +65,89 @@
                 @csrf
                 @method('PUT')
 
+                @if ($puedeEditarCliente)
+                    @php
+                        $clienteSeleccionado = $clientes->firstWhere('id', (int) old('id_cliente', $factura->id_cliente));
+                        $clienteEtiqueta = $clienteSeleccionado
+                            ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) . ' · CC ' . $clienteSeleccionado->documento
+                            : '';
+                    @endphp
+                    <datalist id="clientes-disponibles">
+                        @foreach ($clientes as $cliente)
+                            <option value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
+                                data-id="{{ $cliente->id }}"></option>
+                            <option value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}" data-id="{{ $cliente->id }}"></option>
+                        @endforeach
+                    </datalist>
+                @endif
+                <datalist id="productos-disponibles">
+                    @foreach ($productos as $producto)
+                        <option value="{{ $producto->nombre }} · Stock: {{ $producto->stock }}"
+                            data-id="{{ $producto->id }}" data-price="{{ $producto->precio }}"></option>
+                    @endforeach
+                </datalist>
+
                 <section class="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80">
                     <div class="border-b border-neutral-800 px-5 py-4">
                         <h2 class="text-lg font-semibold text-neutral-100">Datos generales de la factura</h2>
                         <p class="mt-1 text-sm text-neutral-400">Los cambios de cliente, fecha y estado se aplican al pulsar
                             Guardar cambios.</p>
                     </div>
-                    @if ($puedeEditarFactura)
+                    @if ($puedeEditarCliente || $puedeEditarFactura)
                         <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
                             <div>
-                                <label for="id_cliente"
-                                    class="mb-2 block text-sm font-medium text-neutral-300">Cliente</label>
-                                <select id="id_cliente" name="id_cliente" required
-                                    class="w-full rounded-lg border px-3 py-2.5 text-sm">
-                                    <option value="">Selecciona un cliente</option>
-                                    @foreach ($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}" @selected(old('id_cliente', $factura->id_cliente) == $cliente->id)>
-                                            {{ $cliente->nombre }} {{ $cliente->apellido }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                @if ($puedeEditarCliente)
+                                    <label for="buscar-cliente" class="mb-2 block text-sm font-medium text-neutral-300">
+                                        Cliente o número de documento
+                                    </label>
+                                    <input id="buscar-cliente" type="search" list="clientes-disponibles"
+                                        value="{{ old('cliente_busqueda', $clienteEtiqueta) }}"
+                                        placeholder="Busca por nombre o documento..." autocomplete="off" required
+                                        class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                    <input id="id_cliente" type="hidden" name="id_cliente"
+                                        value="{{ old('id_cliente', $factura->id_cliente) }}">
+                                @else
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Cliente</p>
+                                    <p class="mt-1 font-medium text-neutral-100">
+                                        {{ trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? '')) ?: 'Cliente no disponible' }}
+                                    </p>
+                                    <p class="mt-1 text-xs text-neutral-500">{{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
+                                @endif
                             </div>
                             <div>
-                                <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de
-                                    emisión</label>
-                                <input id="fecha" type="date" name="fecha" required
-                                    value="{{ old('fecha', $factura->fecha?->format('Y-m-d')) }}"
-                                    class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                @if ($puedeEditarFactura)
+                                    <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de emisión</label>
+                                    <input id="fecha" type="date" name="fecha" required
+                                        value="{{ old('fecha', $factura->fecha?->format('Y-m-d')) }}"
+                                        class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                @else
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Fecha</p>
+                                    <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
+                                @endif
                             </div>
-                            <div>
-                                <label for="estado" class="mb-2 block text-sm font-medium text-neutral-300">Estado</label>
-                                <select id="estado" name="estado" required
-                                    class="w-full rounded-lg border px-3 py-2.5 text-sm">
-                                    @if ($factura->estado === 'pagada')
-                                        <option value="pagada" @selected(old('estado', $factura->estado) === 'pagada')>Pagada</option>
-                                        <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
-                                    @else
-                                        <option value="pendiente" @selected(old('estado', $factura->estado) === 'pendiente')>Pendiente</option>
-                                        <option value="pagada" @selected(old('estado') === 'pagada')>Pagada</option>
-                                        <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
-                                    @endif
-                                </select>
-                            </div>
+                            @if ($puedeEditarFactura)
+                                <div>
+                                    <label for="estado" class="mb-2 block text-sm font-medium text-neutral-300">Estado</label>
+                                    <select id="estado" name="estado" required class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                                        @if ($factura->estado === 'pagada')
+                                            <option value="pagada" @selected(old('estado', $factura->estado) === 'pagada')>Pagada</option>
+                                            <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
+                                        @else
+                                            <option value="pendiente" @selected(old('estado', $factura->estado) === 'pendiente')>Pendiente</option>
+                                            <option value="pagada" @selected(old('estado') === 'pagada')>Pagada</option>
+                                            <option value="anulada" @selected(old('estado') === 'anulada')>Anulada</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            @endif
+                            @if (!$puedeEditarFactura)
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable</p>
+                                    <p class="mt-1 font-medium text-neutral-100">
+                                        {{ trim(($factura->usuario?->nombre ?? '') . ' ' . ($factura->usuario?->apellido ?? '')) ?: 'Usuario no disponible' }}
+                                    </p>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <div class="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
@@ -119,11 +156,11 @@
                                 <p class="mt-1 font-medium text-neutral-100">
                                     {{ trim(($factura->cliente?->nombre ?? '') . ' ' . ($factura->cliente?->apellido ?? '')) ?: 'Cliente no disponible' }}
                                 </p>
+                                <p class="mt-1 text-xs text-neutral-500">{{ $factura->cliente?->documento ?? 'Sin documento' }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Fecha</p>
-                                <p class="mt-1 font-medium text-neutral-100">
-                                    {{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
+                                <p class="mt-1 font-medium text-neutral-100">{{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</p>
                             </div>
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Responsable</p>
@@ -190,25 +227,14 @@
                                             @if ($puedeEditarDetalle)
                                                 <input type="hidden" name="detalles[{{ $loop->index }}][id]"
                                                     value="{{ $detalle->id }}">
-                                                <select name="detalles[{{ $loop->index }}][id_producto]"
-                                                    data-product-select required
+                                                <input type="search" list="productos-disponibles" data-product-search required
+                                                    value="{{ $productoActivoEnLista
+                                                        ? $productoActual->nombre . ' · Stock: ' . $productoActual->stock
+                                                        : ($productoActual?->nombre ?? 'Producto no disponible') . ' (inactivo)' }}"
+                                                    placeholder="Busca un producto..." autocomplete="off"
                                                     class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
-                                                    @if (!$productoActivoEnLista)
-                                                        <option value="{{ $detalle->id_producto }}"
-                                                            data-price="{{ $productoActual?->precio ?? $detalle->precio_unitario }}"
-                                                            selected>
-                                                            {{ $productoActual?->nombre ?? 'Producto no disponible' }}
-                                                            (inactivo)
-                                                        </option>
-                                                    @endif
-                                                    @foreach ($productos as $producto)
-                                                        <option value="{{ $producto->id }}"
-                                                            data-price="{{ $producto->precio }}"
-                                                            @selected($detalle->id_producto == $producto->id)>
-                                                            {{ $producto->nombre }} · Stock: {{ $producto->stock }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="hidden" name="detalles[{{ $loop->index }}][id_producto]"
+                                                    value="{{ $detalle->id_producto }}" data-product-id>
                                             @else
                                                 <span
                                                     class="font-medium text-neutral-100">{{ $productoActual?->nombre ?? 'Producto no disponible' }}</span>
@@ -261,15 +287,10 @@
                             <template id="plantilla-detalle">
                                 <tr class="border-t border-neutral-800 align-top" data-fila-detalle>
                                     <td class="px-3 py-3">
-                                        <select name="detalles[__INDEX__][id_producto]" data-product-select required
+                                        <input type="search" list="productos-disponibles" data-product-search required
+                                            placeholder="Busca un producto..." autocomplete="off"
                                             class="w-full min-w-0 rounded-lg border px-2 py-2 text-sm">
-                                            <option value="">Selecciona un producto</option>
-                                            @foreach ($productos as $producto)
-                                                <option value="{{ $producto->id }}"
-                                                    data-price="{{ $producto->precio }}"> {{ $producto->nombre }} ·
-                                                    Stock: {{ $producto->stock }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="hidden" name="detalles[__INDEX__][id_producto]" data-product-id>
                                         <p class="mt-1 text-xs text-neutral-500">Nuevo detalle</p>
                                     </td>
                                     <td class="px-3 py-3">
@@ -443,7 +464,19 @@
                 const template = document.getElementById('plantilla-detalle');
                 const addButton = document.getElementById('agregar-detalle');
                 const deleteContainer = document.getElementById('eliminaciones-detalles');
+                const productosDisponibles = document.getElementById('productos-disponibles');
+                const clienteBusqueda = document.getElementById('buscar-cliente');
+                const clienteId = document.getElementById('id_cliente');
+                const clientesDisponibles = document.getElementById('clientes-disponibles');
                 let nextIndex = {{ $factura->detalle_factura->count() }};
+
+                const sincronizarCliente = () => {
+                    if (!clienteBusqueda || !clienteId || !clientesDisponibles) return;
+                    const opcion = Array.from(clientesDisponibles.options)
+                        .find((item) => item.value === clienteBusqueda.value);
+                    clienteId.value = opcion?.dataset.id || '';
+                    clienteBusqueda.setCustomValidity('');
+                };
 
                 const formatoMoneda = (valor) => new Intl.NumberFormat('es-CO', {
                     minimumFractionDigits: 2,
@@ -472,15 +505,22 @@
                 };
 
                 const prepararFila = (row) => {
-                    const select = row.querySelector('[data-product-select]');
+                    const busquedaProducto = row.querySelector('[data-product-search]');
+                    const productoId = row.querySelector('[data-product-id]');
                     const priceInput = row.querySelector('[data-price-input]');
 
-                    if (select && priceInput) {
-                        select.addEventListener('change', () => {
-                            const option = select.options[select.selectedIndex];
-                            if (option?.dataset.price) priceInput.value = option.dataset.price;
+                    if (busquedaProducto && productoId && priceInput) {
+                        const sincronizarProducto = () => {
+                            const opcion = Array.from(productosDisponibles.options)
+                                .find((item) => item.value === busquedaProducto.value);
+                            productoId.value = opcion?.dataset.id || '';
+                            if (opcion?.dataset.price) priceInput.value = opcion.dataset.price;
+                            busquedaProducto.setCustomValidity('');
                             recalcularTotales();
-                        });
+                        };
+
+                        busquedaProducto.addEventListener('input', sincronizarProducto);
+                        busquedaProducto.addEventListener('change', sincronizarProducto);
                     }
 
                     row.querySelectorAll('[data-quantity], [data-price-input]').forEach((input) => {
@@ -519,7 +559,33 @@
                     });
                 }
 
-                form.addEventListener('submit', () => {
+                form.addEventListener('submit', (event) => {
+                    if (clienteBusqueda && clienteId) {
+                        sincronizarCliente();
+                        if (!clienteId.value) {
+                            event.preventDefault();
+                            clienteBusqueda.setCustomValidity('Selecciona un cliente de la lista para continuar.');
+                            clienteBusqueda.reportValidity();
+                            return;
+                        }
+                    }
+
+                    let productoInvalido = null;
+                    tbody.querySelectorAll('[data-fila-detalle]').forEach((row) => {
+                        const busqueda = row.querySelector('[data-product-search]');
+                        const id = row.querySelector('[data-product-id]');
+                        if (busqueda && busqueda.value.trim() && id && !id.value) {
+                            busqueda.setCustomValidity('Selecciona un producto de la lista.');
+                            productoInvalido = productoInvalido || busqueda;
+                        }
+                    });
+
+                    if (productoInvalido) {
+                        event.preventDefault();
+                        productoInvalido.reportValidity();
+                        return;
+                    }
+
                     form.querySelectorAll('button[type="submit"]').forEach((button) => {
                         button.disabled = true;
                         button.textContent = 'Guardando...';

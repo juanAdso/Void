@@ -109,6 +109,10 @@ Route::middleware('auth')->group(function () {
     Route::match(['put', 'patch'], '/facturas/{factura}', [FacturasController::class, 'update'])
         ->middleware('modulo:editar facturas')
         ->name('facturas.update');
+    Route::patch('/facturas/{factura}/estado', [FacturasController::class, 'cambiarEstado'])
+        ->middleware('modulo:editar facturas')
+        ->whereNumber('factura')
+        ->name('facturas.estado');
     Route::put('/facturas/{factura}/guardar-cambios', [FacturasController::class, 'guardarCambios'])
         ->middleware('modulo:ver facturas')
         ->name('facturas.guardar-cambios');

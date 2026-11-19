@@ -9,17 +9,39 @@ use Illuminate\Http\Request;
 
 class PublicPortalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tiendas = Tienda::query()
+        $buscar = trim((string) $request->input('buscar', ''));
+
+        $tiendasQuery = Tienda::query()
             ->where('estado', true)
             ->withCount(['productos as total_productos' => function ($query) {
                 $query->where('estado', true);
-            }])
-            ->orderBy('nombre')
-            ->get();
+            }]);
 
-        return view('welcome', compact('tiendas'));
+        if ($buscar !== '') {
+            $tiendasQuery->where('nombre', 'like', '%'.$buscar.'%');
+        }
+
+        $tiendas = $tiendasQuery->orderBy('nombre')->get();
+        $productosEncontrados = collect();
+
+        if ($buscar !== '') {
+            $productosEncontrados = Productos::query()
+                ->with('tienda')
+                ->where('estado', true)
+                ->where('stock', '>', 0)
+                ->whereHas('tienda', fn ($query) => $query->where('estado', true))
+                ->where(function ($query) use ($buscar) {
+                    $query->where('nombre', 'like', '%'.$buscar.'%')
+                        ->orWhere('descripcion', 'like', '%'.$buscar.'%');
+                })
+                ->orderBy('nombre')
+                ->limit(40)
+                ->get();
+        }
+
+        return view('welcome', compact('tiendas', 'productosEncontrados', 'buscar'));
     }
 
     public function tienda(int $id)

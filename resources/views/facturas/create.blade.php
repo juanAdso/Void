@@ -30,6 +30,13 @@
             </div>
         @endif
 
+        @php
+            $clienteSeleccionado = $clientes->firstWhere('id', (int) old('id_cliente'));
+            $clienteEtiqueta = $clienteSeleccionado
+                ? trim($clienteSeleccionado->nombre . ' ' . $clienteSeleccionado->apellido) . ' · CC ' . $clienteSeleccionado->documento
+                : '';
+        @endphp
+
         <form id="crear-factura-form" action="{{ route('facturas.store') }}" method="POST" class="space-y-6">
             @csrf
 
@@ -40,23 +47,34 @@
                 </div>
                 <div class="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
                     <div>
-                        <label for="id_cliente" class="mb-2 block text-sm font-medium text-neutral-300">Cliente</label>
-                        <select id="id_cliente" name="id_cliente" required
+                        <label for="buscar-cliente" class="mb-2 block text-sm font-medium text-neutral-300">
+                            Cliente o número de documento
+                        </label>
+                        <input id="buscar-cliente" type="search" list="clientes-disponibles"
+                            value="{{ old('cliente_busqueda', $clienteEtiqueta) }}"
+                            placeholder="Busca por nombre o documento..." autocomplete="off" required
                             class="w-full rounded-lg border px-3 py-2.5 text-sm">
-                            <option value="">Selecciona un cliente</option>
+                        <input id="id_cliente" type="hidden" name="id_cliente" value="{{ old('id_cliente') }}">
+                        <datalist id="clientes-disponibles">
                             @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" @selected(old('id_cliente') == $cliente->id)>
-                                    {{ $cliente->nombre }} {{ $cliente->apellido }}
-                                </option>
+                                <option value="{{ trim($cliente->nombre . ' ' . $cliente->apellido) }} · CC {{ $cliente->documento }}"
+                                    data-id="{{ $cliente->id }}"></option>
+                                <option value="{{ $cliente->documento }} · {{ trim($cliente->nombre . ' ' . $cliente->apellido) }}" data-id="{{ $cliente->id }}"></option>
                             @endforeach
-                        </select>
+                        </datalist>
                     </div>
                     <div>
                         <label for="fecha" class="mb-2 block text-sm font-medium text-neutral-300">Fecha de
                             emisión</label>
-                        <input id="fecha" type="date" name="fecha"
-                            value="{{ old('fecha', now()->toDateString()) }}" required
-                            class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                        @if ($esEmpleado)
+                            <input id="fecha" type="date" value="{{ now()->toDateString() }}" disabled
+                                class="w-full cursor-not-allowed rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2.5 text-sm text-neutral-400">
+                            <p class="mt-1 text-xs text-neutral-500">La fecha de emisión se asigna automáticamente.</p>
+                        @else
+                            <input id="fecha" type="date" name="fecha"
+                                value="{{ old('fecha', now()->toDateString()) }}" required
+                                class="w-full rounded-lg border px-3 py-2.5 text-sm">
+                        @endif
                     </div>
                     <div>
                         <label class="mb-2 block text-sm font-medium text-neutral-300">Estado inicial</label>
@@ -88,22 +106,23 @@
                     </p>
                 </div>
 
+                <datalist id="productos-disponibles">
+                    @foreach ($productos as $producto)
+                        <option value="{{ $producto->nombre }} · Stock: {{ $producto->stock }}"
+                            data-id="{{ $producto->id }}" data-price="{{ $producto->precio }}"></option>
+                    @endforeach
+                </datalist>
+
                 <template id="detalle-template">
                     <div class="grid grid-cols-1 items-end gap-3 rounded-xl border border-neutral-800 bg-neutral-950/50 p-4 md:grid-cols-2 xl:grid-cols-[minmax(220px,2fr)_minmax(100px,0.7fr)_minmax(140px,1fr)_minmax(130px,1fr)_auto]"
                         data-detalle-row>
                         <div>
                             <label
                                 class="mb-2 block text-xs font-semibold uppercase tracking-wide text-neutral-400">Producto</label>
-                            <select name="detalles[__INDEX__][id_producto]" required data-product-select
+                            <input type="search" list="productos-disponibles" required data-product-search
+                                placeholder="Busca un producto..." autocomplete="off"
                                 class="w-full rounded-lg border px-3 py-2.5 text-sm">
-                                <option value="">Selecciona un producto</option>
-                                @foreach ($productos as $producto)
-                                    <option value="{{ $producto->id }}" data-price="{{ $producto->precio }}"
-                                        data-stock="{{ $producto->stock }}">
-                                        {{ $producto->nombre }} · Stock: {{ $producto->stock }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="detalles[__INDEX__][id_producto]" data-product-id>
                         </div>
                         <div>
                             <label
@@ -173,7 +192,18 @@
             const addButton = document.getElementById('agregar-detalle');
             const form = document.getElementById('crear-factura-form');
             const emptyMessage = document.getElementById('sin-detalles');
+            const clienteBusqueda = document.getElementById('buscar-cliente');
+            const clienteId = document.getElementById('id_cliente');
+            const clientesDisponibles = document.getElementById('clientes-disponibles');
+            const productosDisponibles = document.getElementById('productos-disponibles');
             let nextIndex = 0;
+
+            const sincronizarCliente = () => {
+                const opcion = Array.from(clientesDisponibles.options)
+                    .find((item) => item.value === clienteBusqueda.value);
+                clienteId.value = opcion?.dataset.id || '';
+                clienteBusqueda.setCustomValidity('');
+            };
 
             const formatoMoneda = (valor) => new Intl.NumberFormat('es-CO', {
                 minimumFractionDigits: 2,
@@ -212,16 +242,19 @@
                     row.remove();
                     recalcularTotales();
                 });
-                row.querySelector('[data-product-select]').addEventListener('change', (event) => {
-                    const option = event.target.options[event.target.selectedIndex];
-                    const price = row.querySelector('[data-price-input]');
-
-                    if (option.dataset.price) {
-                        price.value = option.dataset.price;
-                    }
-
+                const productoBusqueda = row.querySelector('[data-product-search]');
+                const productoId = row.querySelector('[data-product-id]');
+                const sincronizarProducto = () => {
+                    const opcion = Array.from(productosDisponibles.options)
+                        .find((item) => item.value === productoBusqueda.value);
+                    productoId.value = opcion?.dataset.id || '';
+                    if (opcion?.dataset.price) row.querySelector('[data-price-input]').value = opcion.dataset.price;
+                    productoBusqueda.setCustomValidity('');
                     recalcularTotales();
-                });
+                };
+
+                productoBusqueda.addEventListener('input', sincronizarProducto);
+                productoBusqueda.addEventListener('change', sincronizarProducto);
                 row.querySelectorAll('[data-quantity], [data-price-input]').forEach((input) => {
                     input.addEventListener('input', recalcularTotales);
                 });
@@ -231,12 +264,32 @@
             }
 
             addButton.addEventListener('click', agregarDetalle);
-            form.addEventListener('submit', () => {
+            clienteBusqueda.addEventListener('input', sincronizarCliente);
+            clienteBusqueda.addEventListener('change', sincronizarCliente);
+
+            form.addEventListener('submit', (event) => {
+                sincronizarCliente();
+                if (!clienteId.value) {
+                    event.preventDefault();
+                    clienteBusqueda.setCustomValidity('Selecciona un cliente de la lista para continuar.');
+                    clienteBusqueda.reportValidity();
+                    return;
+                }
+
+                let productoInvalido = null;
                 container.querySelectorAll('[data-detalle-row]').forEach((row) => {
-                    if (!row.querySelector('[data-product-select]').value) {
-                        row.remove();
+                    const busqueda = row.querySelector('[data-product-search]');
+                    const id = row.querySelector('[data-product-id]');
+                    if (busqueda.value.trim() && !id.value) {
+                        busqueda.setCustomValidity('Selecciona un producto de la lista.');
+                        productoInvalido = productoInvalido || busqueda;
                     }
                 });
+
+                if (productoInvalido) {
+                    event.preventDefault();
+                    productoInvalido.reportValidity();
+                }
             });
 
             agregarDetalle();

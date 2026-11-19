@@ -2,6 +2,11 @@
 @section('page-title', 'Gestión de facturas')
 @section('title', 'Facturas')
 @section('content')
+    @php
+        $puedeCambiarEstado = auth()->user()->rol === 'administrador'
+            && auth()->user()->tienePermisoActivo('editar facturas');
+    @endphp
+
     <x-card>
         <div class="container mx-auto mt-2">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -27,7 +32,9 @@
                             <th>Subtotal</th>
                             <th>IVA</th>
                             <th>Total</th>
-                            <th>Estado</th>
+                            @if ($puedeCambiarEstado)
+                                <th>Estado</th>
+                            @endif
                             <th data-searchable="false" data-orderable="false">Acciones</th>
                         </tr>
                     </thead>
@@ -58,24 +65,42 @@
                                     {{ number_format((float) $factura->total, 2, ',', '.') }}
                                 </td>
 
-                                <td>
-                                    @if ($factura->estado === 'pagada')
-                                        <span
-                                            class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">
-                                            Pagada
-                                        </span>
-                                    @elseif ($factura->estado === 'pendiente')
-                                        <span
-                                            class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">
-                                            Pendiente
-                                        </span>
-                                    @else
-                                        <span
-                                            class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">
-                                            Anulada
-                                        </span>
-                                    @endif
-                                </td>
+                                @if ($puedeCambiarEstado)
+                                    <td>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            @if ($factura->estado === 'pagada')
+                                                <span class="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">Pagada</span>
+                                            @elseif ($factura->estado === 'pendiente')
+                                                <span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800">Pendiente</span>
+                                            @else
+                                                <span class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-800">Anulada</span>
+                                            @endif
+
+                                            @if ($factura->estado === 'pendiente')
+                                                <form action="{{ route('facturas.estado', $factura->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="estado" value="pagada">
+                                                    <button type="submit" title="Marcar como pagada"
+                                                        aria-label="Marcar factura #{{ $factura->id }} como pagada"
+                                                        class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-emerald-500/40 bg-emerald-500/10 text-sm font-bold text-emerald-300 transition hover:bg-emerald-500/20">✓</button>
+                                                </form>
+                                            @endif
+
+                                            @if (in_array($factura->estado, ['pendiente', 'pagada'], true))
+                                                <form action="{{ route('facturas.estado', $factura->id) }}" method="POST"
+                                                    onsubmit="return confirm('¿Anular la factura #{{ $factura->id }}? Se restituirán las unidades al inventario.');">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="estado" value="anulada">
+                                                    <button type="submit" title="Anular factura"
+                                                        aria-label="Anular factura #{{ $factura->id }}"
+                                                        class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-red-500/40 bg-red-500/10 text-sm font-bold text-red-300 transition hover:bg-red-500/20">✕</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                @endif
 
                                 <td>
                                     <div class="flex min-w-[190px] flex-wrap items-center justify-center gap-2">
@@ -102,7 +127,7 @@
                                                 </form>
                                             @else
                                                 <span class="text-xs text-neutral-500">
-                                                    No eliminable: {{ $factura->estado }}
+                                                    No eliminable
                                                 </span>
                                             @endif
                                         @endcan
@@ -111,7 +136,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-5 py-10 text-center text-sm text-slate-400">
+                                <td colspan="{{ $puedeCambiarEstado ? 8 : 7 }}" class="px-5 py-10 text-center text-sm text-slate-400">
                                     Todavía no hay facturas registradas.
                                 </td>
                             </tr>

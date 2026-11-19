@@ -133,7 +133,7 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
     ]);
 
     $factura = Facturas::query()->where('id_usuario', $this->admin->id)->firstOrFail();
-    $responseCrear->assertRedirect(route('facturas.show', $factura->id));
+    $responseCrear->assertRedirect(route('facturas.index'));
 
     $this->get(route('facturas.edit', $factura->id))->assertRedirect(route('facturas.show', $factura->id));
 
@@ -141,7 +141,7 @@ test('la gestion de facturas permite crear editar y eliminar una factura pendien
         'id_cliente' => $cliente->id,
         'fecha' => '2026-11-16',
         'estado' => 'pendiente',
-    ])->assertRedirect(route('facturas.show', $factura->id));
+    ])->assertRedirect(route('facturas.index'));
 
     expect($factura->fresh()->fecha->toDateString())->toBe('2026-11-16');
 
@@ -308,8 +308,21 @@ test('el empleado consulta facturas y solo ve acciones permitidas por sus permis
         'subtotal' => 100,
     ]);
 
+    $this->actingAs($empleado)->get(route('facturas.index'))
+        ->assertOk()
+        ->assertDontSee('Estado')
+        ->assertDontSee('Pendiente')
+        ->assertDontSee(route('facturas.estado', $factura->id));
+
+    $this->actingAs($empleado)->patch(route('facturas.estado', $factura->id), [
+        'estado' => 'anulada',
+    ])->assertForbidden();
+
     $this->actingAs($empleado)->get(route('facturas.show', $factura->id))
         ->assertOk()
+        ->assertSee('id="buscar-cliente"', false)
+        ->assertDontSee('name="fecha"', false)
+        ->assertDontSee('name="estado"', false)
         ->assertSee('Producto de empleado')
         ->assertSee('Agregar producto')
         ->assertDontSee('Editar producto')
@@ -337,9 +350,134 @@ test('el empleado consulta facturas y solo ve acciones permitidas por sus permis
 
     $this->actingAs($empleado)->get(route('cliente.index'))
         ->assertOk()
-        ->assertDontSee('Acciones')
-        ->assertDontSee('Editar')
+        ->assertSee('Acciones')
+        ->assertSee('Editar')
         ->assertDontSee('Eliminar');
+});
+
+test('el empleado puede crear y editar clientes pero no eliminarlos', function () {
+    $empleado = User::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'rol' => 'empleado',
+        'estado' => true,
+    ]);
+    $empleado->assignRole('empleado');
+
+    $this->actingAs($empleado)->get(route('cliente.create'))->assertOk();
+    $this->actingAs($empleado)->post(route('cliente.store'), [
+        'nombre' => 'Cliente empleado',
+        'apellido' => 'Prueba',
+        'documento' => '9012345678',
+        'telefono' => '3001112233',
+        'correo' => 'cliente.empleado@example.com',
+        'direccion' => 'Calle de prueba',
+    ])->assertRedirect(route('cliente.index'));
+
+    $cliente = Cliente::query()
+        ->where('id_tienda', $this->tienda->id)
+        ->where('documento', '9012345678')
+        ->firstOrFail();
+
+    $this->actingAs($empleado)->get(route('cliente.edit', $cliente->id))
+        ->assertOk()
+        ->assertSee('Cliente empleado');
+
+    $this->actingAs($empleado)->put(route('cliente.update', $cliente->id), [
+        'nombre' => 'Cliente actualizado por empleado',
+        'apellido' => 'Prueba',
+        'documento' => '9012345678',
+        'telefono' => '3001112233',
+        'correo' => 'cliente.empleado@example.com',
+        'direccion' => 'Carrera de prueba',
+    ])->assertRedirect(route('cliente.index'));
+
+    $this->actingAs($empleado)->delete(route('cliente.destroy', $cliente->id))
+        ->assertForbidden();
+
+    expect($cliente->fresh()->nombre)->toBe('Cliente actualizado por empleado');
+});
+
+test('el empleado no puede cambiar la fecha al crear facturas aunque envie otro valor', function () {
+    $empleado = User::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'rol' => 'empleado',
+        'estado' => true,
+    ]);
+    $empleado->assignRole('empleado');
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $fechaActual = now()->toDateString();
+
+    $this->actingAs($empleado)->get(route('facturas.create'))
+        ->assertOk()
+        ->assertSee('La fecha de emisión se asigna automáticamente.')
+        ->assertSee('disabled', false);
+
+    $this->actingAs($empleado)->post(route('facturas.store'), [
+        'id_cliente' => $cliente->id,
+        'fecha' => '2000-01-01',
+        'estado' => 'pendiente',
+    ])->assertRedirect(route('facturas.index'));
+
+    $factura = Facturas::query()
+        ->where('id_usuario', $empleado->id)
+        ->latest('id')
+        ->firstOrFail();
+
+    expect($factura->fecha->toDateString())->toBe($fechaActual);
+});
+
+test('el administrador cambia el estado desde el listado y anular restituye existencias', function () {
+    $cliente = Cliente::factory()->create(['id_tienda' => $this->tienda->id]);
+    $facturaPagada = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => now()->toDateString(),
+        'subtotal' => 0,
+        'iva' => 0,
+        'total' => 0,
+        'estado' => 'pendiente',
+    ]);
+
+    $categoria = Categoria::factory()->create(['id_tienda' => $this->tienda->id]);
+    $producto = Productos::factory()->create([
+        'id_tienda' => $this->tienda->id,
+        'id_categoria' => $categoria->id,
+        'nombre' => 'Producto para anulación desde listado',
+        'stock' => 9,
+        'estado' => true,
+    ]);
+    $facturaAnulada = Facturas::create([
+        'id_cliente' => $cliente->id,
+        'id_usuario' => $this->admin->id,
+        'fecha' => now()->toDateString(),
+        'subtotal' => 100,
+        'iva' => 19,
+        'total' => 119,
+        'estado' => 'pendiente',
+    ]);
+    DetalleFactura::create([
+        'id_factura' => $facturaAnulada->id,
+        'id_producto' => $producto->id,
+        'cantidad' => 1,
+        'precio_unitario' => 100,
+        'subtotal' => 100,
+    ]);
+
+    $this->get(route('facturas.index'))
+        ->assertOk()
+        ->assertSee('title="Marcar como pagada"', false)
+        ->assertSee('title="Anular factura"', false);
+
+    $this->patch(route('facturas.estado', $facturaPagada->id), [
+        'estado' => 'pagada',
+    ])->assertRedirect(route('facturas.index'));
+    expect($facturaPagada->fresh()->estado)->toBe('pagada');
+
+    $this->patch(route('facturas.estado', $facturaAnulada->id), [
+        'estado' => 'anulada',
+    ])->assertRedirect(route('facturas.index'));
+    expect($facturaAnulada->fresh()->estado)->toBe('anulada');
+    expect($producto->fresh()->stock)->toBe(10);
 });
 
 test('el administrador ve los productos disponibles al editar detalles aunque no pueda crear nuevos', function () {

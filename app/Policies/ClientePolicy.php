@@ -33,7 +33,8 @@ class ClientePolicy
 
     public function delete(User $user, Cliente $cliente): bool
     {
-        return (bool) $user->id_tienda
+        return $user->rol === 'administrador'
+            && (bool) $user->id_tienda
             && (int) $cliente->id_tienda === (int) $user->id_tienda
             && $user->can('eliminar clientes');
     }

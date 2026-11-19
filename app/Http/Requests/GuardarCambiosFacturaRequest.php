@@ -30,6 +30,7 @@ class GuardarCambiosFacturaRequest extends FormRequest
             'editar detallefacturas',
             'crear detallefacturas',
             'eliminar detallefacturas',
+            'editar clientes',
         ])->contains(fn ($permiso) => $usuario->tienePermisoActivo($permiso));
     }
 
@@ -38,6 +39,7 @@ class GuardarCambiosFacturaRequest extends FormRequest
         $usuario = $this->user();
         $tiendaId = (int) $usuario->id_tienda;
         $puedeEditarFactura = $usuario->tienePermisoActivo('editar facturas');
+        $puedeEditarCliente = $puedeEditarFactura || $usuario->tienePermisoActivo('editar clientes');
         $puedeEditarDetalles = $usuario->tienePermisoActivo('editar detallefacturas');
         $puedeCrearDetalles = $usuario->tienePermisoActivo('crear detallefacturas');
         $puedeEliminarDetalles = $usuario->tienePermisoActivo('eliminar detallefacturas');
@@ -51,7 +53,7 @@ class GuardarCambiosFacturaRequest extends FormRequest
 
         return [
             'id_cliente' => [
-                $puedeEditarFactura ? 'required' : 'prohibited',
+                $puedeEditarCliente ? 'required' : 'prohibited',
                 'integer',
                 Rule::exists('clientes', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
             ],

@@ -89,7 +89,7 @@ test('crear factura con varios detalles descuenta inventario y calcula sus total
 
     $factura = Facturas::firstOrFail();
 
-    $response->assertRedirect(route('facturas.show', $factura->id));
+    $response->assertRedirect(route('facturas.index'));
     expect($productoA->fresh()->stock)->toBe(8);
     expect($productoB->fresh()->stock)->toBe(5);
     expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(2);
@@ -149,7 +149,7 @@ test('crear factura en estado pendiente con totales iniciales en cero', function
     ]);
 
     $factura = Facturas::first();
-    $response->assertRedirect(route('facturas.show', $factura->id));
+    $response->assertRedirect(route('facturas.index'));
     expect($factura)->not->toBeNull();
     expect($factura->estado)->toBe('pendiente');
     expect((float) $factura->subtotal)->toBe(0.0);
@@ -868,7 +868,7 @@ test('guardar cambios de una factura pagada actualiza detalles inventario movimi
         'eliminar_detalles' => [$detalleRetirado->id],
     ]);
 
-    $response->assertRedirect(route('facturas.show', $factura->id));
+    $response->assertRedirect(route('facturas.index'));
 
     expect($factura->fresh()->id_cliente)->toBe($clienteNuevo->id);
     expect($factura->fresh()->fecha->toDateString())->toBe('2026-11-18');
@@ -933,7 +933,7 @@ test('guardar cambios de factura pendiente registra cantidad y precio unicamente
                 'precio_unitario' => 150,
             ],
         ],
-    ])->assertRedirect(route('facturas.show', $factura->id));
+    ])->assertRedirect(route('facturas.index'));
 
     expect($producto->fresh()->stock)->toBe(6);
     expect((float) $factura->fresh()->subtotal)->toBe(600.0);
@@ -1067,7 +1067,7 @@ test('empleado puede agregar detalles desde la factura sin recibir permisos de e
         ],
     ]);
 
-    $response->assertRedirect(route('facturas.show', $factura->id));
+    $response->assertRedirect(route('facturas.index'));
     expect($producto->fresh()->stock)->toBe(9);
     expect(DetalleFactura::where('id_factura', $factura->id)->count())->toBe(1);
     expect($factura->fresh()->total)->toBe('119.00');

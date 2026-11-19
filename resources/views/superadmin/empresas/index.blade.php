@@ -53,7 +53,7 @@
                             </td>
                             <td class="whitespace-nowrap px-5 py-4 text-right">
                                 <a href="{{ route('superadmin.empresas.show', $empresa) }}"
-                                    class="font-semibold text-blue-600 hover:text-blue-800">Ver y administrar</a>
+                                    class="font-semibold text-blue-600 hover:text-blue-800">Administrar</a>
                             </td>
                         </tr>
                     @empty
