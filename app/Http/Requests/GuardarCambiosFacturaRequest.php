@@ -53,7 +53,7 @@ class GuardarCambiosFacturaRequest extends FormRequest
 
         return [
             'id_cliente' => [
-                $puedeEditarCliente ? 'required' : 'prohibited',
+                $puedeEditarCliente ? 'sometimes' : 'prohibited',
                 'integer',
                 Rule::exists('clientes', 'id')->where(fn ($query) => $query->where('id_tienda', $tiendaId)),
             ],

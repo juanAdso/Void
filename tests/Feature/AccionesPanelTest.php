@@ -263,7 +263,7 @@ test('la consulta de factura integra los detalles y las acciones del administrad
 
     $response
         ->assertSeeText('Productos y detalles de factura')
-        ->assertSeeText('Producto visible en factura')
+        ->assertSee('Producto visible en factura', false)
         ->assertSeeText('Guardar')
         ->assertSeeText('Retirar')
         ->assertSeeText('Agregar producto')
@@ -608,7 +608,7 @@ test('la edicion de factura integra los campos de sus detalles en la misma vista
         ->assertSee('name="id_cliente"', false)
         ->assertSee('name="fecha"', false)
         ->assertSeeText('Productos y detalles de factura')
-        ->assertSeeText('Producto editable desde factura')
+        ->assertSee('Producto editable desde factura', false)
         ->assertSee('name="detalles[0][id_producto]"', false)
         ->assertSee('name="detalles[0][cantidad]"', false)
         ->assertSee('name="detalles[0][precio_unitario]"', false)

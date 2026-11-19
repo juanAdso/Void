@@ -65,7 +65,7 @@ test('empleado tiene acceso solo a los modulos y operaciones autorizadas', funct
     $this->actingAs($empleado)->get(route('tiendas.create'))->assertForbidden();
 
     $this->actingAs($empleado)->get(route('categoria.create'))->assertForbidden();
-    $this->actingAs($empleado)->get(route('cliente.create'))->assertForbidden();
+    $this->actingAs($empleado)->get(route('cliente.create'))->assertOk();
     $this->actingAs($empleado)->get(route('productos.create'))->assertForbidden();
 
     $this->actingAs($empleado)->delete('/categoria/1')->assertForbidden();

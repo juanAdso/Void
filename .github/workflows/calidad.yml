@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   calidad:
@@ -21,7 +21,7 @@ jobs:
       - name: Obtener el repositorio
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Configurar PHP
         uses: shivammathur/setup-php@v2
@@ -44,19 +44,6 @@ jobs:
 
       - name: Instalar dependencias frontend
         run: npm ci
-
-      - name: Aplicar formato Prettier a los archivos del proyecto
-        run: npm run format:frontend
-
-      - name: Guardar el formato de las vistas modificadas
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add resources/views/facturas/create.blade.php resources/views/facturas/index.blade.php resources/views/facturas/show.blade.php resources/views/layouts/publico.blade.php resources/views/welcome.blade.php
-          if ! git diff --cached --quiet; then
-            git commit -m "Aplica formato Prettier a las vistas VOID"
-            git push origin HEAD:main
-          fi
 
       - name: Verificar formato de vistas y recursos frontend
         run: npm run format:frontend:check
