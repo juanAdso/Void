@@ -7,6 +7,73 @@ const normalizarEncabezado = (valor) =>
         .replace(/[\u0300-\u036f]/g, '')
         .trim();
 
+const agregarFiltroFechas = (dataTable, headerRow, contenedor) => {
+    const columnaFecha = Array.from(headerRow.cells).findIndex((header) => header.dataset.dateFilter === 'true');
+
+    if (columnaFecha < 0) {
+        return;
+    }
+
+    const controles = contenedor.querySelector('.dt-layout-row:first-child .dt-layout-start');
+
+    if (!controles) {
+        return;
+    }
+
+    const filtro = document.createElement('div');
+    filtro.className = 'dt-date-filter';
+    filtro.setAttribute('role', 'group');
+    filtro.setAttribute('aria-label', 'Filtrar registros por fecha');
+    filtro.innerHTML =
+        '<label>Desde <input type="date" data-date-from aria-label="Fecha inicial"></label>' +
+        '<label>Hasta <input type="date" data-date-to aria-label="Fecha final"></label>' +
+        '<button type="button" data-date-clear>Limpiar</button>';
+
+    const desde = filtro.querySelector('[data-date-from]');
+    const hasta = filtro.querySelector('[data-date-to]');
+    const limpiar = filtro.querySelector('[data-date-clear]');
+
+    const aplicarFiltro = () => {
+        const fechaInicial = desde.value;
+        const fechaFinal = hasta.value;
+
+        if (fechaInicial && fechaFinal && fechaFinal < fechaInicial) {
+            hasta.setCustomValidity('La fecha final debe ser igual o posterior a la fecha inicial.');
+            hasta.reportValidity();
+            return;
+        }
+
+        hasta.setCustomValidity('');
+
+        dataTable.search
+            .fixed('dateRange', (_texto, _datos, indiceFila) => {
+                if (!fechaInicial && !fechaFinal) {
+                    return true;
+                }
+
+                const fila = dataTable.row(indiceFila).node();
+                const fecha = fila?.cells[columnaFecha]?.dataset.order ?? '';
+
+                if (!fecha) {
+                    return false;
+                }
+
+                return (!fechaInicial || fecha >= fechaInicial) && (!fechaFinal || fecha <= fechaFinal);
+            })
+            .draw();
+    };
+
+    desde.addEventListener('change', aplicarFiltro);
+    hasta.addEventListener('change', aplicarFiltro);
+    limpiar.addEventListener('click', () => {
+        desde.value = '';
+        hasta.value = '';
+        aplicarFiltro();
+    });
+
+    controles.append(filtro);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('table.datatable').forEach((table) => {
         if (DataTable.isDataTable(table)) {
@@ -42,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const paging = table.dataset.datatablePaging !== 'false';
 
-        new DataTable(table, {
+        const dataTable = new DataTable(table, {
             pageLength: 10,
             lengthMenu: [5, 10, 25, 50, 100],
             searching: true,
@@ -81,5 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             },
         });
+
+        agregarFiltroFechas(dataTable, headerRow, table.closest('.dt-container'));
     });
 });

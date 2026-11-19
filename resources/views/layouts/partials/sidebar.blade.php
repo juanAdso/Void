@@ -78,15 +78,25 @@
     }
 @endphp
 
-<aside x-cloak :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    class="fixed inset-y-0 left-0 z-40 w-64 border-r border-neutral-800 bg-neutral-950 text-slate-300 transform transition-transform duration-300 ease-out lg:translate-x-0"
+<aside x-cloak
+    :class="[
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        sidebarExpanded ? 'lg:w-64' : 'lg:w-20',
+    ]"
+    @mouseenter="if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) sidebarExpanded = true"
+    @mouseleave="sidebarExpanded = false" @focusin="if ($event.target.closest('a')) sidebarExpanded = true"
+    @focusout="if (!$el.contains($event.relatedTarget)) sidebarExpanded = false"
+    class="fixed inset-y-0 left-0 z-40 w-64 lg:w-20 border-r border-neutral-800 bg-neutral-950 text-slate-300 transform transition-all duration-300 ease-out"
     aria-label="Menú principal">
     <div class="h-full flex flex-col">
-        <div class="flex items-center gap-3 h-16 px-6 border-b border-neutral-800">
-            <div
-                class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-amber-300 font-bold shadow-lg shadow-blue-950/40">
-                Ø</div>
-            <div>
+        <div
+            class="flex items-center justify-center gap-3 h-16 px-2 border-b border-neutral-800 lg:justify-start lg:px-3">
+            <button type="button" @click="sidebarExpanded = !sidebarExpanded"
+                class="w-9 h-9 shrink-0 rounded-xl bg-blue-600 flex items-center justify-center text-amber-300 font-bold shadow-lg shadow-blue-950/40 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                aria-label="Expandir o contraer el menú" :aria-expanded="sidebarExpanded.toString()">
+                Ø
+            </button>
+            <div x-show="sidebarExpanded" class="void-sidebar-expanded min-w-0">
                 <span class="block text-amber-50 font-extrabold text-lg tracking-[0.18em]">VOID</span>
                 <span class="block text-[10px] uppercase tracking-widest text-slate-400">
                     {{ $esSuperadministrador ? 'Administración global' : 'Panel de empresa' }}
@@ -94,32 +104,36 @@
             </div>
         </div>
 
-        <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-1" aria-label="Navegación lateral">
+        <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-1 lg:px-2" aria-label="Navegación lateral">
             @foreach ($links as $link)
                 @if (auth()->check() && (!isset($link['can']) || auth()->user()->canAny($link['can'])))
                     @php $active = request()->routeIs($link['active']); @endphp
                     <a href="{{ route($link['route']) }}" @if ($active) aria-current="page" @endif
+                        @click="sidebarOpen = false; sidebarExpanded = false" aria-label="{{ $link['label'] }}"
+                        title="{{ $link['label'] }}"
+                        :class="sidebarExpanded ? 'lg:justify-start lg:px-3' : 'lg:justify-center lg:px-0'"
                         class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $active ? 'bg-blue-600/15 border border-blue-500/20 text-amber-300 shadow-inner shadow-blue-950/20' : 'text-slate-300 hover:bg-neutral-900 hover:text-amber-50 hover:translate-x-0.5' }}">
                         <span class="w-5 h-5 flex-shrink-0" aria-hidden="true">
                             @include('layouts.partials.icons', ['icon' => $link['icon']])
                         </span>
-                        <span>{{ $link['label'] }}</span>
+                        <span x-show="sidebarExpanded" class="void-sidebar-expanded">{{ $link['label'] }}</span>
                     </a>
                 @endif
             @endforeach
         </nav>
 
-        <div class="px-3 py-4 border-t border-neutral-800">
+        <div class="px-3 py-4 border-t border-neutral-800 lg:px-2">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
+                    :class="sidebarExpanded ? 'lg:justify-start lg:px-3' : 'lg:justify-center lg:px-0'"
                     class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-red-950/40 hover:text-red-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    aria-label="Cerrar sesión">
+                    aria-label="Cerrar sesión" title="Cerrar sesión">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    Cerrar sesión
+                    <span x-show="sidebarExpanded" class="void-sidebar-expanded">Cerrar sesión</span>
                 </button>
             </form>
         </div>

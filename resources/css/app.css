@@ -145,6 +145,59 @@
         box-shadow: 0 0 0 3px rgb(59 130 246 / 20%);
     }
 
+    .dt-date-filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+    }
+
+    .dt-date-filter label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #b7c3d2;
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .dt-date-filter input {
+        min-width: 8.25rem;
+        height: 2.35rem;
+        border: 1px solid #405064;
+        border-radius: 0.55rem;
+        background: #101720;
+        padding: 0.4rem 0.55rem;
+        color: #f1f5f9;
+        color-scheme: dark;
+        font: inherit;
+        font-size: 0.75rem;
+    }
+
+    .dt-date-filter input:focus-visible {
+        border-color: #60a5fa;
+        outline: 2px solid rgb(96 165 250 / 24%);
+        outline-offset: 1px;
+    }
+
+    .dt-date-filter button {
+        min-height: 2.35rem;
+        border: 1px solid #354254;
+        border-radius: 0.55rem;
+        background: #151e2a;
+        padding: 0.4rem 0.65rem;
+        color: #d5deea;
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .dt-date-filter button:hover {
+        border-color: #4b83d8;
+        background: #202c3b;
+        color: #ffffff;
+    }
+
     .dt-container .dt-search input::placeholder {
         color: #8492a5;
         opacity: 1;
@@ -217,6 +270,22 @@
         border-bottom: 1px solid #303b4b;
     }
 
+    /* Oculta el encabezado de dimensionamiento que DataTables duplica dentro del cuerpo. */
+    .dt-container .dt-scroll-body > table > thead > tr > th,
+    .dt-container .dt-scroll-body > table > thead > tr > td {
+        height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-top-width: 0 !important;
+        border-bottom-width: 0 !important;
+    }
+
+    .dt-container .dt-scroll-body > table > thead > tr > th div.dt-scroll-sizing,
+    .dt-container .dt-scroll-body > table > thead > tr > td div.dt-scroll-sizing {
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
     .dt-container table.dataTable {
         width: 100% !important;
         min-width: 100%;
@@ -241,8 +310,9 @@
         letter-spacing: 0.045em;
         text-align: left;
         text-transform: uppercase;
-        white-space: normal !important;
-        overflow-wrap: anywhere;
+        white-space: nowrap !important;
+        word-break: normal;
+        overflow-wrap: normal;
         vertical-align: middle;
     }
 
@@ -255,8 +325,9 @@
     }
 
     .dt-container table.dataTable thead .dt-column-title {
-        flex: 1 1 auto;
-        min-width: 0;
+        flex: 0 0 auto;
+        min-width: max-content;
+        white-space: nowrap;
     }
 
     .dt-container table.dataTable thead .dt-column-order {
@@ -433,6 +504,20 @@
         min-width: 2rem;
         min-height: 2rem;
         padding: 0.35rem 0.5rem;
+    }
+
+    .dt-date-filter {
+        width: 100%;
+    }
+
+    .dt-date-filter label {
+        flex: 1 1 8rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dt-date-filter input {
+        width: 100%;
     }
 
     .dt-container table.dataTable thead th,

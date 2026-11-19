@@ -177,6 +177,47 @@
                 </div>
             @endif
 
+            <form method="GET" action="{{ route('reportes.index') }}"
+                class="mx-5 mt-4 rounded-xl border border-slate-700 bg-slate-900/70 p-4">
+                <input type="hidden" name="fecha_inicio" value="{{ $fechaInicio }}">
+                <input type="hidden" name="fecha_fin" value="{{ $fechaFin }}">
+                @if (request()->filled('producto'))
+                    <input type="hidden" name="producto" value="{{ request('producto') }}">
+                @endif
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="mov_fecha_inicio"
+                            class="mb-1 block text-xs font-semibold uppercase text-slate-300">Desde</label>
+                        <input id="mov_fecha_inicio" name="mov_fecha_inicio" type="date"
+                            value="{{ old('mov_fecha_inicio', $movFechaInicio) }}"
+                            max="{{ old('mov_fecha_fin', $movFechaFin) ?: null }}"
+                            class="rounded-lg border border-slate-600 px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label for="mov_fecha_fin"
+                            class="mb-1 block text-xs font-semibold uppercase text-slate-300">Hasta</label>
+                        <input id="mov_fecha_fin" name="mov_fecha_fin" type="date"
+                            value="{{ old('mov_fecha_fin', $movFechaFin) }}"
+                            min="{{ old('mov_fecha_inicio', $movFechaInicio) ?: null }}"
+                            class="rounded-lg border border-slate-600 px-3 py-2 text-sm">
+                    </div>
+                    <button type="submit"
+                        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+                        Filtrar movimientos
+                    </button>
+                    <a href="{{ route('reportes.index', request()->except(['mov_fecha_inicio', 'mov_fecha_fin', 'movimientos_page'])) }}"
+                        class="rounded-lg border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
+                        Limpiar
+                    </a>
+                </div>
+                @error('mov_fecha_inicio')
+                    <p class="mt-2 text-xs font-medium text-red-300">{{ $message }}</p>
+                @enderror
+                @error('mov_fecha_fin')
+                    <p class="mt-2 text-xs font-medium text-red-300">{{ $message }}</p>
+                @enderror
+            </form>
+
             <x-table :headers="['Fecha', 'Producto', 'Tipo de Movimiento', 'Cantidad', 'Responsable', 'Motivo']" :paging="false">
                 @forelse($movimientos as $mov)
                     <tr class="hover:bg-slate-50 text-sm">

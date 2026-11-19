@@ -14,10 +14,12 @@
                             ['accion', 'acción', 'acciones', 'opciones'],
                             true,
                         );
+                        $esColumnaFecha = is_array($header) && ($header['date_filter'] ?? false);
                     @endphp
                     <th scope="col"
                         @if ($esColumnaAcciones) data-searchable="false" data-orderable="false" @endif
-                        class="px-5 py-3.5 text-left text-xs font-bold text-neutral-100 uppercase tracking-wider whitespace-normal break-words">
+                        @if ($esColumnaFecha) data-date-filter="true" @endif
+                        class="px-5 py-3.5 text-left text-xs font-bold text-neutral-100 uppercase tracking-wider whitespace-nowrap">
                         {{ $headerLabel }}
                     </th>
                 @endforeach

@@ -33,7 +33,14 @@
                 </x-slot:actions>
 
                 @can('ver facturas')
-                    <x-table :headers="['Factura #', 'Cliente', 'Estado', 'Total', 'Fecha', 'Acciones']">
+                    <x-table :headers="[
+                        'Factura #',
+                        'Cliente',
+                        'Estado',
+                        'Total',
+                        ['label' => 'Fecha', 'date_filter' => true],
+                        'Acciones',
+                    ]">
                         @forelse ($facturasRecientes as $factura)
                             @php
                                 $nombreCliente = trim(
@@ -46,7 +53,8 @@
                                 <td class="px-5 py-3.5"><x-badge :status="$factura->estado" /></td>
                                 <td class="px-5 py-3.5 font-semibold text-neutral-100">
                                     &#36;{{ number_format((float) $factura->total, 2) }}</td>
-                                <td class="whitespace-nowrap px-5 py-3.5 text-neutral-400">
+                                <td data-order="{{ $factura->fecha?->format('Y-m-d') ?? '' }}"
+                                    class="whitespace-nowrap px-5 py-3.5 text-neutral-400">
                                     {{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}</td>
                                 <td class="px-5 py-3.5">
                                     <a href="{{ route('facturas.show', $factura->id) }}"

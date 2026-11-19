@@ -23,7 +23,7 @@
                         <tr>
                             <th>Factura</th>
                             <th>Cliente</th>
-                            <th>Fecha</th>
+                            <th data-date-filter="true">Fecha</th>
                             <th>Subtotal</th>
                             <th>IVA</th>
                             <th>Total</th>
@@ -42,7 +42,7 @@
                                     {{ $factura->cliente?->apellido ?? '' }}
                                 </td>
 
-                                <td>
+                                <td data-order="{{ $factura->fecha?->format('Y-m-d') ?? '' }}">
                                     {{ $factura->fecha?->format('d/m/Y') ?? 'Sin fecha' }}
                                 </td>
 

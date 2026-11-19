@@ -284,6 +284,12 @@
             border-left: 2px solid var(--void-amber)
         }
 
+        @media (max-width: 1023px) {
+            .void-sidebar-expanded {
+                display: block !important;
+            }
+        }
+
         @media(prefers-reduced-motion:reduce) {
 
             .void-admin *,
@@ -473,14 +479,14 @@
 
 <body class="void-admin h-full bg-neutral-950 text-neutral-100 antialiased">
 
-    <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
+    <div x-data="{ sidebarOpen: false, sidebarExpanded: false }" class="min-h-screen flex">
 
         <div x-show="sidebarOpen" x-cloak x-transition.opacity.duration.200ms @click="sidebarOpen = false"
             class="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
 
         @include('layouts.partials.sidebar')
 
-        <div class="flex-1 flex flex-col min-w-0 lg:pl-64">
+        <div class="flex-1 flex flex-col min-w-0 lg:pl-20">
             @include('layouts.partials.navbar')
 
             <main class="void-main flex-1 p-4 sm:p-6 lg:p-8">

@@ -8,6 +8,7 @@ use App\Models\Productos;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ReportesController extends Controller
 {
@@ -18,6 +19,19 @@ class ReportesController extends Controller
 
         if (! $tiendaId) {
             abort(403, 'No tienes una tienda asignada para consultar reportes.');
+        }
+
+        $fechasMovimientos = $request->validate([
+            'mov_fecha_inicio' => ['nullable', 'date_format:Y-m-d'],
+            'mov_fecha_fin' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+        $movFechaInicio = $fechasMovimientos['mov_fecha_inicio'] ?? null;
+        $movFechaFin = $fechasMovimientos['mov_fecha_fin'] ?? null;
+
+        if ($movFechaInicio && $movFechaFin && $movFechaFin < $movFechaInicio) {
+            throw ValidationException::withMessages([
+                'mov_fecha_fin' => 'La fecha final debe ser igual o posterior a la fecha inicial.',
+            ]);
         }
 
         $productosStockBajo = Productos::query()
@@ -48,6 +62,14 @@ class ReportesController extends Controller
 
         if ($productoFiltro) {
             $consultaMovimientos->where('id_producto', $productoFiltro->id);
+        }
+
+        if ($movFechaInicio) {
+            $consultaMovimientos->whereDate('fecha', '>=', $movFechaInicio);
+        }
+
+        if ($movFechaFin) {
+            $consultaMovimientos->whereDate('fecha', '<=', $movFechaFin);
         }
 
         $movimientos = $consultaMovimientos
@@ -139,6 +161,8 @@ class ReportesController extends Controller
             'ventasPeriodo',
             'fechaInicio',
             'fechaFin',
+            'movFechaInicio',
+            'movFechaFin',
             'ventasPorEmpleado'
         ));
     }
